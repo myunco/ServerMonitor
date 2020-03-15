@@ -1,4 +1,4 @@
-package git.myunco.servermonitor.listener;
+package com.github.myunco.servermonitor.listener;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

@@ -1,4 +1,4 @@
-package git.myunco.servermonitor.executor;
+package com.github.myunco.servermonitor.executor;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

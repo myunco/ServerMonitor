@@ -1,7 +1,7 @@
-package git.myunco.servermonitor;
+package com.github.myunco.servermonitor;
 
-import git.myunco.servermonitor.executor.PluginCommandExecutor;
-import git.myunco.servermonitor.listener.PluginEventListener;
+import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
+import com.github.myunco.servermonitor.listener.PluginEventListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 /*

@@ -1,5 +1,6 @@
 package com.github.myunco.servermonitor.executor;
 
+import com.github.myunco.servermonitor.ServerMonitor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,7 +12,7 @@ public class PluginCommandExecutor implements CommandExecutor {
             "§e/ServerMonitor reload ---- §a重载插件配置\n" +
             "§e/ServerMonitor version ---- §a查看插件版本";
     public static final String MSG_PREFIX = "§3[§aServerMonitor§3] §e-> ";
-
+    public static final String VERSION = ServerMonitor.plugin.getDescription().getVersion();
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if ("ServerMonitor".equals(cmd.getName())) {
@@ -25,7 +26,7 @@ public class PluginCommandExecutor implements CommandExecutor {
                     sender.sendMessage(HELP_MSG);
                     break;
                 case "version":
-                    sender.sendMessage(MSG_PREFIX + "§bVersion§e: §d1.0.0");
+                    sender.sendMessage(MSG_PREFIX + "§bVersion§e: §a" + VERSION);
                     break;
                 default:
                     sender.sendMessage(MSG_PREFIX + "§c错误的命令参数!\n" + HELP_MSG);

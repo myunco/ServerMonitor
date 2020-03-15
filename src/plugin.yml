@@ -1,5 +1,5 @@
 name: ServerMonitor
-main: git.myunco.servermonitor.ServerMonitor
+main: com.github.myunco.servermonitor.ServerMonitor
 version: 1.0.0
 author: unco_
 commands:

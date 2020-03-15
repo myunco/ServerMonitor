@@ -1,0 +1,77 @@
+#语言 默认为简体中文
+language: zh_cn
+
+#日志中日期格式
+dateFormat: 'yyyy/MM/dd HH:mm:ss'
+
+#即时保存 true为启用 false为禁用
+#若启用则每条日志信息即时保存到文件，禁用则有一定缓冲，但会在插件卸载时完整保存(若插件未正常卸载则存在部分记录丢失的可能)
+realTimeSave: true
+
+#记录玩家聊天 true为启用 false为禁用
+playerChat: true
+  #为每个玩家单独记录
+  perPlayer: true
+
+#记录玩家指令 true为启用 false为禁用
+playerCommand: true
+  #为每个玩家单独记录
+  perPlayer: true
+
+#记录玩家游戏模式变更 true为启用 false为禁用
+playerGamemodeChange: true
+  #为每个玩家单独记录
+  perPlayer: false
+
+#记录op变更 true为启用 false为禁用
+opChange: true
+
+#记录玩家加入/离开/被踢出
+joinAndLeave: true
+
+#玩家白名单 按示例格式添加
+whitelist:
+  - player1
+  - player2
+
+#特殊关照命令列表 按示例格式添加
+alertCommandList:
+  - /op
+  - /give
+  - /gamemode
+  - /gmc
+  - /gm
+
+#处理方法 0=不处理 1=发送全服公告 2=控制台执行指令 4=使该玩家执行指令 8=使该玩家发送消息 16=对该玩家发送消息 32=控制台显示警告信息 64=将警告信息保存至警告日志
+#以上处理方式不冲突，选择多种处理方式相加即可。例如 既要发送全服公告又要控制台执行指令 则1+2=3 处理方法填3即可。
+handleMethod: 3
+  #以下为各处理方法的详细设置，使用{player}表示该玩家的名字，{command}表示事件指令。
+  #要发送的公告
+  broadcast: '§e[§d公告§e]§4玩家§a{player}§4因利用bug获取权限使用管理员指令而惨遭封禁!'
+
+  #控制台执行的指令 支持多个 按格式添加
+  consoleCmd:
+    - 'ban {player}'
+
+  #使该玩家执行的指令 支持多个 按格式添加
+  #需注意本方法的优先级低于控制台执行指令，并且不能执行该玩家无权执行的指令。
+  playerCmd:
+    - '/suicide'
+
+  #使该玩家发送消息
+  playerSendMsg:
+    - '我卡bug了! 快, 打我!'
+
+  #对该玩家发送消息
+  sendMsgToPlayer:
+    - '惊喜不惊喜？意外不意外？'
+
+  #控制台显示警告信息
+  consoleWarning:
+    - '§4§l---------------警告---------------'
+    - '§a玩家{player}使用管理员指令：{command}'
+    - '§e请立即查询该玩家指令记录并检查权限系统是否存在漏洞'
+    - '§4§l---------------警告---------------'
+
+  #将警告保存到警告日志
+  warningLog: '§a玩家{player}使用管理员指令：{command}, §e请立即查询该玩家指令记录并检查权限系统是否存在漏洞'

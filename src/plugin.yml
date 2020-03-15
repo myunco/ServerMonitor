@@ -1,0 +1,11 @@
+name: ServerMonitor
+main: git.myunco.servermonitor.ServerMonitor
+version: 1.0.0
+author: unco_
+commands:
+  ServerMonitor:
+    description: This is main command of the plugin.
+    usage: /ServerMonitor [arg1] [arg2] ...
+    aliases: [sm]
+    permission: servermonitor.use
+    permission-message: "§cYou don't have permission!"

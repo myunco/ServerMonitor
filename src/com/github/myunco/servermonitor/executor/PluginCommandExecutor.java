@@ -1,9 +1,11 @@
 package com.github.myunco.servermonitor.executor;
 
 import com.github.myunco.servermonitor.ServerMonitor;
+import com.github.myunco.servermonitor.config.ConfigLoader;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class PluginCommandExecutor implements CommandExecutor {
     public static final String HELP_MSG =
@@ -20,7 +22,8 @@ public class PluginCommandExecutor implements CommandExecutor {
                 return false;
             switch (args[0].toLowerCase()) {
                 case "reload":
-                    sender.sendMessage(MSG_PREFIX + "§a你执行了重载指令，然而现在没有重载功能。");
+                    ConfigLoader.load();
+                    sender.sendMessage(MSG_PREFIX + "§a插件配置重载完成.");
                     break;
                 case "help":
                     sender.sendMessage(HELP_MSG);

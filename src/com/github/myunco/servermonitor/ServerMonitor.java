@@ -1,6 +1,5 @@
 package com.github.myunco.servermonitor;
 
-import com.github.myunco.servermonitor.config.Config;
 import com.github.myunco.servermonitor.config.ConfigLoader;
 import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
 import com.github.myunco.servermonitor.listener.PluginEventListener;
@@ -10,9 +9,10 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 需求：
  * 1.可记录玩家聊天日志，并可设置为每个玩家单独一个记录文件（默认开启
  * 2.可记录玩家指令日志，并且日志中标明是否有权限使用 后续同上
+ *   2.1包括控制台执行的指令
  * 3.可记录玩家游戏模式变更日志，后续同上（通常不推荐，默认不开启
- * 4.可记录op变更记录，格式：何时：谁 使 谁 成为/失去op
- * 5.监测非op且不在插件白名单内的玩家 有权 使用特殊关照列表内的指令
+ * 4.可记录op变更记录，格式----何时：谁 使 谁 成为/失去op
+ * 5.监测不在插件白名单内的op使用特殊关照列表内的指令
  *   5.1上述判断成立后，有以下可选的不冲突的处理方式：
  *     5.1.0什么也不做
  *     5.1.1发送全服公告
@@ -29,7 +29,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 简要分析：
  * 1.监听玩家聊天事件
  * 2.监听玩家指令事件
- * 3.监听游戏模式变更事件（如果有
+ *   2.1监听控制台指令事件
+ * 3.监听游戏模式变更事件
  * 4.在监听玩家指令事件中处理
  * 5.在监听玩家指令事件中处理
  * 6.监听玩家进入/离开/被踢出事件

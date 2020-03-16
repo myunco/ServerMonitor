@@ -1,5 +1,7 @@
 package com.github.myunco.servermonitor;
 
+import com.github.myunco.servermonitor.config.Config;
+import com.github.myunco.servermonitor.config.ConfigLoader;
 import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
 import com.github.myunco.servermonitor.listener.PluginEventListener;
 import org.bukkit.Bukkit;
@@ -40,6 +42,11 @@ public class ServerMonitor extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+        ConfigLoader.load();
+        if (ConfigLoader.error) {
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
         getServer().getPluginManager().registerEvents(new PluginEventListener(), this);
         Bukkit.getPluginCommand("ServerMonitor").setExecutor(new PluginCommandExecutor());
         Bukkit.getConsoleSender().sendMessage( "§3[§aServerMonitor§3] §b已启用.");

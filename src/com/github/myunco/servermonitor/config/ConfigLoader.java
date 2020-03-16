@@ -60,6 +60,10 @@ public class ConfigLoader {
         }
     }
 
+    public static void reload() {
+        pl.reloadConfig();
+        load();
+    }
     public static void loadLanguage(String language) {
         File file = new File(pl.getDataFolder(), "languages" + File.separator + language + ".yml");
         if (!file.exists())

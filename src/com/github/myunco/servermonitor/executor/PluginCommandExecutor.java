@@ -22,7 +22,7 @@ public class PluginCommandExecutor implements CommandExecutor {
                 return false;
             switch (args[0].toLowerCase()) {
                 case "reload":
-                    ConfigLoader.load();
+                    ConfigLoader.reload();
                     sender.sendMessage(MSG_PREFIX + "§a插件配置重载完成.");
                     break;
                 case "help":

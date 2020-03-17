@@ -30,6 +30,8 @@ public class ConfigLoader {
             loadError("配置文件错误! 请检查 lineSeparator 是否存在.");
             return;
         }
+        if (Config.lineSeparator.toLowerCase().equals("auto"))
+            Config.lineSeparator = System.lineSeparator();
         Config.realTimeSave = config.getBoolean("realTimeSave");
         Config.playerChat.put("playerChat", config.getBoolean("playerChat.enable"));
         Config.playerChat.put("perPlayer", config.getBoolean("playerChat.perPlayer"));
@@ -42,7 +44,7 @@ public class ConfigLoader {
         Config.commandAlert = config.getBoolean("commandAlert.enable");
         if (Config.commandAlert) {
             Config.whitelist = config.getStringList("commandAlert.whitelist");
-            Config.alertCommandList = config.getStringList("commandAlert.alertCommandList");
+            Config.commandWhiteList = config.getStringList("commandAlert.commandWhiteList");
             ConfigurationSection cs = config.getConfigurationSection("commandAlert.handleMethod");
             if (cs == null) {
                 loadError("配置文件错误! 请检查 commandAlert下的handleMethod 是否存在.");

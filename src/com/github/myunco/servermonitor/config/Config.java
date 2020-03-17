@@ -15,7 +15,7 @@ public class Config {
     public static boolean joinAndLeave;
     public static List<String> whitelist;
     public static boolean commandAlert;
-    public static List<String> alertCommandList;
+    public static List<String> commandWhiteList;
     public static int handleMethod;
     public static HashMap<String, List<String>> handleMethodConfig = new HashMap<>();
 }

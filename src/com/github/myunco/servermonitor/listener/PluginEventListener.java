@@ -49,7 +49,7 @@ public class PluginEventListener implements Listener {
         if (Config.whitelist.contains(playerName))
             return;
         if (Config.alertCommandList.contains(getTextLeft(cmd, " "))) {
-            str = getTime() + "玩家[" + playerName + "]是OP且不在白名单内并使用了特殊关照命令：" + cmd;
+            str = getTime() + "玩家[" + playerName + "]是OP且不在白名单内并使用了警报命令：" + cmd;
             Bukkit.broadcastMessage(str);
             int method = Config.handleMethod;
             if (method == 0)
@@ -58,11 +58,12 @@ public class PluginEventListener implements Listener {
             List<String> list;
             if ((method & 1) == 1) {
                 list = handleMethodConfig.get("broadcast");
-                list.forEach(Bukkit::broadcastMessage);
+                //list.forEach(Bukkit::broadcastMessage);
+                list.forEach(value -> Bukkit.broadcastMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
             }
             if ((method & 2) == 2) {
                 list = handleMethodConfig.get("consoleCmd");
-                list.forEach(value -> Bukkit.dispatchCommand(ServerMonitor.plugin.getServer().getConsoleSender(), value));
+                list.forEach(value -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("{player}", playerName).replace("{command}", cmd)));
             }
             if ((method & 4) == 4) {
                 System.out.println("选项包含4");

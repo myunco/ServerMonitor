@@ -39,24 +39,27 @@ public class ConfigLoader {
         Config.playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer"));
         Config.opChange = config.getBoolean("opChange");
         Config.joinAndLeave = config.getBoolean("joinAndLeave");
-        Config.whitelist = config.getStringList("whitelist");
-        Config.alertCommandList = config.getStringList("alertCommandList");
-        ConfigurationSection cs = config.getConfigurationSection("handleMethod");
-        if (cs == null) {
-            loadError("配置文件错误! 请检查 handleMethod 是否存在.");
-            return;
-        }
-        Set<String> s = cs.getKeys(false);
-        if (s.size() < 8) {
-            loadError("配置文件错误! 请检查 handleMethod 下的所有项是否存在.");
-            return;
-        }
-        for (String value : s) {
-            if (value.equals("method")) {
-                Config.handleMethod = config.getInt("handleMethod.method");
-                continue;
+        Config.commandAlert = config.getBoolean("commandAlert.enable");
+        if (Config.commandAlert) {
+            Config.whitelist = config.getStringList("commandAlert.whitelist");
+            Config.alertCommandList = config.getStringList("commandAlert.alertCommandList");
+            ConfigurationSection cs = config.getConfigurationSection("commandAlert.handleMethod");
+            if (cs == null) {
+                loadError("配置文件错误! 请检查 commandAlert下的handleMethod 是否存在.");
+                return;
             }
-            Config.handleMethodConfig.put(value, config.getStringList("handleMethod." + value));
+            Set<String> s = cs.getKeys(false);
+            if (s.size() < 8) {
+                loadError("配置文件错误! 请检查 commandAlert下的handleMethod下的所有项 是否存在.");
+                return;
+            }
+            for (String value : s) {
+                if (value.equals("method")) {
+                    Config.handleMethod = config.getInt("commandAlert.handleMethod.method");
+                    continue;
+                }
+                Config.handleMethodConfig.put(value, config.getStringList("commandAlert.handleMethod." + value));
+            }
         }
     }
 
@@ -67,7 +70,7 @@ public class ConfigLoader {
     public static void loadLanguage(String language) {
         File file = new File(pl.getDataFolder(), "languages" + File.separator + language + ".yml");
         if (!file.exists())
-            System.out.println("语言文件: " + file.getAbsolutePath() + " 不存在.");
+            System.out.println("[ServerMonitor]语言文件:" + file.getAbsolutePath() + " 不存在.");
     }
 
     public static void loadError(String msg) {

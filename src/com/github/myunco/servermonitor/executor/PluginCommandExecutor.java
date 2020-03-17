@@ -5,7 +5,6 @@ import com.github.myunco.servermonitor.config.ConfigLoader;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class PluginCommandExecutor implements CommandExecutor {
     public static final String HELP_MSG =

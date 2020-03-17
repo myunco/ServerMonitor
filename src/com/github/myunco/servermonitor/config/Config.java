@@ -7,13 +7,14 @@ public class Config {
     public static String language;
     public static String dateFormat;
     public static String lineSeparator;
-    public static Boolean realTimeSave;
+    public static boolean realTimeSave;
     public static HashMap<String, Boolean> playerChat = new HashMap<>();
     public static HashMap<String, Boolean> playerCommand = new HashMap<>();
     public static HashMap<String, Boolean> playerGameModeChange = new HashMap<>();
-    public static Boolean opChange;
-    public static Boolean joinAndLeave;
+    public static boolean opChange;
+    public static boolean joinAndLeave;
     public static List<String> whitelist;
+    public static boolean commandAlert;
     public static List<String> alertCommandList;
     public static int handleMethod;
     public static HashMap<String, List<String>> handleMethodConfig = new HashMap<>();

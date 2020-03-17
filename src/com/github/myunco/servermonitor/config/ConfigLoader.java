@@ -34,11 +34,11 @@ public class ConfigLoader {
         if (Config.lineSeparator.toLowerCase().equals("auto"))
             Config.lineSeparator = System.lineSeparator();
         Config.realTimeSave = config.getBoolean("realTimeSave");
-        Config.playerChat.put("playerChat", config.getBoolean("playerChat.enable"));
+        Config.playerChat.put("enable", config.getBoolean("playerChat.enable"));
         Config.playerChat.put("perPlayer", config.getBoolean("playerChat.perPlayer"));
-        Config.playerCommand.put("playerCommand", config.getBoolean("playerCommand.enable"));
+        Config.playerCommand.put("enable", config.getBoolean("playerCommand.enable"));
         Config.playerCommand.put("perPlayer", config.getBoolean("playerCommand.perPlayer"));
-        Config.playerGameModeChange.put("playerGameModeChange", config.getBoolean("playerGameModeChange.enable"));
+        Config.playerGameModeChange.put("enable", config.getBoolean("playerGameModeChange.enable"));
         Config.playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer"));
         Config.opChange = config.getBoolean("opChange");
         Config.joinAndLeave = config.getBoolean("joinAndLeave");

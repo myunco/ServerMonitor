@@ -20,10 +20,12 @@ public class Log {
     public static File dateFolder = ServerMonitor.plugin.getDataFolder();
 
     public static void createWarningLog() throws IOException {
+        if (warningLog != null)
+            return;
         warningLog = new FileWriter(new File(dateFolder, "warning.log"), true);
     }
 
-    public static void writeWarningLog(String str){
+    public static void writeWarningLog(String str) {
         try {
             warningLog.write(str + Config.lineSeparator);
             if (Config.realTimeSave)
@@ -38,23 +40,42 @@ public class Log {
             warningLog.close();
     }
 
-    public static void createChatLog() throws IOException{
-        chatLog = new FileWriter(new File(dateFolder, "ChatLogs/Chat.log"), true);
+    public static void createChatLog() throws IOException {
+        if (chatLog != null)
+            return;
+        File file = new File(dateFolder, "ChatLogs/Chat.log");
+        if (!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
+        chatLog = new FileWriter(file, true);
     }
 
-    public static void createCommandLog() throws IOException{
-        commandLog = new FileWriter(new File(dateFolder, "CommandLogs/Command.log"), true);
+    public static void createCommandLog() throws IOException {
+        if (commandLog != null)
+            return;
+        File file = new File(dateFolder, "CommandLogs/Command.log");
+        if (!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
+        commandLog = new FileWriter(file, true);
     }
 
-    public static void createGameModeLog() throws IOException{
-        gameModeLog = new FileWriter(new File(dateFolder, "GameModeLogs/GameMode.log"), true);
+    public static void createGameModeLog() throws IOException {
+        if (gameModeLog != null)
+            return;
+        File file = new File(dateFolder, "GameModeLogs/GameMode.log");
+        if (!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
+        gameModeLog = new FileWriter(file, true);
     }
 
-    public static void createOpChangeLog() throws IOException{
+    public static void createOpChangeLog() throws IOException {
+        if (opChangeLog != null)
+            return;
         opChangeLog = new FileWriter(new File(dateFolder, "OpChange.log"), true);
     }
 
-    public static void createJoinLeaveLog() throws IOException{
+    public static void createJoinLeaveLog() throws IOException {
+        if (joinLeaveLog != null)
+            return;
         joinLeaveLog = new FileWriter(new File(dateFolder, "JoinAndLeave.log"), true);
     }
 

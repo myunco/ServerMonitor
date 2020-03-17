@@ -102,10 +102,10 @@ public class PluginEventListener implements Listener {
         String cmd = event.getCommand();
         String str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]执行命令 : " + cmd;
         Log.writeCommandLog(str);
-        if (cmd.toLowerCase().startsWith("/op ")) {
+        if (cmd.toLowerCase().startsWith("op ")) {
             str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]Opped : " + Util.getTextRight(cmd, " ");
             Log.writeOpChangeLog(str);
-        } else if (cmd.toLowerCase().startsWith("/deop ")) {
+        } else if (cmd.toLowerCase().startsWith("deop ")) {
             str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]De-Opped : " + Util.getTextRight(cmd, " ");
             Log.writeOpChangeLog(str);
         }

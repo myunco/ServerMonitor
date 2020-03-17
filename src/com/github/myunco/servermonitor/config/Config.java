@@ -16,6 +16,7 @@ public class Config {
     public static List<String> whitelist;
     public static boolean commandAlert;
     public static List<String> commandWhiteList;
+    public static boolean cancel;
     public static int handleMethod;
     public static HashMap<String, List<String>> handleMethodConfig = new HashMap<>();
 }

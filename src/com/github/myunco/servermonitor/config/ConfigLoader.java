@@ -44,6 +44,7 @@ public class ConfigLoader {
         Config.commandAlert = config.getBoolean("commandAlert.enable");
         if (Config.commandAlert) {
             Config.whitelist = config.getStringList("commandAlert.whitelist");
+            Config.cancel = config.getBoolean("commandAlert.cancel");
             Config.commandWhiteList = config.getStringList("commandAlert.commandWhiteList");
             ConfigurationSection cs = config.getConfigurationSection("commandAlert.handleMethod");
             if (cs == null) {
@@ -72,7 +73,7 @@ public class ConfigLoader {
     public static void loadLanguage(String language) {
         File file = new File(pl.getDataFolder(), "languages" + File.separator + language + ".yml");
         if (!file.exists())
-            System.out.println("[ServerMonitor]语言文件:" + file.getAbsolutePath() + " 不存在.");
+            System.out.println("[ServerMonitor] 语言文件:" + file.getAbsolutePath() + " 不存在.");
     }
 
     public static void loadError(String msg) {

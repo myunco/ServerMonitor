@@ -1,6 +1,7 @@
 package com.github.myunco.servermonitor.listener;
 
 import com.github.myunco.servermonitor.config.Config;
+import com.github.myunco.servermonitor.util.Log;
 import com.github.myunco.servermonitor.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -14,7 +15,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.List;
 
 public class PluginEventListener implements Listener {
@@ -46,51 +47,50 @@ public class PluginEventListener implements Listener {
             return;
         if (Util.isCommandWhiteList(Util.getTextLeft(cmd, " ")))
             return;
-
-        str = Util.getTime() + "玩家[" + playerName + "]是OP且不在白名单内并使用了警报命令：" + cmd;
+        str = Util.getTime() + "玩家[" + playerName + "]是OP且不在白名单内并使用了非白名单命令：" + cmd;
         Bukkit.broadcastMessage(str);
+        if (Config.cancel)
+            event.setCancelled(true);
         int method = Config.handleMethod;
         if (method == 0)
             return;
-        HashMap<String, List<String>> handleMethodConfig = Config.handleMethodConfig;
         List<String> list;
         if ((method & 1) == 1) {
-            list = handleMethodConfig.get("broadcast");
+            list = Config.handleMethodConfig.get("broadcast");
             //list.forEach(Bukkit::broadcastMessage);
             list.forEach(value -> Bukkit.broadcastMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
-            System.out.println("选项包含1");
         }
         if ((method & 2) == 2) {
-            list = handleMethodConfig.get("consoleCmd");
+            list = Config.handleMethodConfig.get("consoleCmd");
             list.forEach(value -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("{player}", playerName).replace("{command}", cmd)));
-            System.out.println("选项包含2");
         }
         if ((method & 4) == 4) {
-            list = handleMethodConfig.get("playerCmd");
+            list = Config.handleMethodConfig.get("playerCmd");
             //performCommand要去掉 '/' 所以这里直接用chat吧
             list.forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
-            System.out.println("选项包含4");
         }
         if ((method & 8) == 8) {
-            list = handleMethodConfig.get("playerSendMsg");
+            list = Config.handleMethodConfig.get("playerSendMsg");
             list.forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
-            System.out.println("选项包含8");
         }
         if ((method & 16) == 16) {
-            list = handleMethodConfig.get("sendMsgToPlayer");
+            list = Config.handleMethodConfig.get("sendMsgToPlayer");
             list.forEach(value -> event.getPlayer().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
-            System.out.println("选项包含16");
         }
         if ((method & 32) == 32) {
-            list = handleMethodConfig.get("consoleWarning");
+            list = Config.handleMethodConfig.get("consoleWarning");
             list.forEach(value -> Bukkit.getConsoleSender().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
-            System.out.println("选项包含32");
         }
         if ((method & 64) == 64) {
-            list = handleMethodConfig.get("warningLog");
-            System.out.println("选项包含64");
+            list = Config.handleMethodConfig.get("warningLog");
+            list.forEach(value -> {
+                try {
+                    Log.warningLog(value);
+                } catch (IOException e) {
+                    Bukkit.getConsoleSender().sendMessage("§4[错误] §5在写入warningLog时发生IO异常!");
+                }
+            });
         }
-
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

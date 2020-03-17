@@ -1,7 +1,7 @@
 package com.github.myunco.servermonitor.config;
 
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 public class Config {
     public static String language;

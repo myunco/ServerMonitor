@@ -1,34 +1,35 @@
 package com.github.myunco.servermonitor.config;
 
 import com.github.myunco.servermonitor.ServerMonitor;
+import com.github.myunco.servermonitor.util.Log;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 
 public class ConfigLoader {
-    public static boolean error;
     private static ServerMonitor pl = ServerMonitor.plugin;
 
-    public static void load() {
+    public static boolean load() {
         pl.saveDefaultConfig();
         FileConfiguration config = pl.getConfig();
         Config.language = config.getString("language");
         if (Config.language == null) {
             loadError("配置文件错误! 请检查 language 是否存在.");
-            return;
+            return false;
         }
         loadLanguage(Config.language);
         Config.dateFormat = config.getString("dateFormat");
         if (Config.dateFormat == null) {
             loadError("配置文件错误! 请检查 dateFormat 是否存在.");
-            return;
+            return false;
         }
         Config.lineSeparator = config.getString("lineSeparator");
         if (Config.lineSeparator == null) {
             loadError("配置文件错误! 请检查 lineSeparator 是否存在.");
-            return;
+            return false;
         }
         if (Config.lineSeparator.toLowerCase().equals("auto"))
             Config.lineSeparator = System.lineSeparator();
@@ -49,12 +50,12 @@ public class ConfigLoader {
             ConfigurationSection cs = config.getConfigurationSection("commandAlert.handleMethod");
             if (cs == null) {
                 loadError("配置文件错误! 请检查 commandAlert下的handleMethod 是否存在.");
-                return;
+                return false;
             }
             Set<String> s = cs.getKeys(false);
             if (s.size() < 8) {
                 loadError("配置文件错误! 请检查 commandAlert下的handleMethod下的所有项 是否存在.");
-                return;
+                return false;
             }
             for (String value : s) {
                 if (value.equals("method")) {
@@ -64,12 +65,54 @@ public class ConfigLoader {
                 Config.handleMethodConfig.put(value, config.getStringList("commandAlert.handleMethod." + value));
             }
         }
+        if (Config.playerChat.get("enable")) {
+            try {
+                Log.createChatLog();
+            } catch (IOException e) {
+                Log.sendException("§4[错误] §5在打开ChatLog时发生IO异常!", e.getMessage());
+                return false;
+            }
+        }
+        if (Config.playerCommand.get("enable")) {
+            try {
+                Log.createCommandLog();
+            } catch (IOException e) {
+                Log.sendException("§4[错误] §5在打开CommandLog时发生IO异常!", e.getMessage());
+                return false;
+            }
+        }
+        if (Config.playerGameModeChange.get("enable")) {
+            try {
+                Log.createGameModeLog();
+            } catch (IOException e) {
+                Log.sendException("§4[错误] §5在打开GameModeLog时发生IO异常!", e.getMessage());
+                return false;
+            }
+        }
+        if (Config.opChange) {
+            try {
+                Log.createOpChangeLog();
+            } catch (IOException e) {
+                Log.sendException("§4[错误] §5在打开OpChangeLog时发生IO异常!", e.getMessage());
+                return false;
+            }
+        }
+        if (Config.joinAndLeave) {
+            try {
+                Log.createJoinLeaveLog();
+            } catch (IOException e) {
+                Log.sendException("§4[错误] §5在打开JoinLeaveLog时发生IO异常!", e.getMessage());
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void reload() {
         pl.reloadConfig();
         load();
     }
+
     public static void loadLanguage(String language) {
         File file = new File(pl.getDataFolder(), "languages" + File.separator + language + ".yml");
         if (!file.exists())
@@ -78,6 +121,5 @@ public class ConfigLoader {
 
     public static void loadError(String msg) {
         pl.getLogger().warning(msg);
-        error = true;
     }
 }

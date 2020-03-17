@@ -15,7 +15,6 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-import java.io.IOException;
 import java.util.List;
 
 public class PluginEventListener implements Listener {
@@ -83,13 +82,7 @@ public class PluginEventListener implements Listener {
         }
         if ((method & 64) == 64) {
             list = Config.handleMethodConfig.get("warningLog");
-            list.forEach(value -> {
-                try {
-                    Log.warningLog(value);
-                } catch (IOException e) {
-                    Bukkit.getConsoleSender().sendMessage("§4[错误] §5在写入warningLog时发生IO异常!");
-                }
-            });
+            list.forEach(Log::warningLog);
         }
     }
 

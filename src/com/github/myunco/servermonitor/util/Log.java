@@ -15,26 +15,27 @@ public class Log {
     public static FileWriter gameModeLog;
     public static FileWriter opChangeLog;
     public static FileWriter joinLeaveLog;
+    public static FileWriter warningLog;
 
     public static File dateFolder = ServerMonitor.plugin.getDataFolder();
 
-    public static void warningLog(String str){
-        FileWriter fw;
+    public static void createWarningLog() throws IOException {
+        warningLog = new FileWriter(new File(dateFolder, "warning.log"), true);
+    }
+
+    public static void writeWarningLog(String str){
         try {
-            fw = new FileWriter(new File(dateFolder, "warning.log"), true);
-            try {
-                fw.write(str + Config.lineSeparator);
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    sendException("§4[错误] §5在关闭warningLog时发生IO异常!", e.getMessage());
-                }
-            } catch (IOException e) {
-                sendException("§4[错误] §5在写入warningLog时发生IO异常!", e.getMessage());
-            }
+            warningLog.write(str + Config.lineSeparator);
+            if (Config.realTimeSave)
+                warningLog.flush();
         } catch (IOException e) {
-            sendException("§4[错误] §5在打开warningLog时发生IO异常!", e.getMessage());
+            sendException("§4[错误] §5在写WarningLog时发生IO异常!", e.getMessage());
         }
+    }
+
+    public static void closeWarningLog() throws IOException {
+        if (warningLog != null)
+            warningLog.close();
     }
 
     public static void createChatLog() throws IOException{
@@ -74,4 +75,55 @@ public class Log {
         Bukkit.getConsoleSender().sendMessage(PluginCommandExecutor.MSG_PREFIX + message);
         Bukkit.getConsoleSender().sendMessage(PluginCommandExecutor.MSG_PREFIX + "Message:" + exceptionMsg);
     }
+
+    public static void writeChatLog(String str) {
+        try {
+            chatLog.write(str + Config.lineSeparator);
+            if (Config.realTimeSave)
+                chatLog.flush();
+        } catch (IOException e) {
+            sendException("§4[错误] §5在写ChatLog时发生IO异常!", e.getMessage());
+        }
+    }
+
+    public static void writeCommandLog(String str) {
+        try {
+            commandLog.write(str + Config.lineSeparator);
+            if (Config.realTimeSave)
+                commandLog.flush();
+        } catch (IOException e) {
+            sendException("§4[错误] §5在写CommandLog时发生IO异常!", e.getMessage());
+        }
+    }
+
+    public static void writeGameModeLog(String str) {
+        try {
+            gameModeLog.write(str + Config.lineSeparator);
+            if (Config.realTimeSave)
+                gameModeLog.flush();
+        } catch (IOException e) {
+            sendException("§4[错误] §5在写GameModeLog时发生IO异常!", e.getMessage());
+        }
+    }
+
+    public static void writeOpChangeLog(String str) {
+        try {
+            opChangeLog.write(str + Config.lineSeparator);
+            if (Config.realTimeSave)
+                opChangeLog.flush();
+        } catch (IOException e) {
+            sendException("§4[错误] §5在写OpChangeLog时发生IO异常!", e.getMessage());
+        }
+    }
+
+    public static void writeJoinLeaveLog(String str) {
+        try {
+            joinLeaveLog.write(str + Config.lineSeparator);
+            if (Config.realTimeSave)
+                joinLeaveLog.flush();
+        } catch (IOException e) {
+            sendException("§4[错误] §5在写JoinLeaveLog时发生IO异常!", e.getMessage());
+        }
+    }
+
 }

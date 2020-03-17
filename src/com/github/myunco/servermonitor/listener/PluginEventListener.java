@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
+import java.io.IOException;
 import java.util.List;
 
 public class PluginEventListener implements Listener {
@@ -22,7 +23,7 @@ public class PluginEventListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerAsyncChatEvent(AsyncPlayerChatEvent event) {
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "]说 : " + event.getMessage();
-        Bukkit.broadcastMessage(str);
+        Log.writeChatLog(str);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -30,24 +31,24 @@ public class PluginEventListener implements Listener {
         String cmd = event.getMessage();
         String playerName = event.getPlayer().getName();
         boolean isOp = event.getPlayer().isOp();
-        String str = Util.getTime() + " 玩家[" + playerName + "]" + (isOp ? "(OP)" : "(非OP)") + "执行指令 : " + cmd;
-        Bukkit.broadcastMessage(str);
+        String str = Util.getTime() + " 玩家[" + playerName + "]" + (isOp ? "(OP)" : "(非OP)") + "执行命令 : " + cmd;
+        Log.writeCommandLog(str);
         //不知道怎么判断非op玩家是否有权限执行这条命令，干脆改成只检测op执行吧
         if (!isOp)
             return;
         if (cmd.toLowerCase().startsWith("/op ")) {
             str = Util.getTime() + " 玩家[" + playerName + "]Opped : " + Util.getTextRight(cmd, " ");
-            Bukkit.broadcastMessage(str);
+            Log.writeOpChangeLog(str);
         } else if (cmd.toLowerCase().startsWith("/deop ")) {
             str = Util.getTime() + " 玩家[" + playerName + "]De-Opped : " + Util.getTextRight(cmd, " ");
-            Bukkit.broadcastMessage(str);
+            Log.writeOpChangeLog(str);
         }
         if (Util.isWhiteList(playerName))
             return;
         if (Util.isCommandWhiteList(Util.getTextLeft(cmd, " ")))
             return;
-        str = Util.getTime() + "玩家[" + playerName + "]是OP且不在白名单内并使用了非白名单命令：" + cmd;
-        Bukkit.broadcastMessage(str);
+        //str = Util.getTime() + "玩家[" + playerName + "]是OP且不在白名单内并使用了非白名单命令：" + cmd;
+        //Bukkit.broadcastMessage(str);
         if (Config.cancel)
             event.setCancelled(true);
         int method = Config.handleMethod;
@@ -82,32 +83,42 @@ public class PluginEventListener implements Listener {
         }
         if ((method & 64) == 64) {
             list = Config.handleMethodConfig.get("warningLog");
-            list.forEach(Log::warningLog);
+            try {
+                Log.createWarningLog();
+                list.forEach(Log::writeWarningLog);
+                try {
+                    Log.closeWarningLog();
+                } catch (IOException e) {
+                    Log.sendException("§4[错误] §5在关闭WarningLog时发生IO异常!", e.getMessage());
+                }
+            } catch (IOException e) {
+                Log.sendException("§4[错误] §5在打开WarningLog时发生IO异常!", e.getMessage());
+            }
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void serverCommandEvent(ServerCommandEvent event) {
-        String str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]执行指令 : " + event.getCommand();
-        Bukkit.broadcastMessage(str);
+        String str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]执行命令 : " + event.getCommand();
+        Log.writeCommandLog(str);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "]的游戏模式更改为 : " + event.getNewGameMode().toString();
-        Bukkit.broadcastMessage(str);
+        Log.writeGameModeLog(str);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerJoinEvent(PlayerJoinEvent event) {
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 加入服务器";
-        Bukkit.broadcastMessage(str);
+        Log.writeJoinLeaveLog(str);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerQuitEvent(PlayerQuitEvent event) {
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 退出服务器";
-        Bukkit.broadcastMessage(str);
+        Log.writeJoinLeaveLog(str);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -115,7 +126,7 @@ public class PluginEventListener implements Listener {
         if (event.isCancelled())
             return;
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 被踢出游戏";
-        Bukkit.broadcastMessage(str);
+        Log.writeJoinLeaveLog(str);
     }
 
 }

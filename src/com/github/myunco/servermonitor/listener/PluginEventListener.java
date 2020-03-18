@@ -24,8 +24,11 @@ public class PluginEventListener implements Listener {
     public void playerAsyncChatEvent(AsyncPlayerChatEvent event) {
         if (!Config.playerChat.get("enable"))
             return;
-        String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "]说 : " + event.getMessage();
+        String playerName = event.getPlayer().getName();
+        String str = Util.getTime() + " 玩家[" + playerName + "]说 : " + event.getMessage();
         Log.writeChatLog(str);
+        if (Config.playerChat.get("perPlayer"))
+            Log.writePlayerChatLog(playerName, str);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -37,6 +40,8 @@ public class PluginEventListener implements Listener {
         boolean isOp = event.getPlayer().isOp();
         String str = Util.getTime() + " 玩家[" + playerName + "]" + (isOp ? "(OP)" : "(非OP)") + "执行命令 : " + cmd;
         Log.writeCommandLog(str);
+        if (Config.playerCommand.get("perPlayer"))
+            Log.writePlayerCommandLog(playerName, str);
         //不知道怎么判断非op玩家是否有权限执行这条命令，干脆改成只检测op执行吧
         if (!isOp || !Config.opChange)
             return;
@@ -122,24 +127,41 @@ public class PluginEventListener implements Listener {
     public void playerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
         if (!Config.playerGameModeChange.get("enable"))
             return;
-        String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "]的游戏模式更改为 : " + event.getNewGameMode().toString();
+        String playerName = event.getPlayer().getName();
+        String str = Util.getTime() + " 玩家[" + playerName + "]的游戏模式更改为 : " + event.getNewGameMode().toString();
         Log.writeGameModeLog(str);
+        if (Config.playerGameModeChange.get("perPlayer"))
+            Log.writePlayerGameModeLog(playerName, str);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerJoinEvent(PlayerJoinEvent event) {
         if (!Config.joinAndLeave)
             return;
-        String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 加入服务器";
+        String playerName = event.getPlayer().getName();
+        String str = Util.getTime() + " 玩家[" + playerName + "](" + event.getPlayer().getAddress().toString() + ") : 加入服务器";
         Log.writeJoinLeaveLog(str);
+        if (Config.playerChat.get("perPlayer"))
+            Log.addPlayerChatLog(playerName);
+        if (Config.playerCommand.get("perPlayer"))
+            Log.addPlayerCommandLog(playerName);
+        if (Config.playerGameModeChange.get("perPlayer"))
+            Log.addPlayerGameModeLog(playerName);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerQuitEvent(PlayerQuitEvent event) {
         if (!Config.joinAndLeave)
             return;
-        String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 退出服务器";
+        String playerName = event.getPlayer().getName();
+        String str = Util.getTime() + " 玩家[" + playerName + "](" + event.getPlayer().getAddress().toString() + ") : 退出服务器";
         Log.writeJoinLeaveLog(str);
+        if (Config.playerChat.get("perPlayer"))
+            Log.closePlayerChatLog(playerName);
+        if (Config.playerCommand.get("perPlayer"))
+            Log.closePlayerCommandLog(playerName);
+        if (Config.playerGameModeChange.get("perPlayer"))
+            Log.closePlayerGameModeLog(playerName);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

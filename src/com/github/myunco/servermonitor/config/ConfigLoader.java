@@ -116,9 +116,9 @@ public class ConfigLoader {
     }
 
     public static void loadLanguage(String language) {
-        File file = new File(pl.getDataFolder(), "languages" + File.separator + language + ".yml");
+        File file = new File(pl.getDataFolder(), "languages/" + language + ".yml");
         if (!file.exists())
-            System.out.println("[ServerMonitor] 语言文件:" + file.getAbsolutePath() + " 不存在.");
+            System.out.println("[ServerMonitor] 语言文件: " + file.getPath() + " 不存在.");
     }
 
     public static void loadError(String msg) {

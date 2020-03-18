@@ -14,6 +14,7 @@ public class PluginCommandExecutor implements CommandExecutor {
             "§e/ServerMonitor version ---- §a查看插件版本";
     public static final String MSG_PREFIX = "§3[§aServerMonitor§3] §e-> ";
     public static final String VERSION = ServerMonitor.plugin.getDescription().getVersion();
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if ("ServerMonitor".equals(cmd.getName())) {

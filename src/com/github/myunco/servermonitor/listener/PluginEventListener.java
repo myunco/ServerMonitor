@@ -22,7 +22,7 @@ public class PluginEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerAsyncChatEvent(AsyncPlayerChatEvent event) {
-        if(!Config.playerChat.get("enable"))
+        if (!Config.playerChat.get("enable"))
             return;
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "]说 : " + event.getMessage();
         Log.writeChatLog(str);
@@ -30,7 +30,7 @@ public class PluginEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
-        if(!Config.playerCommand.get("enable"))
+        if (!Config.playerCommand.get("enable"))
             return;
         String cmd = event.getMessage();
         String playerName = event.getPlayer().getName();
@@ -146,7 +146,7 @@ public class PluginEventListener implements Listener {
     public void playerKickEvent(PlayerKickEvent event) {
         if (!Config.joinAndLeave || event.isCancelled())
             return;
-        String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 被踢出游戏";
+        String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 被踢出游戏 原因: " + event.getReason();
         Log.writeJoinLeaveLog(str);
     }
 

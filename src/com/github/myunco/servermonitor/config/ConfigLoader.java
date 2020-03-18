@@ -106,6 +106,15 @@ public class ConfigLoader {
                 return false;
             }
         }
+        pl.getServer().getOnlinePlayers().forEach(player -> {
+            String playerName = player.getName();
+            if (Config.playerChat.get("perPlayer"))
+                Log.addPlayerChatLog(playerName);
+            if (Config.playerCommand.get("perPlayer"))
+                Log.addPlayerCommandLog(playerName);
+            if (Config.playerGameModeChange.get("perPlayer"))
+                Log.addPlayerGameModeLog(playerName);
+        });
         return true;
     }
 

@@ -246,7 +246,7 @@ public class Log {
         if (!file.getParentFile().exists())
             file.getParentFile().mkdirs();
         try {
-            playerChatLog.put(playerName, new FileWriter(file));
+            playerChatLog.put(playerName, new FileWriter(file, true));
         } catch (IOException e) {
             sendException("§4[错误] §5在打开" + file.getPath() + "时发生IO异常!", e.getMessage());
         }
@@ -257,7 +257,7 @@ public class Log {
         if (!file.getParentFile().exists())
             file.getParentFile().mkdirs();
         try {
-            playerCommandLog.put(playerName, new FileWriter(file));
+            playerCommandLog.put(playerName, new FileWriter(file, true));
         } catch (IOException e) {
             sendException("§4[错误] §5在打开" + file.getPath() + "时发生IO异常!", e.getMessage());
         }
@@ -268,7 +268,7 @@ public class Log {
         if (!file.getParentFile().exists())
             file.getParentFile().mkdirs();
         try {
-            playerGameModeLog.put(playerName, new FileWriter(file));
+            playerGameModeLog.put(playerName, new FileWriter(file, true));
         } catch (IOException e) {
             sendException("§4[错误] §5在打开" + file.getPath() + "时发生IO异常!", e.getMessage());
         }

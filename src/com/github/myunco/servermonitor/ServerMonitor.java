@@ -7,8 +7,6 @@ import com.github.myunco.servermonitor.util.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
-
 /*
  * 需求：
  * 1.可记录玩家聊天日志，并可设置为每个玩家单独一个记录文件（默认开启
@@ -54,17 +52,13 @@ public class ServerMonitor extends JavaPlugin {
         }
         getServer().getPluginManager().registerEvents(new PluginEventListener(), this);
         Bukkit.getPluginCommand("ServerMonitor").setExecutor(new PluginCommandExecutor());
-        Bukkit.getConsoleSender().sendMessage( "§3[§aServerMonitor§3] §b已启用.");
+        Bukkit.getConsoleSender().sendMessage("§3[§aServerMonitor§3] §b已启用.");
     }
 
     @Override
     public void onDisable() {
-        try {
-            Log.closeAllLog();
-        } catch (IOException e) {
-            Log.sendException("§4[错误] §5在关闭日志时发生IO异常!", e.getMessage());
-        }
-        Bukkit.getConsoleSender().sendMessage( "§3[§aServerMonitor§3] §c已卸载.");
+        Log.closeAllLog();
+        Bukkit.getConsoleSender().sendMessage("§3[§aServerMonitor§3] §c已卸载.");
     }
 
 }

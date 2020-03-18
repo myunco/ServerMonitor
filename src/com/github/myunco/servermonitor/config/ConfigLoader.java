@@ -36,11 +36,12 @@ public class ConfigLoader {
         Config.realTimeSave = config.getBoolean("realTimeSave");
         Config.playerChat.put("enable", config.getBoolean("playerChat.enable"));
         Config.playerChat.put("perPlayer", config.getBoolean("playerChat.perPlayer"));
+        Config.playerChat.put("consoleCommand", config.getBoolean("playerChat.consoleCommand"));
         Config.playerCommand.put("enable", config.getBoolean("playerCommand.enable"));
         Config.playerCommand.put("perPlayer", config.getBoolean("playerCommand.perPlayer"));
         Config.playerGameModeChange.put("enable", config.getBoolean("playerGameModeChange.enable"));
         Config.playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer"));
-        Config.opChange = config.getBoolean("opChange");
+        Config.opChange = config.getBoolean("playerCommand.opChange");
         Config.joinAndLeave = config.getBoolean("joinAndLeave");
         Config.commandAlert = config.getBoolean("commandAlert.enable");
         if (Config.commandAlert) {
@@ -109,6 +110,7 @@ public class ConfigLoader {
     }
 
     public static void reload() {
+        Log.closeAllLog();
         pl.reloadConfig();
         load();
     }

@@ -22,15 +22,17 @@ playerCommand:
   enable: true
   #为每个玩家单独记录
   perPlayer: true
+  #记录控制台指令 true为启用 false为禁用
+  consoleCommand: true
+  #记录op变更 true为启用 false为禁用
+  #此项在记录玩家指令和记录控制台指令都启用的情况下才能完整生效
+  opChange: true
 
 playerGameModeChange:
   #记录玩家游戏模式变更 true为启用 false为禁用
   enable: true
   #为每个玩家单独记录
   perPlayer: false
-
-#记录op变更 true为启用 false为禁用
-opChange: true
 
 #记录玩家加入/离开/被踢出
 joinAndLeave: true

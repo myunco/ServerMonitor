@@ -22,19 +22,23 @@ public class PluginEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerAsyncChatEvent(AsyncPlayerChatEvent event) {
+        if(!Config.playerChat.get("enable"))
+            return;
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "]说 : " + event.getMessage();
         Log.writeChatLog(str);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
+        if(!Config.playerCommand.get("enable"))
+            return;
         String cmd = event.getMessage();
         String playerName = event.getPlayer().getName();
         boolean isOp = event.getPlayer().isOp();
         String str = Util.getTime() + " 玩家[" + playerName + "]" + (isOp ? "(OP)" : "(非OP)") + "执行命令 : " + cmd;
         Log.writeCommandLog(str);
         //不知道怎么判断非op玩家是否有权限执行这条命令，干脆改成只检测op执行吧
-        if (!isOp)
+        if (!isOp || !Config.opChange)
             return;
         if (cmd.toLowerCase().startsWith("/op ")) {
             str = Util.getTime() + " 玩家[" + playerName + "]Opped : " + Util.getTextRight(cmd, " ");
@@ -43,9 +47,7 @@ public class PluginEventListener implements Listener {
             str = Util.getTime() + " 玩家[" + playerName + "]De-Opped : " + Util.getTextRight(cmd, " ");
             Log.writeOpChangeLog(str);
         }
-        if (Util.isWhiteList(playerName))
-            return;
-        if (Util.isCommandWhiteList(Util.getTextLeft(cmd, " ")))
+        if (!Config.commandAlert || Util.isWhiteList(playerName) || Util.isCommandWhiteList(Util.getTextLeft(cmd, " ")))
             return;
         //str = Util.getTime() + "玩家[" + playerName + "]是OP且不在白名单内并使用了非白名单命令：" + cmd;
         //Bukkit.broadcastMessage(str);
@@ -99,9 +101,13 @@ public class PluginEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void serverCommandEvent(ServerCommandEvent event) {
+        if (!Config.playerCommand.get("consoleCommand"))
+            return;
         String cmd = event.getCommand();
         String str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]执行命令 : " + cmd;
         Log.writeCommandLog(str);
+        if (!Config.opChange)
+            return;
         if (cmd.toLowerCase().startsWith("op ")) {
             str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]Opped : " + Util.getTextRight(cmd, " ");
             Log.writeOpChangeLog(str);
@@ -113,25 +119,31 @@ public class PluginEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
+        if (!Config.playerGameModeChange.get("enable"))
+            return;
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "]的游戏模式更改为 : " + event.getNewGameMode().toString();
         Log.writeGameModeLog(str);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerJoinEvent(PlayerJoinEvent event) {
+        if (!Config.joinAndLeave)
+            return;
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 加入服务器";
         Log.writeJoinLeaveLog(str);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerQuitEvent(PlayerQuitEvent event) {
+        if (!Config.joinAndLeave)
+            return;
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 退出服务器";
         Log.writeJoinLeaveLog(str);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void playerKickEvent(PlayerKickEvent event) {
-        if (event.isCancelled())
+        if (!Config.joinAndLeave || event.isCancelled())
             return;
         String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 被踢出游戏";
         Log.writeJoinLeaveLog(str);

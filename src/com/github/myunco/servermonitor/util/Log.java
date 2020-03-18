@@ -20,8 +20,6 @@ public class Log {
     public static File dateFolder = ServerMonitor.plugin.getDataFolder();
 
     public static void createWarningLog() throws IOException {
-        if (warningLog != null)
-            return;
         warningLog = new FileWriter(new File(dateFolder, "warning.log"), true);
     }
 
@@ -41,8 +39,6 @@ public class Log {
     }
 
     public static void createChatLog() throws IOException {
-        if (chatLog != null)
-            return;
         File file = new File(dateFolder, "ChatLogs/Chat.log");
         if (!file.getParentFile().exists())
             file.getParentFile().mkdirs();
@@ -50,8 +46,6 @@ public class Log {
     }
 
     public static void createCommandLog() throws IOException {
-        if (commandLog != null)
-            return;
         File file = new File(dateFolder, "CommandLogs/Command.log");
         if (!file.getParentFile().exists())
             file.getParentFile().mkdirs();
@@ -59,8 +53,6 @@ public class Log {
     }
 
     public static void createGameModeLog() throws IOException {
-        if (gameModeLog != null)
-            return;
         File file = new File(dateFolder, "GameModeLogs/GameMode.log");
         if (!file.getParentFile().exists())
             file.getParentFile().mkdirs();
@@ -68,33 +60,54 @@ public class Log {
     }
 
     public static void createOpChangeLog() throws IOException {
-        if (opChangeLog != null)
-            return;
         opChangeLog = new FileWriter(new File(dateFolder, "OpChange.log"), true);
     }
 
     public static void createJoinLeaveLog() throws IOException {
-        if (joinLeaveLog != null)
-            return;
         joinLeaveLog = new FileWriter(new File(dateFolder, "JoinAndLeave.log"), true);
     }
 
-    public static void closeAllLog() throws IOException {
-        if (chatLog != null)
-            chatLog.close();
-        if (commandLog != null)
-            commandLog.close();
-        if (gameModeLog != null)
-            gameModeLog.close();
-        if (opChangeLog != null)
-            opChangeLog.close();
-        if (joinLeaveLog != null)
-            joinLeaveLog.close();
+    public static void closeAllLog() {
+        //本着能关一个尽量关一个的原则
+        try {
+            if (chatLog != null)
+                chatLog.close();
+        } catch (IOException e) {
+            sendException("§4[错误] §5在关闭ChatLog时发生IO异常!", e.getMessage());
+        } finally {
+            try {
+                if (commandLog != null)
+                    commandLog.close();
+            } catch (IOException e) {
+                sendException("§4[错误] §5在关闭CommandLog时发生IO异常!", e.getMessage());
+            } finally {
+                try {
+                    if (gameModeLog != null)
+                        gameModeLog.close();
+                } catch (IOException e) {
+                    sendException("§4[错误] §5在关闭GameModeLog时发生IO异常!", e.getMessage());
+                } finally {
+                    try {
+                        if (opChangeLog != null)
+                            opChangeLog.close();
+                    } catch (IOException e) {
+                        sendException("§4[错误] §5在关闭OpChangeLog时发生IO异常!", e.getMessage());
+                    } finally {
+                        try {
+                            if (joinLeaveLog != null)
+                                joinLeaveLog.close();
+                        } catch (IOException e) {
+                            sendException("§4[错误] §5在关闭JoinAndLeaveLog时发生IO异常!", e.getMessage());
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public static void sendException(String message, String exceptionMsg) {
         Bukkit.getConsoleSender().sendMessage(PluginCommandExecutor.MSG_PREFIX + message);
-        Bukkit.getConsoleSender().sendMessage(PluginCommandExecutor.MSG_PREFIX + "Message:" + exceptionMsg);
+        Bukkit.getConsoleSender().sendMessage(PluginCommandExecutor.MSG_PREFIX + "Message: " + exceptionMsg);
     }
 
     public static void writeChatLog(String str) {

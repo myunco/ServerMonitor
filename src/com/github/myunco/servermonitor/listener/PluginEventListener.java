@@ -107,7 +107,7 @@ public class PluginEventListener implements Listener {
             try {
                 Log.createWarningLog();
                 //list.forEach(Log::writeWarningLog);
-                list.forEach(value -> Log.writeWarningLog(Util.getTime() + " " + value.replace("{player}", playerName).replace("{command}", cmd)));
+                list.forEach(value -> Log.writeWarningLog(Util.getTime() + value.replace("{player}", playerName).replace("{command}", cmd)));
                 try {
                     Log.closeWarningLog();
                 } catch (IOException e) {

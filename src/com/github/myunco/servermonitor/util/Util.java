@@ -10,7 +10,7 @@ public class Util {
 
     public static String getTime() {
         Date d = new Date();
-        return sdf.format(d);
+        return sdf.format(d) + " ";
     }
 
     public static String getTextRight(String str, String subStr) {

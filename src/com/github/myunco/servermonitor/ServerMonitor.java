@@ -57,12 +57,14 @@ public class ServerMonitor extends JavaPlugin {
         }
         getServer().getPluginManager().registerEvents(new PluginEventListener(), this);
         Bukkit.getPluginCommand("ServerMonitor").setExecutor(new PluginCommandExecutor());
+        //Bukkit.getConsoleSender().sendMessage("§3[§aServerMonitor§3] §b已启用.");
         Bukkit.getConsoleSender().sendMessage(Language.enabled);
     }
 
     @Override
     public void onDisable() {
         Log.closeAllLog();
+        //Bukkit.getConsoleSender().sendMessage("§3[§aServerMonitor§3] §c已卸载.");
         Bukkit.getConsoleSender().sendMessage(Language.disabled);
     }
 

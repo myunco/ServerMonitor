@@ -2,7 +2,6 @@ package com.github.myunco.servermonitor.config;
 
 public class Language {
     public static final String MSG_PREFIX = "§3[§aServerMonitor§3] §e-> ";
-
     public static int version;
     public static String enabled;
     public static String disabled;

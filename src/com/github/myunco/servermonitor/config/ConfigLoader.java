@@ -2,6 +2,7 @@ package com.github.myunco.servermonitor.config;
 
 import com.github.myunco.servermonitor.ServerMonitor;
 import com.github.myunco.servermonitor.util.Log;
+import com.github.myunco.servermonitor.util.Util;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -31,6 +32,7 @@ public class ConfigLoader {
             loadError(Language.messageConfigError.replace("{path}", "dateFormat"));
             return false;
         }
+        Util.setSdf(Config.dateFormat);
         Config.lineSeparator = config.getString("lineSeparator");
         if (Config.lineSeparator == null) {
             //loadError("配置文件错误! 请检查 lineSeparator 是否存在.");

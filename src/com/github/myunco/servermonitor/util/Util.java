@@ -6,7 +6,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Util {
-    static SimpleDateFormat sdf = new SimpleDateFormat(Config.dateFormat);
+    static SimpleDateFormat sdf;
+
+    public static void setSdf(String dateFormat) {
+         sdf = new SimpleDateFormat(dateFormat);
+    }
 
     public static String getTime() {
         Date d = new Date();

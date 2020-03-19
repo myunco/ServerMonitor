@@ -44,6 +44,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  *   语言文件有版本号
  *     如果读取的语言文件版本低于最新版本，进行更新处理
  *   如果指定的语言文件不存在，则把zh_cn复制为指定的语言文件
+ * 2020/3/19 17:45
+ * 好像没有什么明显的bug...
+ * 算是基本完成了!
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;

@@ -2,7 +2,7 @@
 language: 'zh_cn'
 
 #日志中日期格式
-dateFormat: 'yyyy/MM/dd HH:mm:ss'
+dateFormat: 'yyyy/MM/dd HH:mm:ss '
 
 #行分隔符 Auto=自动，手动指定则填写如：'\r\n'
 lineSeparator: 'Auto'

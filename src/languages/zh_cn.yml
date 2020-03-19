@@ -1,0 +1,34 @@
+#语言文件版本 请勿修改此项
+version: 1
+
+enabled: '§3[§aServerMonitor§3] §b已启用.'
+disabled: '§3[§aServerMonitor§3] §c已卸载.'
+helpMsg:
+  - '§e===========§bServerMonitor§e==========='
+  - '/ServerMonitor help ---- §a查看指令帮助'
+  - '§e/ServerMonitor reload ---- §a重载插件配置'
+  - '§e/ServerMonitor version ---- §a查看插件版本'
+reloaded: '§a插件配置重载完成.'
+commandError: '§c错误的命令参数!'
+log:
+  playerChat: '玩家[{player}]说 : {message}'
+  isOP: 'OP'
+  nonOP: '非OP'
+  playerCommand: '玩家[{player}]({op?})执行命令 : {command}'
+  consoleCommand: '控制台[{sender}]执行命令 : {command}'
+  opped: '玩家[{player1}]Opped : {player2}'
+  deOpped: '玩家[{player1}]De-Opped : {player2}'
+  consoleOpped: '控制台[{sender}]Opped : {player}'
+  consoleDeOpped: '控制台[{sender}]De-Opped : {player}'
+  playerGameModeChange: '玩家[{player}]的游戏模式更改为 : {gamemode}'
+  playerJoin: '玩家[{player}]({ip}) : 加入服务器'
+  playerQuit: '玩家[{player}]({ip}) : 退出服务器'
+  playerKick: '玩家[{player}]({ip}) : 被踢出游戏 原因: {reason}'
+message:
+  openException: '§4[错误] §5在打开 {file} 时发生IO异常!'
+  writeException: '§4[错误] §5在写 {file} 时发生IO异常!'
+  closeException: '§4[错误] §5在关闭 {file} 时发生IO异常!'
+  configError: '配置文件错误! 请检查 {path} 是否存在.'
+  saveException: '§4[错误] §5在保存 {file} 时发生IO异常!'
+  langUpdate: '§c语言文件版本：§a{version} §c最新版本：§b{$version} §6需要更新.'
+  langUpdated: '§a语言文件更新完成!'

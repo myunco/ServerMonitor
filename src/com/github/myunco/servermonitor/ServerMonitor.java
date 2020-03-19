@@ -1,6 +1,7 @@
 package com.github.myunco.servermonitor;
 
 import com.github.myunco.servermonitor.config.ConfigLoader;
+import com.github.myunco.servermonitor.config.Language;
 import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
 import com.github.myunco.servermonitor.listener.PluginEventListener;
 import com.github.myunco.servermonitor.util.Log;
@@ -38,7 +39,11 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 监听玩家加入/退出/被踢出事件
  *   如果为每个玩家单独一个记录文件则在玩家加入/退出事件中创建/关闭流
  *     用HashMap为每个玩家存储
- *
+ * 语言文件
+ *   默认提供zh_cn
+ *   语言文件有版本号
+ *     如果读取的语言文件版本低于最新版本，进行更新处理
+ *   如果指定的语言文件不存在，则把zh_cn复制为指定的语言文件
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;
@@ -52,13 +57,13 @@ public class ServerMonitor extends JavaPlugin {
         }
         getServer().getPluginManager().registerEvents(new PluginEventListener(), this);
         Bukkit.getPluginCommand("ServerMonitor").setExecutor(new PluginCommandExecutor());
-        Bukkit.getConsoleSender().sendMessage("§3[§aServerMonitor§3] §b已启用.");
+        Bukkit.getConsoleSender().sendMessage(Language.enabled);
     }
 
     @Override
     public void onDisable() {
         Log.closeAllLog();
-        Bukkit.getConsoleSender().sendMessage("§3[§aServerMonitor§3] §c已卸载.");
+        Bukkit.getConsoleSender().sendMessage(Language.disabled);
     }
 
 }

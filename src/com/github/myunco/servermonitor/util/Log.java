@@ -2,7 +2,7 @@ package com.github.myunco.servermonitor.util;
 
 import com.github.myunco.servermonitor.ServerMonitor;
 import com.github.myunco.servermonitor.config.Config;
-import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
+import com.github.myunco.servermonitor.config.Language;
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -34,7 +34,8 @@ public class Log {
             if (Config.realTimeSave)
                 warningLog.flush();
         } catch (IOException e) {
-            sendException("§4[错误] §5在写WarningLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在写WarningLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageWriteException.replace("{file}", "warning.log"), e.getMessage());
         }
     }
 
@@ -137,58 +138,66 @@ public class Log {
             if (chatLog != null)
                 chatLog.close();
         } catch (IOException e) {
-            sendException("§4[错误] §5在关闭ChatLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在关闭ChatLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageCloseException.replace("{file}", "Chat.log"), e.getMessage());
         }
         try {
             if (commandLog != null)
                 commandLog.close();
         } catch (IOException e) {
-            sendException("§4[错误] §5在关闭CommandLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在关闭CommandLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageCloseException.replace("{file}", "Command.log"), e.getMessage());
         }
         try {
             if (gameModeLog != null)
                 gameModeLog.close();
         } catch (IOException e) {
-            sendException("§4[错误] §5在关闭GameModeLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在关闭GameModeLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageCloseException.replace("{file}", "GameMode.log"), e.getMessage());
         }
         try {
             if (opChangeLog != null)
                 opChangeLog.close();
         } catch (IOException e) {
-            sendException("§4[错误] §5在关闭OpChangeLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在关闭OpChangeLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageCloseException.replace("{file}", "OpChange.log"), e.getMessage());
         }
         try {
             if (joinLeaveLog != null)
                 joinLeaveLog.close();
         } catch (IOException e) {
-            sendException("§4[错误] §5在关闭JoinAndLeaveLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在关闭JoinAndLeaveLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageCloseException.replace("{file}", "JoinAndLeave.log"), e.getMessage());
         }
         playerChatLog.keySet().forEach(value -> {
             try {
                 playerChatLog.get(value).close();
             } catch (IOException e) {
-                sendException("§4[错误] §5在关闭" + "ChatLogs->" + value + ".log时发生IO异常!", e.getMessage());
+                //sendException("§4[错误] §5在关闭" + "ChatLogs->" + value + ".log时发生IO异常!", e.getMessage());
+                sendException(Language.messageCloseException.replace("{file}", "ChatLogs->" + value + ".log"), e.getMessage());
             }
         });
         playerCommandLog.keySet().forEach(value -> {
             try {
                 playerCommandLog.get(value).close();
             } catch (IOException e) {
-                sendException("§4[错误] §5在关闭" + "CommandLogs->" + value + ".log时发生IO异常!", e.getMessage());
+                //sendException("§4[错误] §5在关闭" + "CommandLogs->" + value + ".log时发生IO异常!", e.getMessage());
+                sendException(Language.messageCloseException.replace("{file}", "CommandLogs->" + value + ".log"), e.getMessage());
             }
         });
         playerGameModeLog.keySet().forEach(value -> {
             try {
                 playerGameModeLog.get(value).close();
             } catch (IOException e) {
-                sendException("§4[错误] §5在关闭" + "GameModeLogs->" + value + ".log时发生IO异常!", e.getMessage());
+                //sendException("§4[错误] §5在关闭" + "GameModeLogs->" + value + ".log时发生IO异常!", e.getMessage());
+                sendException(Language.messageCloseException.replace("{file}", "GameModeLogs->" + value + ".log"), e.getMessage());
             }
         });
     }
 
     public static void sendException(String message, String exceptionMsg) {
-        Bukkit.getConsoleSender().sendMessage(PluginCommandExecutor.MSG_PREFIX + message);
-        Bukkit.getConsoleSender().sendMessage(PluginCommandExecutor.MSG_PREFIX + "Message: " + exceptionMsg);
+        Bukkit.getConsoleSender().sendMessage(Language.MSG_PREFIX + message);
+        Bukkit.getConsoleSender().sendMessage(Language.MSG_PREFIX + "Message: " + exceptionMsg);
     }
 
     public static void writeChatLog(String str) {
@@ -197,7 +206,8 @@ public class Log {
             if (Config.realTimeSave)
                 chatLog.flush();
         } catch (IOException e) {
-            sendException("§4[错误] §5在写ChatLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在写ChatLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageWriteException.replace("{file}", "Chat.log"), e.getMessage());
         }
     }
 
@@ -207,7 +217,8 @@ public class Log {
             if (Config.realTimeSave)
                 commandLog.flush();
         } catch (IOException e) {
-            sendException("§4[错误] §5在写CommandLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在写CommandLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageWriteException.replace("{file}", "Command.log"), e.getMessage());
         }
     }
 
@@ -217,7 +228,8 @@ public class Log {
             if (Config.realTimeSave)
                 gameModeLog.flush();
         } catch (IOException e) {
-            sendException("§4[错误] §5在写GameModeLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在写GameModeLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageWriteException.replace("{file}", "GameMode.log"), e.getMessage());
         }
     }
 
@@ -227,7 +239,8 @@ public class Log {
             if (Config.realTimeSave)
                 opChangeLog.flush();
         } catch (IOException e) {
-            sendException("§4[错误] §5在写OpChangeLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在写OpChangeLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageWriteException.replace("{file}", "OpChange.log"), e.getMessage());
         }
     }
 
@@ -237,7 +250,8 @@ public class Log {
             if (Config.realTimeSave)
                 joinLeaveLog.flush();
         } catch (IOException e) {
-            sendException("§4[错误] §5在写JoinLeaveLog时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在写JoinLeaveLog时发生IO异常!", e.getMessage());
+            sendException(Language.messageWriteException.replace("{file}", "JoinAndLeave.log"), e.getMessage());
         }
     }
 
@@ -248,7 +262,8 @@ public class Log {
         try {
             playerChatLog.put(playerName, new FileWriter(file, true));
         } catch (IOException e) {
-            sendException("§4[错误] §5在打开" + file.getPath() + "时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在打开" + file.getPath() + "时发生IO异常!", e.getMessage());
+            sendException(Language.messageOpenException.replace("{file}", file.getPath()), e.getMessage());
         }
     }
 
@@ -259,7 +274,8 @@ public class Log {
         try {
             playerCommandLog.put(playerName, new FileWriter(file, true));
         } catch (IOException e) {
-            sendException("§4[错误] §5在打开" + file.getPath() + "时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在打开" + file.getPath() + "时发生IO异常!", e.getMessage());
+            sendException(Language.messageOpenException.replace("{file}", file.getPath()), e.getMessage());
         }
     }
 
@@ -270,7 +286,8 @@ public class Log {
         try {
             playerGameModeLog.put(playerName, new FileWriter(file, true));
         } catch (IOException e) {
-            sendException("§4[错误] §5在打开" + file.getPath() + "时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在打开" + file.getPath() + "时发生IO异常!", e.getMessage());
+            sendException(Language.messageOpenException.replace("{file}", file.getPath()), e.getMessage());
         }
     }
 
@@ -281,7 +298,8 @@ public class Log {
             if (Config.realTimeSave)
                 fw.flush();
         } catch (IOException e) {
-            sendException("§4[错误] §5在写ChatLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在写ChatLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            sendException(Language.messageWriteException.replace("{file}", "ChatLogs->" + playerName + ".log"), e.getMessage());
         }
     }
 
@@ -292,7 +310,8 @@ public class Log {
             if (Config.realTimeSave)
                 fw.flush();
         } catch (IOException e) {
-            sendException("§4[错误] §5在写CommandLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在写CommandLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            sendException(Language.messageWriteException.replace("{file}", "CommandLogs->" + playerName + ".log"), e.getMessage());
         }
     }
 
@@ -303,7 +322,8 @@ public class Log {
             if (Config.realTimeSave)
                 fw.flush();
         } catch (IOException e) {
-            sendException("§4[错误] §5在写GameModeLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在写GameModeLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            sendException(Language.messageWriteException.replace("{file}", "GameModeLogs->" + playerName + ".log"), e.getMessage());
         }
     }
 
@@ -311,7 +331,8 @@ public class Log {
         try {
             playerChatLog.get(playerName).close();
         } catch (IOException e) {
-            sendException("§4[错误] §5在关闭GameModeLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在关闭ChatLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            sendException(Language.messageCloseException.replace("{file}", "ChatLogs->" + playerName + ".log"), e.getMessage());
         }
     }
 
@@ -319,7 +340,8 @@ public class Log {
         try {
             playerCommandLog.get(playerName).close();
         } catch (IOException e) {
-            sendException("§4[错误] §5在关闭GameModeLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在关闭CommandLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            sendException(Language.messageCloseException.replace("{file}", "CommandLogs->" + playerName + ".log"), e.getMessage());
         }
     }
 
@@ -327,7 +349,8 @@ public class Log {
         try {
             playerGameModeLog.get(playerName).close();
         } catch (IOException e) {
-            sendException("§4[错误] §5在关闭GameModeLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            //sendException("§4[错误] §5在关闭GameModeLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
+            sendException(Language.messageCloseException.replace("{file}", "GameModeLogs->" + playerName + ".log"), e.getMessage());
         }
     }
 }

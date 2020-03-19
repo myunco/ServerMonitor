@@ -1,6 +1,7 @@
 package com.github.myunco.servermonitor.listener;
 
 import com.github.myunco.servermonitor.config.Config;
+import com.github.myunco.servermonitor.config.Language;
 import com.github.myunco.servermonitor.util.Log;
 import com.github.myunco.servermonitor.util.Util;
 import org.bukkit.Bukkit;
@@ -25,7 +26,10 @@ public class PluginEventListener implements Listener {
         if (!Config.playerChat.get("enable"))
             return;
         String playerName = event.getPlayer().getName();
-        String str = Util.getTime() + " 玩家[" + playerName + "]说 : " + event.getMessage();
+        //String str = Util.getTime() + " 玩家[" + playerName + "]说 : " + event.getMessage();
+        String str = Util.getTime() + Language.logPlayerChat
+                .replace("{player}", playerName)
+                .replace("{message}", event.getMessage());
         Log.writeChatLog(str);
         if (Config.playerChat.get("perPlayer"))
             Log.writePlayerChatLog(playerName, str);
@@ -38,7 +42,11 @@ public class PluginEventListener implements Listener {
         String cmd = event.getMessage();
         String playerName = event.getPlayer().getName();
         boolean isOp = event.getPlayer().isOp();
-        String str = Util.getTime() + " 玩家[" + playerName + "]" + (isOp ? "(OP)" : "(非OP)") + "执行命令 : " + cmd;
+        //String str = Util.getTime() + " 玩家[" + playerName + "]" + (isOp ? "(OP)" : "(非OP)") + "执行命令 : " + cmd;
+        String str = Util.getTime() + Language.logPlayerCommand
+                .replace("{player}", playerName)
+                .replace("{op?}", isOp ? Language.logIsOp : Language.logNonOp)
+                .replace("{command}", cmd);
         Log.writeCommandLog(str);
         if (Config.playerCommand.get("perPlayer"))
             Log.writePlayerCommandLog(playerName, str);
@@ -46,10 +54,16 @@ public class PluginEventListener implements Listener {
         if (!isOp || !Config.opChange)
             return;
         if (cmd.toLowerCase().startsWith("/op ")) {
-            str = Util.getTime() + " 玩家[" + playerName + "]Opped : " + Util.getTextRight(cmd, " ");
+            //str = Util.getTime() + " 玩家[" + playerName + "]Opped : " + Util.getTextRight(cmd, " ");
+            str = Util.getTime() + Language.logOpped
+                    .replace("{player1}", playerName)
+                    .replace("{player2}", Util.getTextRight(cmd, " "));
             Log.writeOpChangeLog(str);
         } else if (cmd.toLowerCase().startsWith("/deop ")) {
-            str = Util.getTime() + " 玩家[" + playerName + "]De-Opped : " + Util.getTextRight(cmd, " ");
+            //str = Util.getTime() + " 玩家[" + playerName + "]De-Opped : " + Util.getTextRight(cmd, " ");
+            str = Util.getTime() + Language.logDeOpped
+                    .replace("{player1}", playerName)
+                    .replace("{player2}", Util.getTextRight(cmd, " "));
             Log.writeOpChangeLog(str);
         }
         if (!Config.commandAlert || Util.isWhiteList(playerName) || Util.isCommandWhiteList(Util.getTextLeft(cmd, " ")))
@@ -97,10 +111,12 @@ public class PluginEventListener implements Listener {
                 try {
                     Log.closeWarningLog();
                 } catch (IOException e) {
-                    Log.sendException("§4[错误] §5在关闭WarningLog时发生IO异常!", e.getMessage());
+                    //Log.sendException("§4[错误] §5在关闭WarningLog时发生IO异常!", e.getMessage());
+                    Log.sendException(Language.messageCloseException.replace("{file}", "warning.log"), e.getMessage());
                 }
             } catch (IOException e) {
-                Log.sendException("§4[错误] §5在打开WarningLog时发生IO异常!", e.getMessage());
+                //Log.sendException("§4[错误] §5在打开WarningLog时发生IO异常!", e.getMessage());
+                Log.sendException(Language.messageOpenException.replace("{file}", "warning.log"), e.getMessage());
             }
         }
     }
@@ -110,15 +126,24 @@ public class PluginEventListener implements Listener {
         if (!Config.playerCommand.get("consoleCommand"))
             return;
         String cmd = event.getCommand();
-        String str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]执行命令 : " + cmd;
+        //String str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]执行命令 : " + cmd;
+        String str = Util.getTime() + Language.logConsoleCommand
+                .replace("{sender}", event.getSender().getName())
+                .replace("{command}", cmd);
         Log.writeCommandLog(str);
         if (!Config.opChange)
             return;
         if (cmd.toLowerCase().startsWith("op ")) {
-            str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]Opped : " + Util.getTextRight(cmd, " ");
+            //str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]Opped : " + Util.getTextRight(cmd, " ");
+            str = Util.getTime() + Language.logConsoleOpped
+                    .replace("{sender}", event.getSender().getName())
+                    .replace("{player}", Util.getTextRight(cmd, " "));
             Log.writeOpChangeLog(str);
         } else if (cmd.toLowerCase().startsWith("deop ")) {
-            str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]De-Opped : " + Util.getTextRight(cmd, " ");
+            //str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]De-Opped : " + Util.getTextRight(cmd, " ");
+            str = Util.getTime() + Language.logConsoleDeOpped
+                    .replace("{sender}", event.getSender().getName())
+                    .replace("{player}", Util.getTextRight(cmd, " "));
             Log.writeOpChangeLog(str);
         }
     }
@@ -128,7 +153,10 @@ public class PluginEventListener implements Listener {
         if (!Config.playerGameModeChange.get("enable"))
             return;
         String playerName = event.getPlayer().getName();
-        String str = Util.getTime() + " 玩家[" + playerName + "]的游戏模式更改为 : " + event.getNewGameMode().toString();
+        //String str = Util.getTime() + " 玩家[" + playerName + "]的游戏模式更改为 : " + event.getNewGameMode().toString();
+        String str = Util.getTime() + Language.logPlayerGameModeChange
+                .replace("{player}", playerName)
+                .replace("{gamemode}", event.getNewGameMode().toString());
         Log.writeGameModeLog(str);
         if (Config.playerGameModeChange.get("perPlayer"))
             Log.writePlayerGameModeLog(playerName, str);
@@ -139,7 +167,10 @@ public class PluginEventListener implements Listener {
         if (!Config.joinAndLeave)
             return;
         String playerName = event.getPlayer().getName();
-        String str = Util.getTime() + " 玩家[" + playerName + "](" + event.getPlayer().getAddress().toString() + ") : 加入服务器";
+        //String str = Util.getTime() + " 玩家[" + playerName + "](" + event.getPlayer().getAddress().toString() + ") : 加入服务器";
+        String str = Util.getTime() + Language.logPlayerJoin
+                .replace("{player}", playerName)
+                .replace("{ip}", event.getPlayer().getAddress().toString());
         Log.writeJoinLeaveLog(str);
         if (Config.playerChat.get("perPlayer"))
             Log.addPlayerChatLog(playerName);
@@ -154,7 +185,10 @@ public class PluginEventListener implements Listener {
         if (!Config.joinAndLeave)
             return;
         String playerName = event.getPlayer().getName();
-        String str = Util.getTime() + " 玩家[" + playerName + "](" + event.getPlayer().getAddress().toString() + ") : 退出服务器";
+        //String str = Util.getTime() + " 玩家[" + playerName + "](" + event.getPlayer().getAddress().toString() + ") : 退出服务器";
+        String str = Util.getTime() +Language.logPlayerQuit
+                .replace("{player}", playerName)
+                .replace("{ip}", event.getPlayer().getAddress().toString());
         Log.writeJoinLeaveLog(str);
         if (Config.playerChat.get("perPlayer"))
             Log.closePlayerChatLog(playerName);
@@ -168,7 +202,11 @@ public class PluginEventListener implements Listener {
     public void playerKickEvent(PlayerKickEvent event) {
         if (!Config.joinAndLeave || event.isCancelled())
             return;
-        String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 被踢出游戏 原因: " + event.getReason();
+        //String str = Util.getTime() + " 玩家[" + event.getPlayer().getName() + "](" + event.getPlayer().getAddress().toString() + ") : 被踢出游戏 原因: " + event.getReason();
+        String str = Util.getTime() + Language.logPlayerKick
+                .replace("{player}", event.getPlayer().getName())
+                .replace("{ip}", event.getPlayer().getAddress().toString())
+                .replace("{reason}", event.getReason());
         Log.writeJoinLeaveLog(str);
     }
 

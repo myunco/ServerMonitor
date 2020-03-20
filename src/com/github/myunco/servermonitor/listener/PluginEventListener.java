@@ -21,7 +21,9 @@ import java.util.List;
 
 public class PluginEventListener implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    //emmm 吃了没看文档的亏，没想到名字叫最低的居然最先执行(先入为主了 优先级高=先执行 的概念)，这命名好迷惑。
+    //@EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void playerAsyncChatEvent(AsyncPlayerChatEvent event) {
         if (!Config.playerChat.get("enable"))
             return;
@@ -35,7 +37,8 @@ public class PluginEventListener implements Listener {
             Log.writePlayerChatLog(playerName, str);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    //@EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void playerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
         if (!Config.playerCommand.get("enable"))
             return;
@@ -121,7 +124,8 @@ public class PluginEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    //@EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void serverCommandEvent(ServerCommandEvent event) {
         if (!Config.playerCommand.get("consoleCommand"))
             return;
@@ -148,7 +152,8 @@ public class PluginEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    //@EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void playerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
         if (!Config.playerGameModeChange.get("enable"))
             return;
@@ -162,7 +167,8 @@ public class PluginEventListener implements Listener {
             Log.writePlayerGameModeLog(playerName, str);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    //@EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void playerJoinEvent(PlayerJoinEvent event) {
         if (!Config.joinAndLeave)
             return;
@@ -180,7 +186,8 @@ public class PluginEventListener implements Listener {
             Log.addPlayerGameModeLog(playerName);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    //@EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void playerQuitEvent(PlayerQuitEvent event) {
         if (!Config.joinAndLeave)
             return;
@@ -198,7 +205,8 @@ public class PluginEventListener implements Listener {
             Log.closePlayerGameModeLog(playerName);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    //@EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void playerKickEvent(PlayerKickEvent event) {
         if (!Config.joinAndLeave || event.isCancelled())
             return;

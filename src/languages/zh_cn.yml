@@ -19,7 +19,7 @@ log:
   opped: '玩家[{player1}]Opped : {player2}'
   deOpped: '玩家[{player1}]De-Opped : {player2}'
   consoleOpped: '控制台[{sender}]Opped : {player}'
-  consoleDeOpped: '控制台[{sender}]De-Opped : {player}'
+  consoleDeOpped: '控制台[{sender}]De-opped : {player}'
   playerGameModeChange: '玩家[{player}]的游戏模式更改为 : {gamemode}'
   playerJoin: '玩家[{player}]({ip}) : 加入服务器'
   playerQuit: '玩家[{player}]({ip}) : 退出服务器'

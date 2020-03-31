@@ -300,6 +300,9 @@ public class Log {
         } catch (IOException e) {
             //sendException("§4[错误] §5在写ChatLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
             sendException(Language.messageWriteException.replace("{file}", "ChatLogs->" + playerName + ".log"), e.getMessage());
+        } catch (NullPointerException e) {
+            sendException("ChatLogs -> " + playerName + " -> NullPointerException", e.getMessage());
+            addPlayerChatLog(playerName);
         }
     }
 
@@ -312,6 +315,9 @@ public class Log {
         } catch (IOException e) {
             //sendException("§4[错误] §5在写CommandLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
             sendException(Language.messageWriteException.replace("{file}", "CommandLogs->" + playerName + ".log"), e.getMessage());
+        } catch (NullPointerException e) {
+            sendException("CommandLogs -> " + playerName + " -> NullPointerException", e.getMessage());
+            addPlayerCommandLog(playerName);
         }
     }
 
@@ -324,6 +330,37 @@ public class Log {
         } catch (IOException e) {
             //sendException("§4[错误] §5在写GameModeLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
             sendException(Language.messageWriteException.replace("{file}", "GameModeLogs->" + playerName + ".log"), e.getMessage());
+        } catch (NullPointerException e) {
+            //为什么只有这里会出现空指针，不应该啊
+            //我测试没有遇到过，但有个用户反馈说会突然自己出现报错：
+            /*
+            [18:55:09 ERROR]: Could not pass event PlayerGameModeChangeEvent to ServerMonitor v1.0.0
+            java.lang.NullPointerException: null
+            at com.github.myunco.servermonitor.util.Log.writePlayerGameModeLog(Log.java:321) ~[?:?] //现在的325行
+            at com.github.myunco.servermonitor.listener.PluginEventListener.playerGameModeChangeEvent(PluginEventListener.java:167) ~[?:?]
+            at com.destroystokyo.paper.event.executor.asm.generated.GeneratedEventExecutor147.execute(Unknown Source) ~[?:?]
+            at org.bukkit.plugin.EventExecutor.lambda$create$1(EventExecutor.java:69) ~[patched_1.14.4.jar:git-Paper-243]
+            at co.aikar.timings.TimedEventExecutor.execute(TimedEventExecutor.java:80) ~[patched_1.14.4.jar:git-Paper-243]
+            at org.bukkit.plugin.RegisteredListener.callEvent(RegisteredListener.java:70) ~[patched_1.14.4.jar:git-Paper-243]
+            at org.bukkit.plugin.SimplePluginManager.callEvent(SimplePluginManager.java:545) ~[patched_1.14.4.jar:git-Paper-243]
+            at net.minecraft.server.v1_14_R1.EntityPlayer.a(EntityPlayer.java:1513) ~[patched_1.14.4.jar:git-Paper-243]
+            at org.bukkit.craftbukkit.v1_14_R1.entity.CraftPlayer.setGameMode(CraftPlayer.java:1062) ~[patched_1.14.4.jar:git-Paper-243]
+            at net.citizensnpcs.trait.GameModeTrait.run(GameModeTrait.java:27) ~[?:?]
+            at net.citizensnpcs.api.npc.AbstractNPC.update(AbstractNPC.java:430) ~[?:?]
+            at net.citizensnpcs.npc.CitizensNPC.update(CitizensNPC.java:316) ~[?:?]
+            at net.citizensnpcs.nms.v1_14_R1.entity.EntityHumanNPC.tick(EntityHumanNPC.java:439) ~[?:?]
+            at net.minecraft.server.v1_14_R1.WorldServer.entityJoinedWorld(WorldServer.java:702) ~[patched_1.14.4.jar:git-Paper-243]
+            at net.minecraft.server.v1_14_R1.World.a(World.java:936) ~[patched_1.14.4.jar:git-Paper-243]
+            at net.minecraft.server.v1_14_R1.WorldServer.doTick(WorldServer.java:472) ~[patched_1.14.4.jar:git-Paper-243]
+            at net.minecraft.server.v1_14_R1.MinecraftServer.b(MinecraftServer.java:1231) ~[patched_1.14.4.jar:git-Paper-243]
+            at net.minecraft.server.v1_14_R1.DedicatedServer.b(DedicatedServer.java:417) ~[patched_1.14.4.jar:git-Paper-243]
+            at net.minecraft.server.v1_14_R1.MinecraftServer.a(MinecraftServer.java:1098) ~[patched_1.14.4.jar:git-Paper-243]
+            at net.minecraft.server.v1_14_R1.MinecraftServer.run(MinecraftServer.java:925) ~[patched_1.14.4.jar:git-Paper-243]
+            at java.lang.Thread.run(Unknown Source) [?:1.8.0_241]
+            不清楚什么原因，都抓一下吧...
+             */
+            sendException("GameModeLogs -> " + playerName + " -> NullPointerException", e.getMessage());
+            addPlayerGameModeLog(playerName);
         }
     }
 

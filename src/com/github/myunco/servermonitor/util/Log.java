@@ -301,8 +301,8 @@ public class Log {
             //sendException("§4[错误] §5在写ChatLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
             sendException(Language.messageWriteException.replace("{file}", "ChatLogs->" + playerName + ".log"), e.getMessage());
         } catch (NullPointerException e) {
-            sendException("ChatLogs -> " + playerName + " -> NullPointerException", e.getMessage());
-            addPlayerChatLog(playerName);
+            //sendException("ChatLogs -> " + playerName + " -> NullPointerException", e.getMessage());
+            //addPlayerChatLog(playerName);
         }
     }
 
@@ -316,8 +316,8 @@ public class Log {
             //sendException("§4[错误] §5在写CommandLogs->" + playerName + ".log时发生IO异常!", e.getMessage());
             sendException(Language.messageWriteException.replace("{file}", "CommandLogs->" + playerName + ".log"), e.getMessage());
         } catch (NullPointerException e) {
-            sendException("CommandLogs -> " + playerName + " -> NullPointerException", e.getMessage());
-            addPlayerCommandLog(playerName);
+            //sendException("CommandLogs -> " + playerName + " -> NullPointerException", e.getMessage());
+            //addPlayerCommandLog(playerName);
         }
     }
 
@@ -359,8 +359,13 @@ public class Log {
             at java.lang.Thread.run(Unknown Source) [?:1.8.0_241]
             不清楚什么原因，都抓一下吧...
              */
-            sendException("GameModeLogs -> " + playerName + " -> NullPointerException", e.getMessage());
-            addPlayerGameModeLog(playerName);
+            //sendException("GameModeLogs -> " + playerName + " -> NullPointerException", e.getMessage());
+            //addPlayerGameModeLog(playerName);
+            //补充：我知道了···
+            /*
+            citizens这个插件生成的NPC也算作玩家，NPC游戏模式修改会触发这个事件...然后HashMap中肯定没有这个NPC的日志文件对象引用，所以NPE了。
+            那就不sendException和addLog了，没在HashMap中的playerName都算作NPC处理。
+             */
         }
     }
 

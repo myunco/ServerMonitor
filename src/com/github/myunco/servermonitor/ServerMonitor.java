@@ -47,6 +47,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 2020/3/19 17:45
  * 好像没有什么明显的bug...
  * 算是基本完成了!
+ * 更新日志：
+ * 1.0.1 处理了可能发生的空指针异常
+ * 1.0.2 修改处理空指针异常的代码
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;

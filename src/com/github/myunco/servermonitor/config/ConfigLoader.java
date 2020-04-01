@@ -49,7 +49,6 @@ public class ConfigLoader {
         Config.playerCommand.put("enable", config.getBoolean("playerCommand.enable"));
         Config.playerCommand.put("perPlayer", config.getBoolean("playerCommand.perPlayer"));
         Config.playerCommand.put("consoleCommand", config.getBoolean("playerCommand.consoleCommand"));
-        System.out.println(config.contains("playerCommand.commandBlockCommand"));
         if (!config.contains("playerCommand.commandBlockCommand")) {
             config.set("playerCommand.commandBlockCommand", true);
             flag = true;

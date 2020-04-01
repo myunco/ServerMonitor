@@ -18,14 +18,17 @@ playerChat:
   perPlayer: true
 
 playerCommand:
-  #记录玩家指令 true为启用 false为禁用
+  #记录玩家命令 true为启用 false为禁用
   enable: true
   #为每个玩家单独记录
   perPlayer: true
-  #记录控制台指令 true为启用 false为禁用
+  #记录控制台命令 true为启用 false为禁用
   consoleCommand: true
+  #记录命令方块执行的命令 true为启用 false为禁用
+  #此项仅在启用记录控制台命令的情况下生效 通常在服务器内有长时间、高频率执行的命令方块时禁用此项 以免日志文件过大
+  commandBlockCommand: true
   #记录op变更 true为启用 false为禁用
-  #此项在记录玩家指令和记录控制台指令都启用的情况下才能完整生效
+  #此项在记录玩家命令和记录控制台命令都启用的情况下才能完整生效
   opChange: true
 
 playerGameModeChange:

@@ -129,10 +129,13 @@ public class PluginEventListener implements Listener {
     public void serverCommandEvent(ServerCommandEvent event) {
         if (!Config.playerCommand.get("consoleCommand"))
             return;
+        String name = event.getSender().getName();
+        if (!Config.playerCommand.get("commandBlockCommand") && "@".equals(name))
+            return;
         String cmd = event.getCommand();
         //String str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]执行命令 : " + cmd;
         String str = Util.getTime() + Language.logConsoleCommand
-                .replace("{sender}", event.getSender().getName())
+                .replace("{sender}", name)
                 .replace("{command}", cmd);
         Log.writeCommandLog(str);
         if (!Config.opChange)
@@ -140,13 +143,13 @@ public class PluginEventListener implements Listener {
         if (cmd.toLowerCase().startsWith("op ")) {
             //str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]Opped : " + Util.getTextRight(cmd, " ");
             str = Util.getTime() + Language.logConsoleOpped
-                    .replace("{sender}", event.getSender().getName())
+                    .replace("{sender}", name)
                     .replace("{player}", Util.getTextRight(cmd, " "));
             Log.writeOpChangeLog(str);
         } else if (cmd.toLowerCase().startsWith("deop ")) {
             //str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]De-Opped : " + Util.getTextRight(cmd, " ");
             str = Util.getTime() + Language.logConsoleDeOpped
-                    .replace("{sender}", event.getSender().getName())
+                    .replace("{sender}", name)
                     .replace("{player}", Util.getTextRight(cmd, " "));
             Log.writeOpChangeLog(str);
         }

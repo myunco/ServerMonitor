@@ -50,6 +50,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 更新日志：
  * 1.0.1 处理了可能发生的空指针异常
  * 1.0.2 修改处理空指针异常的代码
+ * 1.0.3 增加了不记录命令方块执行命令的选项
+ *       (修改了config.yml配置文件的读取)
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;

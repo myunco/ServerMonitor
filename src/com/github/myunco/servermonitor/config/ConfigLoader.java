@@ -4,7 +4,6 @@ import com.github.myunco.servermonitor.ServerMonitor;
 import com.github.myunco.servermonitor.util.Log;
 import com.github.myunco.servermonitor.util.Util;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -15,11 +14,14 @@ import java.io.OutputStream;
 import java.util.Set;
 
 public class ConfigLoader {
-    private static ServerMonitor pl = ServerMonitor.plugin;
+    static ServerMonitor pl = ServerMonitor.plugin;
+    static boolean flag = false;
 
     public static boolean load() {
         pl.saveDefaultConfig();
-        FileConfiguration config = pl.getConfig();
+        File file = new File(pl.getDataFolder(), "/config.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        //FileConfiguration config = pl.getConfig();
         Config.language = config.getString("language");
         if (Config.language == null) {
             loadError("配置文件错误! 请检查 language 是否存在.");
@@ -47,6 +49,12 @@ public class ConfigLoader {
         Config.playerCommand.put("enable", config.getBoolean("playerCommand.enable"));
         Config.playerCommand.put("perPlayer", config.getBoolean("playerCommand.perPlayer"));
         Config.playerCommand.put("consoleCommand", config.getBoolean("playerCommand.consoleCommand"));
+        System.out.println(config.contains("playerCommand.commandBlockCommand"));
+        if (!config.contains("playerCommand.commandBlockCommand")) {
+            config.set("playerCommand.commandBlockCommand", true);
+            flag = true;
+        }
+        Config.playerCommand.put("commandBlockCommand", config.getBoolean("playerCommand.commandBlockCommand"));
         Config.playerGameModeChange.put("enable", config.getBoolean("playerGameModeChange.enable"));
         Config.playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer"));
         Config.opChange = config.getBoolean("playerCommand.opChange");
@@ -130,6 +138,13 @@ public class ConfigLoader {
             if (Config.playerGameModeChange.get("perPlayer"))
                 Log.addPlayerGameModeLog(playerName);
         });
+        if (flag) {
+            try {
+                config.save(file);
+            } catch (IOException e) {
+                Log.sendException(Language.messageSaveException.replace("{file}", "config.yml"), e.getMessage());
+            }
+        }
         return true;
     }
 

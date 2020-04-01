@@ -4,6 +4,7 @@ import com.github.myunco.servermonitor.config.Config;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 
 public class Util {
     static SimpleDateFormat sdf;
@@ -28,11 +29,23 @@ public class Util {
     }
 
     public static boolean isWhiteList(String playerName) {
-        return Config.whitelist.contains(playerName);
+        //return Config.whitelist.contains(playerName);
+        for (String s : Config.whitelist) {
+            if (s.equalsIgnoreCase(playerName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isCommandWhiteList(String command) {
-        return Config.commandWhiteList.contains(command);
+        //return Config.commandWhiteList.contains(command);
+        for (String s : Config.commandWhiteList) {
+            if (s.equalsIgnoreCase(command)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

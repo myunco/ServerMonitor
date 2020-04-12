@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,7 +50,16 @@ public class PluginCommandExecutor implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
         if ("ServerMonitor".equals(cmd.getName())) {
             if (args.length == 1) {
-                return list;
+                if (args[0].isEmpty()) {
+                    return list;
+                }
+                List<String> ret = new ArrayList<>();
+                for (String value : list) {
+                    if (value.startsWith(args[0])) {
+                        ret.add(value);
+                    }
+                }
+                return ret.size() == 0 ? null : ret;
             }
         }
         return null;

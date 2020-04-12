@@ -1,5 +1,6 @@
 package com.github.myunco.servermonitor.listener;
 
+import com.github.myunco.servermonitor.ServerMonitor;
 import com.github.myunco.servermonitor.config.Config;
 import com.github.myunco.servermonitor.config.Language;
 import com.github.myunco.servermonitor.util.Log;
@@ -86,7 +87,7 @@ public class PluginEventListener implements Listener {
         }
         if ((method & 2) == 2) {
             list = Config.handleMethodConfig.get("consoleCmd");
-            list.forEach(value -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("{player}", playerName).replace("{command}", cmd)));
+            list.forEach(value -> Bukkit.dispatchCommand(ServerMonitor.consoleSender, value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 4) == 4) {
             list = Config.handleMethodConfig.get("playerCmd");
@@ -103,7 +104,7 @@ public class PluginEventListener implements Listener {
         }
         if ((method & 32) == 32) {
             list = Config.handleMethodConfig.get("consoleWarning");
-            list.forEach(value -> Bukkit.getConsoleSender().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
+            list.forEach(value -> ServerMonitor.consoleSender.sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 64) == 64) {
             list = Config.handleMethodConfig.get("warningLog");

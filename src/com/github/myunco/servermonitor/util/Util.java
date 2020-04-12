@@ -4,10 +4,11 @@ import com.github.myunco.servermonitor.config.Config;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 
 public class Util {
     static SimpleDateFormat sdf;
+    static SimpleDateFormat today = new SimpleDateFormat("yyyy-MM-dd");
+    public static String logName = getToday();
 
     public static void setSdf(String dateFormat) {
          sdf = new SimpleDateFormat(dateFormat);
@@ -16,6 +17,11 @@ public class Util {
     public static String getTime() {
         Date d = new Date();
         return sdf.format(d) + " ";
+    }
+
+    public static String getToday() {
+        Date d = new Date();
+        return today.format(d);
     }
 
     public static String getTextRight(String str, String subStr) {

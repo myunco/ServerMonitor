@@ -6,6 +6,7 @@ import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
 import com.github.myunco.servermonitor.listener.PluginEventListener;
 import com.github.myunco.servermonitor.util.Log;
 import org.bukkit.Bukkit;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /*
@@ -47,6 +48,12 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 2020/3/19 17:45
  * 好像没有什么明显的bug...
  * 算是基本完成了!
+ *
+ * 1.1.0 版本需求
+ * 日志改为每天一个文件(OP修改日志和警告日志除外)
+ * 添加自动压缩旧日志的选项
+ * 添加自动删除多少天前的日志的选项
+ *
  * 更新日志：
  * 1.0.1 处理了可能发生的空指针异常
  * 1.0.2 修改处理空指针异常的代码
@@ -55,25 +62,27 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;
+    public static ConsoleCommandSender consoleSender;
 
     @Override
     public void onEnable() {
         plugin = this;
+        consoleSender = Bukkit.getConsoleSender();
         if (!ConfigLoader.load()) {
             getPluginLoader().disablePlugin(this);
             return;
         }
         getServer().getPluginManager().registerEvents(new PluginEventListener(), this);
-        Bukkit.getPluginCommand("ServerMonitor").setExecutor(new PluginCommandExecutor());
-        //Bukkit.getConsoleSender().sendMessage("§3[§aServerMonitor§3] §b已启用.");
-        Bukkit.getConsoleSender().sendMessage(Language.enabled);
+        getServer().getPluginCommand("ServerMonitor").setExecutor(new PluginCommandExecutor());
+        //consoleSender.sendMessage("§3[§aServerMonitor§3] §b已启用.");
+        consoleSender.sendMessage(Language.enabled);
     }
 
     @Override
     public void onDisable() {
         Log.closeAllLog();
-        //Bukkit.getConsoleSender().sendMessage("§3[§aServerMonitor§3] §c已卸载.");
-        Bukkit.getConsoleSender().sendMessage(Language.disabled);
+        //consoleSender.sendMessage("§3[§aServerMonitor§3] §c已卸载.");
+        consoleSender.sendMessage(Language.disabled);
     }
 
 }

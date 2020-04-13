@@ -11,6 +11,12 @@ lineSeparator: 'Auto'
 #若启用则每条日志信息即时保存到文件，禁用则有一定缓冲区，但会在插件卸载时完整保存(若插件未正常卸载则存在部分记录丢失的可能)
 realTimeSave: true
 
+#自动压缩旧日志 true为启用 false为禁用
+zipOldLog: true
+
+#自动删除旧日志 填0为禁用 填正整数X 为删除X天前的日志 负数无效
+delOldLog: 0
+
 playerChat:
   #记录玩家聊天 true为启用 false为禁用
   enable: true

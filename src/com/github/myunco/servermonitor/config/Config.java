@@ -8,6 +8,8 @@ public class Config {
     public static String dateFormat;
     public static String lineSeparator;
     public static boolean realTimeSave;
+    public static boolean zipOldLog;
+    public static int delOldLog;
     public static HashMap<String, Boolean> playerChat = new HashMap<>();
     public static HashMap<String, Boolean> playerCommand = new HashMap<>();
     public static HashMap<String, Boolean> playerGameModeChange = new HashMap<>();

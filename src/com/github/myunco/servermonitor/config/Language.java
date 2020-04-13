@@ -26,6 +26,8 @@ public class Language {
     public static String messageCloseException;
     public static String messageConfigError;
     public static String messageSaveException;
+    public static String messageZipException;
     public static String messageLangUpdate;
     public static String messageLangUpdated;
+    public static String messageDeleteError;
 }

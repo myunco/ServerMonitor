@@ -1,10 +1,12 @@
 package com.github.myunco.servermonitor;
 
+import com.github.myunco.servermonitor.config.Config;
 import com.github.myunco.servermonitor.config.ConfigLoader;
 import com.github.myunco.servermonitor.config.Language;
 import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
 import com.github.myunco.servermonitor.listener.PluginEventListener;
 import com.github.myunco.servermonitor.util.Log;
+import com.github.myunco.servermonitor.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -74,6 +76,10 @@ public class ServerMonitor extends JavaPlugin {
         }
         getServer().getPluginManager().registerEvents(new PluginEventListener(), this);
         getServer().getPluginCommand("ServerMonitor").setExecutor(new PluginCommandExecutor());
+        if (Config.zipOldLog) {
+            Util.zipOldLog();
+        }
+        Util.delOldLog(Config.delOldLog);
         //consoleSender.sendMessage("§3[§aServerMonitor§3] §b已启用.");
         consoleSender.sendMessage(Language.enabled);
     }

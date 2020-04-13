@@ -44,16 +44,25 @@ public class ConfigLoader {
         if (Config.lineSeparator.toLowerCase().equals("auto"))
             Config.lineSeparator = System.lineSeparator();
         Config.realTimeSave = config.getBoolean("realTimeSave");
+        //1.1.0新增
+        checkContain(config, "zipOldLog", true);
+        Config.zipOldLog = config.getBoolean("zipOldLog");
+        checkContain(config, "delOldLog", 0);
+        Config.delOldLog = config.getInt("delOldLog");
+
         Config.playerChat.put("enable", config.getBoolean("playerChat.enable"));
         Config.playerChat.put("perPlayer", config.getBoolean("playerChat.perPlayer"));
         Config.playerCommand.put("enable", config.getBoolean("playerCommand.enable"));
         Config.playerCommand.put("perPlayer", config.getBoolean("playerCommand.perPlayer"));
         Config.playerCommand.put("consoleCommand", config.getBoolean("playerCommand.consoleCommand"));
-        if (!config.contains("playerCommand.commandBlockCommand")) {
+        //1.0.3新增
+        /*if (!config.contains("playerCommand.commandBlockCommand")) {
             config.set("playerCommand.commandBlockCommand", true);
             flag = true;
-        }
+        }*/
+        checkContain(config, "playerCommand.commandBlockCommand", true);
         Config.playerCommand.put("commandBlockCommand", config.getBoolean("playerCommand.commandBlockCommand"));
+
         Config.playerGameModeChange.put("enable", config.getBoolean("playerGameModeChange.enable"));
         Config.playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer"));
         Config.opChange = config.getBoolean("playerCommand.opChange");
@@ -187,7 +196,7 @@ public class ConfigLoader {
         if (languageUpdate(lang)) {
             try {
                 lang.save(file);
-                pl.getServer().getConsoleSender().sendMessage(Language.MSG_PREFIX + Language.messageLangUpdated);
+                ServerMonitor.consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageLangUpdated);
             } catch (IOException e) {
                 //Log.sendException("§4[错误] §5在保存 " + language + ".yml 时发生IO异常!", e.getMessage());
                 Log.sendException(Language.messageSaveException.replace("{file}", language + ".yml"), e.getMessage());
@@ -218,16 +227,26 @@ public class ConfigLoader {
         Language.messageWriteException = lang.getString("message.writeException");
         Language.messageCloseException = lang.getString("message.closeException");
         Language.messageConfigError = lang.getString("message.configError");
+        Language.messageZipException = lang.getString("message.zipException");
+        Language.messageDeleteError = lang.getString("message.deleteError");
     }
 
     public static boolean languageUpdate(YamlConfiguration lang) {
-        if (Language.version != 1) {
+        int currentVersion = 2;
+        if (Language.version < currentVersion) {
             //pl.getServer().getConsoleSender().sendMessage(Language.MSG_PREFIX + "§c语言文件版本：§a" + Language.version + " §c最新版本：§b1 §6需要更新.");
-            pl.getServer().getConsoleSender().sendMessage(Language.MSG_PREFIX + Language.messageLangUpdate
+            ServerMonitor.consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageLangUpdate
                     .replace("{version}", String.valueOf(Language.version))
-                    .replace("{$version}", "1"));
-            //1为初始版本，没有新增内容，暂时不写新增逻辑
-            Language.version = 1;
+                    .replace("{$version}", String.valueOf(currentVersion)));
+            switch (Language.version) {
+                case 1:
+                    lang.set("message.zipException", "§4[错误] §5在压缩 {file} 时发生IO异常!");
+                    lang.set("message.deleteError", "§4[错误] §5删除 {file} 失败!");
+                    break; //最后一个case才break
+                default:
+                    loadError("Language version error.");
+            }
+            Language.version = currentVersion;
             lang.set("version", Language.version);
             return true;
         }
@@ -236,5 +255,12 @@ public class ConfigLoader {
 
     public static void loadError(String msg) {
         pl.getLogger().warning(msg);
+    }
+
+    public static void checkContain(YamlConfiguration config, String path, Object defaults) {
+        if (!config.contains(path)) {
+            config.set(path, defaults);
+            flag = true;
+        }
     }
 }

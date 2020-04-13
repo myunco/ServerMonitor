@@ -1,5 +1,5 @@
 #语言文件版本 请勿修改此项
-version: 1
+version: 2
 
 enabled: '§3[§aServerMonitor§3] §b已启用.'
 disabled: '§3[§aServerMonitor§3] §c已卸载.'
@@ -30,5 +30,7 @@ message:
   closeException: '§4[错误] §5在关闭 {file} 时发生IO异常!'
   configError: '配置文件错误! 请检查 {path} 是否存在.'
   saveException: '§4[错误] §5在保存 {file} 时发生IO异常!'
+  zipException: '§4[错误] §5在压缩 {file} 时发生IO异常!'
   langUpdate: '§c语言文件版本：§a{version} §c最新版本：§b{$version} §6需要更新.'
   langUpdated: '§a语言文件更新完成!'
+  deleteError: '§4[错误] §5删除 {file} 失败!'

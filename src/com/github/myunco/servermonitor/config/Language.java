@@ -30,4 +30,8 @@ public class Language {
     public static String messageLangUpdate;
     public static String messageLangUpdated;
     public static String messageDeleteError;
+    public static String messageCheckUpdateException;
+    public static String messageCheckUpdateError;
+    public static String messageMajorUpdate;
+    public static String messageFoundNewVersion;
 }

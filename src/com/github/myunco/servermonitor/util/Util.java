@@ -3,12 +3,18 @@ package com.github.myunco.servermonitor.util;
 import com.github.myunco.servermonitor.ServerMonitor;
 import com.github.myunco.servermonitor.config.Config;
 import com.github.myunco.servermonitor.config.Language;
+import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
+import org.bukkit.command.ConsoleCommandSender;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +24,7 @@ import java.util.zip.GZIPOutputStream;
 public class Util {
     static SimpleDateFormat sdf;
     static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    static ConsoleCommandSender consoleSender = ServerMonitor.consoleSender;
     public static String logName = getToday();
 
     public static void setSdf(String dateFormat) {
@@ -80,7 +87,7 @@ public class Util {
         fis.close();
         gzip.close();
         if (!file.delete())
-            ServerMonitor.consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError);
+            consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError);
     }
 
     public static void zipOldLog() {
@@ -107,7 +114,7 @@ public class Util {
             long diff = getDayDiff(logName, fileTime);
             if (diff > days) {
                 if (!file.delete())
-                    ServerMonitor.consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError);
+                    consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError);
             }
         }
     }
@@ -139,5 +146,33 @@ public class Util {
             }
         }
         return result;
+    }
+
+    public static void logInit() {
+        if (Config.zipOldLog) {
+            Util.zipOldLog();
+        }
+        Util.delOldLog(Config.delOldLog);
+    }
+
+    public static void checkVersionUpdate() throws IOException {
+        URL url = new URL("http://sinacloud.net/myunco/E776DD23/version.txt");
+        HttpURLConnection uc = (HttpURLConnection) url.openConnection();
+        int code = uc.getResponseCode();
+        String[] ret = new String[2];
+        if (code == HttpURLConnection.HTTP_OK) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+            ret[0] = br.readLine(); //读取最新版本
+            ret[1] = br.readLine(); //读取是否重大更新
+            if (!PluginCommandExecutor.VERSION.equals(ret[0])) {
+                String str = Language.messageFoundNewVersion
+                        .replace("{version}", PluginCommandExecutor.VERSION)
+                        .replace("{$version}", ret[0])
+                        .replace("{url}", "https://www.mcbbs.net/thread-995756-1-1.html");
+                consoleSender.sendMessage(Language.MSG_PREFIX + ("true".equals(ret[1]) ? Language.messageMajorUpdate + " - " + str : str));
+            }
+        } else {
+            consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageCheckUpdateError.replace("{code}", String.valueOf(code)));
+        }
     }
 }

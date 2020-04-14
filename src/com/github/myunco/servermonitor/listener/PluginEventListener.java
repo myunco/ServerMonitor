@@ -107,7 +107,7 @@ public class PluginEventListener implements Listener {
             list.forEach(value -> ServerMonitor.consoleSender.sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 64) == 64) {
-            list = Config.handleMethodConfig.get("warningLog");
+            list = Config.handleMethodConfig.get("WarningLog");
             try {
                 Log.createWarningLog();
                 //list.forEach(Log::writeWarningLog);
@@ -116,11 +116,11 @@ public class PluginEventListener implements Listener {
                     Log.closeWarningLog();
                 } catch (IOException e) {
                     //Log.sendException("§4[错误] §5在关闭WarningLog时发生IO异常!", e.getMessage());
-                    Log.sendException(Language.messageCloseException.replace("{file}", "warning.log"), e.getMessage());
+                    Log.sendException(Language.messageCloseException.replace("{file}", "Warning.log"), e.getMessage());
                 }
             } catch (IOException e) {
                 //Log.sendException("§4[错误] §5在打开WarningLog时发生IO异常!", e.getMessage());
-                Log.sendException(Language.messageOpenException.replace("{file}", "warning.log"), e.getMessage());
+                Log.sendException(Language.messageOpenException.replace("{file}", "Warning.log"), e.getMessage());
             }
         }
     }

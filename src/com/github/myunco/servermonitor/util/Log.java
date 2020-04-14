@@ -26,7 +26,7 @@ public class Log {
     public static ConsoleCommandSender consoleSender = ServerMonitor.consoleSender;
 
     public static void createWarningLog() throws IOException {
-        warningLog = new FileWriter(new File(dateFolder, "warning.log"), true);
+        warningLog = new FileWriter(new File(dateFolder, "Warning.log"), true);
     }
 
     public static void writeWarningLog(String str) {
@@ -36,7 +36,7 @@ public class Log {
                 warningLog.flush();
         } catch (IOException e) {
             //sendException("§4[错误] §5在写WarningLog时发生IO异常!", e.getMessage());
-            sendException(Language.messageWriteException.replace("{file}", "warning.log"), e.getMessage());
+            sendException(Language.messageWriteException.replace("{file}", "Warning.log"), e.getMessage());
         }
     }
 
@@ -449,5 +449,116 @@ public class Log {
             return;
         boolean ret = file.getParentFile().mkdirs();
         if (!ret) consoleSender.sendMessage(message);
+    }
+
+    public static boolean createAllLog(boolean all) {
+        if (Config.playerChat.get("enable")) {
+            try {
+                Log.createChatLog();
+            } catch (IOException e) {
+                Log.sendException(Language.messageOpenException.replace("{file}", "Chat -> " + Util.logName + ".log"), e.getMessage());
+                return false;
+            }
+        }
+        if (Config.playerCommand.get("enable")) {
+            try {
+                Log.createCommandLog();
+            } catch (IOException e) {
+                Log.sendException(Language.messageOpenException.replace("{file}", "Command -> " + Util.logName + ".log"), e.getMessage());
+                return false;
+            }
+        }
+        if (Config.playerGameModeChange.get("enable")) {
+            try {
+                Log.createGameModeLog();
+            } catch (IOException e) {
+                Log.sendException(Language.messageOpenException.replace("{file}", "GameMode -> " + Util.logName + ".log"), e.getMessage());
+                return false;
+            }
+        }
+        if (all && Config.opChange) {
+            try {
+                Log.createOpChangeLog();
+            } catch (IOException e) {
+                Log.sendException(Language.messageOpenException.replace("{file}", "OpChange.log"), e.getMessage());
+                return false;
+            }
+        }
+        if (Config.joinAndLeave) {
+            try {
+                Log.createJoinLeaveLog();
+            } catch (IOException e) {
+                Log.sendException(Language.messageOpenException.replace("{file}", "JoinLeave -> " + Util.logName + ".log"), e.getMessage());
+                return false;
+            }
+        }
+        ServerMonitor.plugin.getServer().getOnlinePlayers().forEach(player -> {
+            String playerName = player.getName();
+            if (Config.playerChat.get("perPlayer"))
+                Log.addPlayerChatLog(playerName);
+            if (Config.playerCommand.get("perPlayer"))
+                Log.addPlayerCommandLog(playerName);
+            if (Config.playerGameModeChange.get("perPlayer"))
+                Log.addPlayerGameModeLog(playerName);
+        });
+        return true;
+    }
+
+    public static void updateAllLog(String logName) {
+        String tmp_logName = Util.logName;
+        FileWriter tmp_chatLog = chatLog;
+        FileWriter tmp_commandLog = commandLog;
+        FileWriter tmp_gameModeLog = gameModeLog;
+        FileWriter tmp_joinLeaveLog = joinLeaveLog;
+        HashMap<String, FileWriter> tmp_playerChatLog = playerChatLog;
+        HashMap<String, FileWriter> tmp_playerCommandLog = playerCommandLog;
+        HashMap<String, FileWriter> tmp_playerGameModeLog = playerGameModeLog;
+        Util.logName = logName;
+        createAllLog(false);
+        try {
+            if (tmp_chatLog != null)
+                tmp_chatLog.close();
+        } catch (IOException e) {
+            sendException(Language.messageCloseException.replace("{file}", "Chat -> " + tmp_logName + ".log"), e.getMessage());
+        }
+        try {
+            if (tmp_commandLog != null)
+                tmp_commandLog.close();
+        } catch (IOException e) {
+            sendException(Language.messageCloseException.replace("{file}", "Command -> " + tmp_logName + ".log"), e.getMessage());
+        }
+        try {
+            if (tmp_gameModeLog != null)
+                tmp_gameModeLog.close();
+        } catch (IOException e) {
+            sendException(Language.messageCloseException.replace("{file}", "GameMode -> " + tmp_logName + ".log"), e.getMessage());
+        }
+        try {
+            if (tmp_joinLeaveLog != null)
+                tmp_joinLeaveLog.close();
+        } catch (IOException e) {
+            sendException(Language.messageCloseException.replace("{file}", "JoinLeave -> " + tmp_logName + ".log"), e.getMessage());
+        }
+        tmp_playerChatLog.keySet().forEach(player -> {
+            try {
+                tmp_playerChatLog.get(player).close();
+            } catch (IOException e) {
+                sendException(Language.messageCloseException.replace("{file}", "Chat -> " + player + " -> " + tmp_logName + ".log"), e.getMessage());
+            }
+        });
+        tmp_playerCommandLog.keySet().forEach(player -> {
+            try {
+                tmp_playerCommandLog.get(player).close();
+            } catch (IOException e) {
+                sendException(Language.messageCloseException.replace("{file}", "Command -> " + player + " -> " + tmp_logName + ".log"), e.getMessage());
+            }
+        });
+        tmp_playerGameModeLog.keySet().forEach(player -> {
+            try {
+                tmp_playerGameModeLog.get(player).close();
+            } catch (IOException e) {
+                sendException(Language.messageCloseException.replace("{file}", "GameMode -> " + player + " -> " + tmp_logName + ".log"), e.getMessage());
+            }
+        });
     }
 }

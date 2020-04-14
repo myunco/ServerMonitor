@@ -10,6 +10,7 @@ public class Config {
     public static boolean realTimeSave;
     public static boolean zipOldLog;
     public static int delOldLog;
+    public static boolean checkUpdate;
     public static HashMap<String, Boolean> playerChat = new HashMap<>();
     public static HashMap<String, Boolean> playerCommand = new HashMap<>();
     public static HashMap<String, Boolean> playerGameModeChange = new HashMap<>();

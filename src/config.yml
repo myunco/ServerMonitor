@@ -17,6 +17,9 @@ zipOldLog: true
 #自动删除旧日志 填0为禁用 填正整数X 为删除X天前的日志 负数无效
 delOldLog: 0
 
+#检查更新 true为启用 false为禁用
+checkUpdate: false
+
 playerChat:
   #记录玩家聊天 true为启用 false为禁用
   enable: true

@@ -158,7 +158,6 @@ public class ConfigLoader {
         if (flag) {
             try {
                 config.save(file);
-                System.out.println("saved");
             } catch (IOException e) {
                 Log.sendException(Language.messageSaveException.replace("{file}", "config.yml"), e.getMessage());
             }

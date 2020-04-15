@@ -107,7 +107,7 @@ public class PluginEventListener implements Listener {
             list.forEach(value -> ServerMonitor.consoleSender.sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 64) == 64) {
-            list = Config.handleMethodConfig.get("WarningLog");
+            list = Config.handleMethodConfig.get("warningLog");
             try {
                 Log.createWarningLog();
                 //list.forEach(Log::writeWarningLog);

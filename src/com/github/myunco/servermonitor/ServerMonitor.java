@@ -72,6 +72,7 @@ import java.io.IOException;
  *       优化命令的TAB补全.
  *       优化代码，修正细节错误.
  *       添加zh_tw语言文件(用户提供).
+ * 1.1.1 修复了写警告日志会出现空指针异常的问题.
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;

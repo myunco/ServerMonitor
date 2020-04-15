@@ -171,6 +171,7 @@ public class Util {
                         .replace("{url}", "https://www.mcbbs.net/thread-995756-1-1.html");
                 consoleSender.sendMessage(Language.MSG_PREFIX + ("true".equals(ret[1]) ? Language.messageMajorUpdate + " - " + str : str));
             }
+            br.close();
         } else {
             consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageCheckUpdateError.replace("{code}", String.valueOf(code)));
         }

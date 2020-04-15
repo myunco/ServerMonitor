@@ -37,4 +37,4 @@ message:
   checkUpdateException: '§4[錯誤] §c在檢查更新時發生IO異常!'
   checkUpdateError: '§4[錯誤] §c檢查更新失敗, 狀態碼: §b{code}'
   majorUpdate: '§4重大更新'
-  foundNewVersion: '§c發現新版本：{$version} §b當前版本: {version} §e前往查看: §a{url}'
+  foundNewVersion: '§c!發現新版本：{$version} §b當前版本: {version} §e前往查看: §a{url}'

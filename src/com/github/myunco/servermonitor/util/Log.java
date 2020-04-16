@@ -510,9 +510,14 @@ public class Log {
         FileWriter tmp_commandLog = commandLog;
         FileWriter tmp_gameModeLog = gameModeLog;
         FileWriter tmp_joinLeaveLog = joinLeaveLog;
-        HashMap<String, FileWriter> tmp_playerChatLog = playerChatLog;
-        HashMap<String, FileWriter> tmp_playerCommandLog = playerCommandLog;
-        HashMap<String, FileWriter> tmp_playerGameModeLog = playerGameModeLog;
+        //HashMap<String, FileWriter> tmp_playerChatLog = playerChatLog;
+        //HashMap<String, FileWriter> tmp_playerCommandLog = playerCommandLog;
+        //HashMap<String, FileWriter> tmp_playerGameModeLog = playerGameModeLog;
+        //憨憨了，这复制的只是HashMap的引用。。。
+
+        HashMap<String, FileWriter> tmp_playerChatLog = new HashMap<>(playerChatLog);
+        HashMap<String, FileWriter> tmp_playerCommandLog = new HashMap<>(playerCommandLog);
+        HashMap<String, FileWriter> tmp_playerGameModeLog = new HashMap<>(playerGameModeLog);
         Util.logName = logName;
         createAllLog(false);
         try {

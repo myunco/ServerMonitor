@@ -73,6 +73,8 @@ import java.io.IOException;
  *       优化代码，修正细节错误.
  *       添加zh_tw语言文件(用户提供).
  * 1.1.1 修复了写警告日志会出现空指针异常的问题.
+ * 1.1.2 修复了日期更新后玩家日志没有正确关闭导致的错误.
+ *       修复了压缩异常、删除错误消息中{file}无效的错误.
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;

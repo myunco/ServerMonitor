@@ -87,7 +87,7 @@ public class Util {
         fis.close();
         gzip.close();
         if (!file.delete())
-            consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError);
+            consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError.replace("{file}", file.getAbsolutePath()));
     }
 
     public static void zipOldLog() {
@@ -98,7 +98,7 @@ public class Util {
                 try {
                     gzipFile(file);
                 } catch (IOException e) {
-                    Log.sendException(Language.MSG_PREFIX + Language.messageZipException, e.getMessage());
+                    Log.sendException(Language.MSG_PREFIX + Language.messageZipException.replace("{file}", file.getAbsolutePath()), e.getMessage());
                 }
             }
         }
@@ -114,7 +114,7 @@ public class Util {
             long diff = getDayDiff(logName, fileTime);
             if (diff > days) {
                 if (!file.delete())
-                    consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError);
+                    consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError.replace("{file}", file.getAbsolutePath()));
             }
         }
     }

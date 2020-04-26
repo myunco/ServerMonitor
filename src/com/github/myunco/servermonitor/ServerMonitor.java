@@ -75,6 +75,8 @@ import java.io.IOException;
  * 1.1.1 修复了写警告日志会出现空指针异常的问题.
  * 1.1.2 修复了日期更新后玩家日志没有正确关闭导致的错误.
  *       修复了压缩异常、删除错误消息中{file}无效的错误.
+ *       自动检查更新选项改为默认开启.
+ *       (修复了插件加载时enable()会调用两次的问题)
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;
@@ -91,7 +93,7 @@ public class ServerMonitor extends JavaPlugin {
         }
         getServer().getPluginManager().registerEvents(new PluginEventListener(), this);
         getServer().getPluginCommand("ServerMonitor").setExecutor(new PluginCommandExecutor());
-        enable();
+        //enable(); ConfigLoader.load()的时候会调用
         //Bukkit.getConsoleSender().sendMessage("§3[§aServerMonitor§3] §b已启用.");
         consoleSender.sendMessage(Language.enabled);
     }

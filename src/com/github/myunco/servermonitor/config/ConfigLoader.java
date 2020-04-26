@@ -50,7 +50,7 @@ public class ConfigLoader {
         Config.zipOldLog = config.getBoolean("zipOldLog");
         checkContain(config, "delOldLog", 0);
         Config.delOldLog = config.getInt("delOldLog");
-        checkContain(config, "checkUpdate", false);
+        checkContain(config, "checkUpdate", true);
         Config.checkUpdate = config.getBoolean("checkUpdate");
 
         Config.playerChat.put("enable", config.getBoolean("playerChat.enable"));

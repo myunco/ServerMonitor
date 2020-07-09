@@ -143,15 +143,25 @@ public class PluginEventListener implements Listener {
             return;
         if (cmd.toLowerCase().startsWith("op ")) {
             //str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]Opped : " + Util.getTextRight(cmd, " ");
+            String playerName = Util.getTextRight(cmd, " ");
             str = Util.getTime() + Language.logConsoleOpped
                     .replace("{sender}", name)
-                    .replace("{player}", Util.getTextRight(cmd, " "));
+                    /*.replace("{player}", Util.getTextRight(cmd, " "));*/
+                    .replace("{player}", playerName);
+                    if ("CONSOLE".equals(name)) {
+                        Util.addWhiteList(playerName);
+                    }
             Log.writeOpChangeLog(str);
         } else if (cmd.toLowerCase().startsWith("deop ")) {
             //str = Util.getTime() + " 控制台[" + event.getSender().getName() + "]De-Opped : " + Util.getTextRight(cmd, " ");
+            String playerName = Util.getTextRight(cmd, " ");
             str = Util.getTime() + Language.logConsoleDeOpped
                     .replace("{sender}", name)
-                    .replace("{player}", Util.getTextRight(cmd, " "));
+                    /*.replace("{player}", Util.getTextRight(cmd, " "));*/
+                    .replace("{player}", playerName);
+                    if ("CONSOLE".equals(name)) {
+                        Util.delWhiteList(playerName);
+                    }
             Log.writeOpChangeLog(str);
         }
     }

@@ -2,9 +2,11 @@ package com.github.myunco.servermonitor.util;
 
 import com.github.myunco.servermonitor.ServerMonitor;
 import com.github.myunco.servermonitor.config.Config;
+import com.github.myunco.servermonitor.config.ConfigLoader;
 import com.github.myunco.servermonitor.config.Language;
 import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -59,6 +61,29 @@ public class Util {
             }
         }
         return false;
+    }
+
+    public static boolean addWhiteList(String playerName) {
+        if (isWhiteList(playerName)) {
+            return true;
+        }
+        Config.whitelist.add(playerName);
+         return setConfigValue("commandAlert.whitelist", Config.whitelist);
+    }
+
+    public static boolean delWhiteList(String playerName) {
+        if (!isWhiteList(playerName)) {
+            return true;
+        }
+        return Config.whitelist.remove(playerName) && setConfigValue("commandAlert.whitelist", Config.whitelist);
+    }
+
+    public static boolean setConfigValue(String path, Object value) {
+        ServerMonitor.plugin.saveDefaultConfig();
+        File file = new File(ServerMonitor.plugin.getDataFolder(), "/config.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        config.set(path, value);
+        return ConfigLoader.save(config, file);
     }
 
     public static boolean isCommandWhiteList(String command) {

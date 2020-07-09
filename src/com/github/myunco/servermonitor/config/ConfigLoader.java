@@ -156,13 +156,24 @@ public class ConfigLoader {
         if (!Log.createAllLog(true))
             return false;
         if (flag) {
-            try {
+            /*try {
                 config.save(file);
             } catch (IOException e) {
                 Log.sendException(Language.messageSaveException.replace("{file}", "config.yml"), e.getMessage());
-            }
+            }*/
+            save(config, file);
         }
         pl.enable();
+        return true;
+    }
+
+    public static boolean save(YamlConfiguration config, File file) {
+        try {
+            config.save(file);
+        } catch (IOException e) {
+            Log.sendException(Language.messageSaveException.replace("{file}", "config.yml"), e.getMessage());
+            return false;
+        }
         return true;
     }
 

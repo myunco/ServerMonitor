@@ -77,6 +77,7 @@ import java.io.IOException;
  *       修复了压缩异常、删除错误消息中{file}无效的错误.
  *       自动检查更新选项改为默认开启.
  *       (修复了插件加载时enable()会调用两次的问题)
+ * 1.1.3 增加了在控制台op或deop时自动设置玩家白名单的功能.
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;

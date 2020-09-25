@@ -22,7 +22,6 @@ public class ConfigLoader {
         pl.saveDefaultConfig();
         File file = new File(pl.getDataFolder(), "/config.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        //FileConfiguration config = pl.getConfig();
         Config.language = config.getString("language");
         if (Config.language == null) {
             loadError("配置文件错误! 请检查 language 是否存在.");
@@ -31,14 +30,12 @@ public class ConfigLoader {
         loadLanguage(Config.language);
         Config.dateFormat = config.getString("dateFormat");
         if (Config.dateFormat == null) {
-            //loadError("配置文件错误! 请检查 dateFormat 是否存在.");
             loadError(Language.messageConfigError.replace("{path}", "dateFormat"));
             return false;
         }
         Util.setSdf(Config.dateFormat);
         Config.lineSeparator = config.getString("lineSeparator");
         if (Config.lineSeparator == null) {
-            //loadError("配置文件错误! 请检查 lineSeparator 是否存在.");
             loadError(Language.messageConfigError.replace("{path}", "lineSeparator"));
             return false;
         }
@@ -58,11 +55,6 @@ public class ConfigLoader {
         Config.playerCommand.put("enable", config.getBoolean("playerCommand.enable"));
         Config.playerCommand.put("perPlayer", config.getBoolean("playerCommand.perPlayer"));
         Config.playerCommand.put("consoleCommand", config.getBoolean("playerCommand.consoleCommand"));
-        //1.0.3新增
-        /*if (!config.contains("playerCommand.commandBlockCommand")) {
-            config.set("playerCommand.commandBlockCommand", true);
-            flag = true;
-        }*/
         checkContain(config, "playerCommand.commandBlockCommand", true);
         Config.playerCommand.put("commandBlockCommand", config.getBoolean("playerCommand.commandBlockCommand"));
 
@@ -77,13 +69,11 @@ public class ConfigLoader {
             Config.commandWhiteList = config.getStringList("commandAlert.commandWhiteList");
             ConfigurationSection cs = config.getConfigurationSection("commandAlert.handleMethod");
             if (cs == null) {
-                //loadError("配置文件错误! 请检查 commandAlert下的handleMethod 是否存在.");
                 loadError(Language.messageConfigError.replace("{path}", "commandAlert.handleMethod"));
                 return false;
             }
             Set<String> s = cs.getKeys(false);
             if (s.size() < 8) {
-                //loadError("配置文件错误! 请检查 commandAlert下的handleMethod下的所有项 是否存在.");
                 loadError(Language.messageConfigError.replace("{path}", "commandAlert.handleMethod.?"));
                 return false;
             }
@@ -95,72 +85,9 @@ public class ConfigLoader {
                 Config.handleMethodConfig.put(value, config.getStringList("commandAlert.handleMethod." + value));
             }
         }
-        /*if (Config.playerChat.get("enable")) {
-            try {
-                Log.createChatLog();
-            } catch (IOException e) {
-                //Log.sendException("§4[错误] §5在打开ChatLog时发生IO异常!", e.getMessage());
-                //Log.sendException(Language.messageOpenException.replace("{file}", "Chat.log"), e.getMessage());
-                Log.sendException(Language.messageOpenException.replace("{file}", "Chat -> " + Util.logName + ".log"), e.getMessage());
-                return false;
-            }
-        }
-        if (Config.playerCommand.get("enable")) {
-            try {
-                Log.createCommandLog();
-            } catch (IOException e) {
-                //Log.sendException("§4[错误] §5在打开CommandLog时发生IO异常!", e.getMessage());
-                //Log.sendException(Language.messageOpenException.replace("{file}", "Command.log"), e.getMessage());
-                Log.sendException(Language.messageOpenException.replace("{file}", "Command -> " + Util.logName + ".log"), e.getMessage());
-                return false;
-            }
-        }
-        if (Config.playerGameModeChange.get("enable")) {
-            try {
-                Log.createGameModeLog();
-            } catch (IOException e) {
-                //Log.sendException("§4[错误] §5在打开GameModeLog时发生IO异常!", e.getMessage());
-                //Log.sendException(Language.messageOpenException.replace("{file}", "GameMode.log"), e.getMessage());
-                Log.sendException(Language.messageOpenException.replace("{file}", "GameMode -> " + Util.logName + ".log"), e.getMessage());
-                return false;
-            }
-        }
-        if (Config.opChange) {
-            try {
-                Log.createOpChangeLog();
-            } catch (IOException e) {
-                //Log.sendException("§4[错误] §5在打开OpChangeLog时发生IO异常!", e.getMessage());
-                Log.sendException(Language.messageOpenException.replace("{file}", "OpChange.log"), e.getMessage());
-                return false;
-            }
-        }
-        if (Config.joinAndLeave) {
-            try {
-                Log.createJoinLeaveLog();
-            } catch (IOException e) {
-                //Log.sendException("§4[错误] §5在打开JoinLeaveLog时发生IO异常!", e.getMessage());
-                //Log.sendException(Language.messageOpenException.replace("{file}", "JoinAndLeave.log"), e.getMessage());
-                Log.sendException(Language.messageOpenException.replace("{file}", "JoinLeave -> " + Util.logName + ".log"), e.getMessage());
-                return false;
-            }
-        }
-        pl.getServer().getOnlinePlayers().forEach(player -> {
-            String playerName = player.getName();
-            if (Config.playerChat.get("perPlayer"))
-                Log.addPlayerChatLog(playerName);
-            if (Config.playerCommand.get("perPlayer"))
-                Log.addPlayerCommandLog(playerName);
-            if (Config.playerGameModeChange.get("perPlayer"))
-                Log.addPlayerGameModeLog(playerName);
-        });*/
         if (!Log.createAllLog(true))
             return false;
         if (flag) {
-            /*try {
-                config.save(file);
-            } catch (IOException e) {
-                Log.sendException(Language.messageSaveException.replace("{file}", "config.yml"), e.getMessage());
-            }*/
             save(config, file);
         }
         pl.enable();
@@ -178,14 +105,11 @@ public class ConfigLoader {
     }
 
     public static void reload() {
-        //Log.closeAllLog();
-        //pl.reloadConfig();
         pl.disable();
         load();
     }
 
     public static void loadLanguage(String language) {
-        //File file = new File(pl.getDataFolder(), "/languages/zh_cn.yml");
         String langPath = "languages/" + language + ".yml";
         File file = new File(pl.getDataFolder(), langPath);
         if (!file.exists()) {
@@ -212,29 +136,6 @@ public class ConfigLoader {
                 pl.saveResource(langPath, false);
             }
         }
-        /*
-        if (!"zh_cn".equals(language)) {
-            file = new File(pl.getDataFolder(), "languages/" + language + ".yml");
-            if (!file.exists()) {
-                InputStream in = pl.getResource("languages/zh_cn.yml");
-                if (in != null) {
-                    try {
-                        OutputStream out = new FileOutputStream(file);
-                        byte[] buf = new byte[1024];
-                        int len;
-                        while ((len = in.read(buf)) != -1) {
-                            out.write(buf, 0, len);
-                        }
-                        out.close();
-                        in.close();
-                        System.out.println("[ServerMonitor] 语言文件: " + file.getPath() + " 不存在,已自动创建.");
-                    } catch (IOException e) {
-                        Log.sendException("§4[错误] §5在保存 " + language + ".yml 时发生IO异常!", e.getMessage());
-                    }
-                }
-            }
-        }
-         */
         YamlConfiguration lang = YamlConfiguration.loadConfiguration(file);
         Language.version = lang.getInt("version");
         Language.messageSaveException = lang.getString("message.saveException");
@@ -245,7 +146,6 @@ public class ConfigLoader {
                 lang.save(file);
                 ServerMonitor.consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageLangUpdated);
             } catch (IOException e) {
-                //Log.sendException("§4[错误] §5在保存 " + language + ".yml 时发生IO异常!", e.getMessage());
                 Log.sendException(Language.messageSaveException.replace("{file}", language + ".yml"), e.getMessage());
             }
         }
@@ -285,7 +185,6 @@ public class ConfigLoader {
     public static boolean languageUpdate(YamlConfiguration lang) {
         int currentVersion = 2;
         if (Language.version < currentVersion) {
-            //pl.getServer().getConsoleSender().sendMessage(Language.MSG_PREFIX + "§c语言文件版本：§a" + Language.version + " §c最新版本：§b1 §6需要更新.");
             ServerMonitor.consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageLangUpdate
                     .replace("{version}", String.valueOf(Language.version))
                     .replace("{$version}", String.valueOf(currentVersion)));
@@ -297,6 +196,7 @@ public class ConfigLoader {
                     lang.set("message.checkUpdateError", "§4[错误] §c检查更新失败, 状态码: §b{code}");
                     lang.set("message.majorUpdate", "§4重大更新");
                     lang.set("message.foundNewVersion", "§c发现新版本：{$version} §b当前版本: {version} 前往查看: {url}");
+                case 2: //如果版本为2 则添加相对于版本3缺少的内容
                     break; //最后一个case才break
                 default:
                     loadError("Language version error.");

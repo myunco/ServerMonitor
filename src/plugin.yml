@@ -1,6 +1,7 @@
 name: ServerMonitor
 main: com.github.myunco.servermonitor.ServerMonitor
-version: 1.1.3
+version: 1.1.4
+api-version: 1.13
 author: unco_
 commands:
   ServerMonitor:
@@ -9,3 +10,7 @@ commands:
     aliases: [sm]
     permission: servermonitor.use
     permission-message: "§cYou don't have permission!"
+permissions:
+  servermonitor.use:
+    description: Has permission to access the all ServerMonitor command
+    default: op

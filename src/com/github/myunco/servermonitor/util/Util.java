@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 public class Util {
@@ -54,7 +55,6 @@ public class Util {
     }
 
     public static boolean isWhiteList(String playerName) {
-        //return Config.whitelist.contains(playerName);
         for (String s : Config.whitelist) {
             if (s.equalsIgnoreCase(playerName)) {
                 return true;
@@ -87,7 +87,6 @@ public class Util {
     }
 
     public static boolean isCommandWhiteList(String command) {
-        //return Config.commandWhiteList.contains(command);
         for (String s : Config.commandWhiteList) {
             if (s.equalsIgnoreCase(command)) {
                 return true;
@@ -200,5 +199,16 @@ public class Util {
         } else {
             consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageCheckUpdateError.replace("{code}", String.valueOf(code)));
         }
+    }
+
+    public static List<String> getTabList(String[] args, List<String> list, int index) {
+        String arg = args[index].toLowerCase();
+        List<String> ret = new ArrayList<>();
+        for (String value : list) {
+            if (value.startsWith(arg)) {
+                ret.add(value);
+            }
+        }
+        return ret.size() == 0 ? null : ret;
     }
 }

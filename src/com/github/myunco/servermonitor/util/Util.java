@@ -180,7 +180,7 @@ public class Util {
     }
 
     public static void checkVersionUpdate() throws IOException {
-        URL url = new URL("http://sinacloud.net/myunco/E776DD23/version.txt");
+        URL url = new URL("https://sinacloud.net/myunco/E776DD23/version.txt");
         HttpURLConnection uc = (HttpURLConnection) url.openConnection();
         int code = uc.getResponseCode();
         String[] ret = new String[2];
@@ -210,5 +210,9 @@ public class Util {
             }
         }
         return ret.size() == 0 ? null : ret;
+    }
+
+    public static boolean checkOPChangeArg(String arg) {
+        return !arg.startsWith(" ") && arg.split(" ").length == 1;
     }
 }

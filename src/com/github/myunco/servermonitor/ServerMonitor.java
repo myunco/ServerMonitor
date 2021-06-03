@@ -37,6 +37,9 @@ import java.util.Objects;
  * 1.1.3 增加了在控制台op或deop时自动设置玩家白名单的功能.
  * 1.1.4 命令补全支持大写.
  *       指定api-version为1.13.
+ *       其他细节修改.
+ * 1.1.5 优化op修改判断逻辑
+ *       （待办：寻找新的可靠的监视op修改的方法）
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;

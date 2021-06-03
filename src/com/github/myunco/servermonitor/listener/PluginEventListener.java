@@ -53,19 +53,25 @@ public class PluginEventListener implements Listener {
         Log.writeCommandLog(str);
         if (Config.playerCommand.get("perPlayer"))
             Log.writePlayerCommandLog(playerName, str);
-        //不知道怎么判断非op玩家是否有权限执行这条命令，干脆改成只检测op执行吧
-        if (!isOp || !Config.opChange)
-            return;
-        if (cmd.toLowerCase().startsWith("/op ")) {
-            str = Util.getTime() + Language.logOpped
-                    .replace("{player1}", playerName)
-                    .replace("{player2}", Util.getTextRight(cmd, " "));
-            Log.writeOpChangeLog(str);
-        } else if (cmd.toLowerCase().startsWith("/deop ")) {
-            str = Util.getTime() + Language.logDeOpped
-                    .replace("{player1}", playerName)
-                    .replace("{player2}", Util.getTextRight(cmd, " "));
-            Log.writeOpChangeLog(str);
+        //待办：寻找新的可靠的监视op修改的方法
+        if (isOp && Config.opChange) {
+            if (cmd.toLowerCase().startsWith("/op ")) {
+                String arg = Util.getTextRight(cmd, " ");
+                if (Util.checkOPChangeArg(arg)) {
+                    str = Util.getTime() + Language.logOpped
+                            .replace("{player1}", playerName)
+                            .replace("{player2}", arg.trim());
+                    Log.writeOpChangeLog(str);
+                }
+            } else if (cmd.toLowerCase().startsWith("/deop ")) {
+                String arg = Util.getTextRight(cmd, " ");
+                if (Util.checkOPChangeArg(arg)) {
+                    str = Util.getTime() + Language.logDeOpped
+                            .replace("{player1}", playerName)
+                            .replace("{player2}", arg.trim());
+                    Log.writeOpChangeLog(str);
+                }
+            }
         }
         if (!Config.commandAlert || Util.isWhiteList(playerName) || Util.isCommandWhiteList(Util.getTextLeft(cmd, " ")))
             return;
@@ -132,22 +138,28 @@ public class PluginEventListener implements Listener {
             return;
         if (cmd.toLowerCase().startsWith("op ")) {
             String playerName = Util.getTextRight(cmd, " ");
-            str = Util.getTime() + Language.logConsoleOpped
-                    .replace("{sender}", name)
-                    .replace("{player}", playerName);
-                    if ("CONSOLE".equals(name)) {
-                        Util.addWhiteList(playerName);
-                    }
-            Log.writeOpChangeLog(str);
+            if (Util.checkOPChangeArg(playerName)) {
+                playerName = playerName.trim();
+                str = Util.getTime() + Language.logConsoleOpped
+                        .replace("{sender}", name)
+                        .replace("{player}", playerName);
+                if ("CONSOLE".equals(name)) {
+                    Util.addWhiteList(playerName);
+                }
+                Log.writeOpChangeLog(str);
+            }
         } else if (cmd.toLowerCase().startsWith("deop ")) {
             String playerName = Util.getTextRight(cmd, " ");
-            str = Util.getTime() + Language.logConsoleDeOpped
-                    .replace("{sender}", name)
-                    .replace("{player}", playerName);
-                    if ("CONSOLE".equals(name)) {
-                        Util.delWhiteList(playerName);
-                    }
-            Log.writeOpChangeLog(str);
+            if (Util.checkOPChangeArg(playerName)) {
+                playerName = playerName.trim();
+                str = Util.getTime() + Language.logConsoleDeOpped
+                        .replace("{sender}", name)
+                        .replace("{player}", playerName);
+                if ("CONSOLE".equals(name)) {
+                    Util.delWhiteList(playerName);
+                }
+                Log.writeOpChangeLog(str);
+            }
         }
     }
 

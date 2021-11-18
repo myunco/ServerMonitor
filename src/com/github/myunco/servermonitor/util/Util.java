@@ -180,12 +180,11 @@ public class Util {
     }
 
     public static void checkVersionUpdate() throws IOException {
-        URL url = new URL("https://sinacloud.net/myunco/E776DD23/version.txt");
-        HttpURLConnection uc = (HttpURLConnection) url.openConnection();
-        int code = uc.getResponseCode();
+        HttpURLConnection conn = (HttpURLConnection) new URL("https://sinacloud.net/myunco/E776DD23/version.txt").openConnection();
+        int code = conn.getResponseCode();
         String[] ret = new String[2];
         if (code == HttpURLConnection.HTTP_OK) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             ret[0] = br.readLine(); //读取最新版本
             ret[1] = br.readLine(); //读取是否重大更新
             if (!PluginCommandExecutor.VERSION.equals(ret[0])) {
@@ -212,7 +211,4 @@ public class Util {
         return ret.size() == 0 ? null : ret;
     }
 
-    public static boolean checkOPChangeArg(String arg) {
-        return !arg.startsWith(" ") && arg.split(" ").length == 1;
-    }
 }

@@ -5,14 +5,17 @@ import com.github.myunco.servermonitor.config.ConfigLoader;
 import com.github.myunco.servermonitor.config.Language;
 import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
 import com.github.myunco.servermonitor.listener.PluginEventListener;
+import com.github.myunco.servermonitor.metrics.Metrics;
 import com.github.myunco.servermonitor.util.Log;
 import com.github.myunco.servermonitor.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Objects;
 
 /*
@@ -39,24 +42,29 @@ import java.util.Objects;
  *       指定api-version为1.13.
  *       其他细节修改.
  * 1.1.5 优化op修改判断逻辑
- *       （待办：寻找新的可靠的监视op修改的方法）
+ *       接入bStats.org匿名统计信息
+ *       调整部分事件优先级、部分已取消事件不再记录日志了
+ *       现在支持1.7.2以及之前的版本了
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;
-    public static ConsoleCommandSender consoleSender;
-    BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
+    public static int mcVersion = Integer.parseInt(Bukkit.getBukkitVersion().replace('-', '.').split("\\.")[1]);
+    public static ConsoleCommandSender consoleSender; // = Bukkit.getConsoleSender();  在1.7.2这样写 下面用到consoleSender会NPE···
+    public static BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
 
     @Override
     public void onEnable() {
+        consoleSender = getServer().getConsoleSender();
+        getLogger().info("minecraft version = 1." + mcVersion);
         plugin = this;
-        consoleSender = Bukkit.getConsoleSender();
         if (!ConfigLoader.load()) {
             getPluginLoader().disablePlugin(this);
             return;
         }
-        getServer().getPluginManager().registerEvents(new PluginEventListener(), this);
+        getServer().getPluginManager().registerEvents(new PluginEventListener(mcVersion), this);
         Objects.requireNonNull(getServer().getPluginCommand("ServerMonitor")).setExecutor(new PluginCommandExecutor());
         consoleSender.sendMessage(Language.enabled);
+        new Metrics(this, 12934);
     }
 
     public void enable() {
@@ -86,8 +94,22 @@ public class ServerMonitor extends JavaPlugin {
     }
 
     public void disable() {
-        Bukkit.getScheduler().cancelTasks(this);
+        bukkitScheduler.cancelTasks(this);
         Log.closeAllLog();
+    }
+
+    public Player[] getOnlinePlayers() {
+        try {
+            if (mcVersion > 7) {
+                throw new Exception();
+            }
+            return (Player[]) Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers").invoke(getServer());
+        } catch (Exception e) {
+            Collection<? extends Player> collection = getServer().getOnlinePlayers();
+            Player[] players = new Player[collection.size()];
+            collection.toArray(players);
+            return players;
+        }
     }
 
 }

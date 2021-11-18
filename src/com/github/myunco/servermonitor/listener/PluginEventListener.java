@@ -6,6 +6,7 @@ import com.github.myunco.servermonitor.config.Language;
 import com.github.myunco.servermonitor.util.Log;
 import com.github.myunco.servermonitor.util.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,9 +23,19 @@ import java.util.List;
 import java.util.Objects;
 
 public class PluginEventListener implements Listener {
+    String opGivePermission;
+    String opTakePermission;
 
-    //emm 吃了没看文档的亏，没想到名字叫最低的居然最先执行(先入为主了优先级高=先执行 的概念)，这命名好迷惑。
-    //@EventHandler(priority = EventPriority.MONITOR)
+    public PluginEventListener(int mcVersion) {
+        if (mcVersion < 8) {
+            opGivePermission = "bukkit.command.op.give";
+            opTakePermission = "bukkit.command.op.take";
+        } else {
+            opGivePermission = "minecraft.command.op";
+            opTakePermission = "minecraft.command.deop";
+        }
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void playerAsyncChatEvent(AsyncPlayerChatEvent event) {
         if (!Config.playerChat.get("enable"))
@@ -38,8 +49,7 @@ public class PluginEventListener implements Listener {
             Log.writePlayerChatLog(playerName, str);
     }
 
-    //@EventHandler(priority = EventPriority.MONITOR)
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void playerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
         if (!Config.playerCommand.get("enable"))
             return;
@@ -53,19 +63,20 @@ public class PluginEventListener implements Listener {
         Log.writeCommandLog(str);
         if (Config.playerCommand.get("perPlayer"))
             Log.writePlayerCommandLog(playerName, str);
-        //待办：寻找新的可靠的监视op修改的方法
-        if (isOp && Config.opChange) {
-            if (cmd.toLowerCase().startsWith("/op ")) {
-                String arg = Util.getTextRight(cmd, " ");
-                if (Util.checkOPChangeArg(arg)) {
+        if (event.isCancelled())
+            return;
+        if (Config.opChange) {
+            if ((isOp || event.getPlayer().hasPermission(opGivePermission)) && cmd.toLowerCase().startsWith("/op ")) {
+                String arg = Util.getTextRight(cmd, " ").trim();
+                if (arg.indexOf(' ') == -1) {
                     str = Util.getTime() + Language.logOpped
                             .replace("{player1}", playerName)
                             .replace("{player2}", arg.trim());
                     Log.writeOpChangeLog(str);
                 }
-            } else if (cmd.toLowerCase().startsWith("/deop ")) {
-                String arg = Util.getTextRight(cmd, " ");
-                if (Util.checkOPChangeArg(arg)) {
+            } else if ((isOp || event.getPlayer().hasPermission(opTakePermission)) && cmd.toLowerCase().startsWith("/deop ")) {
+                String arg = Util.getTextRight(cmd, " ").trim();
+                if (arg.indexOf(' ') == -1) {
                     str = Util.getTime() + Language.logDeOpped
                             .replace("{player1}", playerName)
                             .replace("{player2}", arg.trim());
@@ -73,7 +84,7 @@ public class PluginEventListener implements Listener {
                 }
             }
         }
-        if (!Config.commandAlert || Util.isWhiteList(playerName) || Util.isCommandWhiteList(Util.getTextLeft(cmd, " ")))
+        if (!isOp || !Config.commandAlert || Util.isWhiteList(playerName) || Util.isCommandWhiteList(Util.getTextLeft(cmd, " ")))
             return;
         if (Config.cancel)
             event.setCancelled(true);
@@ -122,7 +133,7 @@ public class PluginEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void serverCommandEvent(ServerCommandEvent event) {
         if (!Config.playerCommand.get("consoleCommand"))
             return;
@@ -134,36 +145,34 @@ public class PluginEventListener implements Listener {
                 .replace("{sender}", name)
                 .replace("{command}", cmd);
         Log.writeCommandLog(str);
-        if (!Config.opChange)
+        if (!Config.opChange || (ServerMonitor.mcVersion > 8 && event.isCancelled()))
             return;
         if (cmd.toLowerCase().startsWith("op ")) {
-            String playerName = Util.getTextRight(cmd, " ");
-            if (Util.checkOPChangeArg(playerName)) {
-                playerName = playerName.trim();
+            String arg = Util.getTextRight(cmd, " ").trim();
+            if (arg.indexOf(' ') == -1) {
                 str = Util.getTime() + Language.logConsoleOpped
                         .replace("{sender}", name)
-                        .replace("{player}", playerName);
-                if ("CONSOLE".equals(name)) {
-                    Util.addWhiteList(playerName);
-                }
+                        .replace("{player}", arg);
                 Log.writeOpChangeLog(str);
+                if (event.getSender() instanceof ConsoleCommandSender) {
+                    Util.addWhiteList(arg);
+                }
             }
         } else if (cmd.toLowerCase().startsWith("deop ")) {
-            String playerName = Util.getTextRight(cmd, " ");
-            if (Util.checkOPChangeArg(playerName)) {
-                playerName = playerName.trim();
+            String arg = Util.getTextRight(cmd, " ").trim();
+            if (arg.indexOf(' ') == -1) {
                 str = Util.getTime() + Language.logConsoleDeOpped
                         .replace("{sender}", name)
-                        .replace("{player}", playerName);
-                if ("CONSOLE".equals(name)) {
-                    Util.delWhiteList(playerName);
-                }
+                        .replace("{player}", arg);
                 Log.writeOpChangeLog(str);
+                if (event.getSender() instanceof ConsoleCommandSender) {
+                    Util.delWhiteList(arg);
+                }
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void playerGameModeChangeEvent(PlayerGameModeChangeEvent event) {
         if (!Config.playerGameModeChange.get("enable"))
             return;
@@ -176,7 +185,7 @@ public class PluginEventListener implements Listener {
             Log.writePlayerGameModeLog(playerName, str);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler
     public void playerJoinEvent(PlayerJoinEvent event) {
         if (!Config.joinAndLeave)
             return;
@@ -193,7 +202,7 @@ public class PluginEventListener implements Listener {
             Log.addPlayerGameModeLog(playerName);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler
     public void playerQuitEvent(PlayerQuitEvent event) {
         if (!Config.joinAndLeave)
             return;
@@ -210,9 +219,9 @@ public class PluginEventListener implements Listener {
             Log.closePlayerGameModeLog(playerName);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void playerKickEvent(PlayerKickEvent event) {
-        if (!Config.joinAndLeave || event.isCancelled())
+        if (!Config.joinAndLeave)
             return;
         String str = Util.getTime() + Language.logPlayerKick
                 .replace("{player}", event.getPlayer().getName())

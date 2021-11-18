@@ -4,6 +4,7 @@ import com.github.myunco.servermonitor.ServerMonitor;
 import com.github.myunco.servermonitor.config.Config;
 import com.github.myunco.servermonitor.config.Language;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -325,7 +326,7 @@ public class Log {
                 return false;
             }
         }
-        ServerMonitor.plugin.getServer().getOnlinePlayers().forEach(player -> {
+        for (Player player : ServerMonitor.plugin.getOnlinePlayers()) {
             String playerName = player.getName();
             if (Config.playerChat.get("perPlayer"))
                 Log.addPlayerChatLog(playerName);
@@ -333,7 +334,7 @@ public class Log {
                 Log.addPlayerCommandLog(playerName);
             if (Config.playerGameModeChange.get("perPlayer"))
                 Log.addPlayerGameModeLog(playerName);
-        });
+        }
         return true;
     }
 

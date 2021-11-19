@@ -6,7 +6,6 @@ import ml.mcos.servermonitor.config.ConfigLoader;
 import ml.mcos.servermonitor.config.Language;
 import ml.mcos.servermonitor.command.CommandServerMonitor;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,23 +24,21 @@ import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 public class Util {
-    static SimpleDateFormat sdf;
-    static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    static SimpleDateFormat timeFormat;
+    static SimpleDateFormat nameFormat = new SimpleDateFormat("yyyy-MM-dd");
     static ConsoleCommandSender consoleSender = ServerMonitor.consoleSender;
     public static String logName = getToday();
 
-    public static void setSdf(String dateFormat) {
-         sdf = new SimpleDateFormat(dateFormat);
+    public static void setTimeFormat(String dateFormat) {
+         timeFormat = new SimpleDateFormat(dateFormat);
     }
 
     public static String getTime() {
-        Date d = new Date();
-        return sdf.format(d) + " ";
+        return timeFormat.format(new Date()) + " ";
     }
 
     public static String getToday() {
-        Date d = new Date();
-        return format.format(d);
+        return nameFormat.format(new Date());
     }
 
     public static String getTextRight(String str, String subStr) {
@@ -54,7 +51,7 @@ public class Util {
         return index == -1 ? str : str.substring(0, index);
     }
 
-    public static boolean isWhiteList(String playerName) {
+    public static boolean isWhitelist(String playerName) {
         for (String s : Config.whitelist) {
             if (s.equalsIgnoreCase(playerName)) {
                 return true;
@@ -63,30 +60,21 @@ public class Util {
         return false;
     }
 
-    public static boolean addWhiteList(String playerName) {
-        if (isWhiteList(playerName)) {
-            return true;
+    public static void whitelistAdd(String playerName) {
+        if (!isWhitelist(playerName)) {
+            Config.whitelist.add(playerName);
+            ConfigLoader.setValue("commandAlert.whitelist", Config.whitelist);
         }
-        Config.whitelist.add(playerName);
-         return setConfigValue("commandAlert.whitelist", Config.whitelist);
     }
 
-    public static boolean delWhiteList(String playerName) {
-        if (!isWhiteList(playerName)) {
-            return true;
+    public static void whitelistRemove(String playerName) {
+        if (isWhitelist(playerName)) {
+            Config.whitelist.remove(playerName);
+            ConfigLoader.setValue("commandAlert.whitelist", Config.whitelist);
         }
-        return Config.whitelist.remove(playerName) && setConfigValue("commandAlert.whitelist", Config.whitelist);
     }
 
-    public static boolean setConfigValue(String path, Object value) {
-        ServerMonitor.plugin.saveDefaultConfig();
-        File file = new File(ServerMonitor.plugin.getDataFolder(), "/config.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        config.set(path, value);
-        return ConfigLoader.save(config, file);
-    }
-
-    public static boolean isCommandWhiteList(String command) {
+    public static boolean isWhitelistCommand(String command) {
         for (String s : Config.commandWhiteList) {
             if (s.equalsIgnoreCase(command)) {
                 return true;
@@ -96,19 +84,19 @@ public class Util {
     }
 
     public static void gzipFile(File file) throws IOException {
-        FileInputStream fis;
+        FileInputStream in;
         try {
-            fis = new FileInputStream(file);
+            in = new FileInputStream(file);
         } catch (FileNotFoundException e) {
             return;
         }
         GZIPOutputStream gzip = new GZIPOutputStream(new FileOutputStream(file.getAbsolutePath() + ".gz"), 1024);
         int len;
         byte[] buf = new byte[1024];
-        while ((len = fis.read(buf)) != -1) {
+        while ((len = in.read(buf)) != -1) {
            gzip.write(buf, 0, len);
         }
-        fis.close();
+        in.close();
         gzip.close();
         if (!file.delete())
             consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError.replace("{file}", file.getAbsolutePath()));
@@ -145,7 +133,7 @@ public class Util {
 
     public static long getDayDiff(String now, String before) {
         try {
-            return (format.parse(now).getTime() - format.parse(before).getTime()) / (1000 * 60 * 60 * 24);
+            return (nameFormat.parse(now).getTime() - nameFormat.parse(before).getTime()) / (1000 * 60 * 60 * 24);
         } catch (ParseException e) {
             return 0;
         }

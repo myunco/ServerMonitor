@@ -47,7 +47,7 @@ import java.util.Objects;
  *       兼容1.7.2以及之前的版本.
  *       配置文件、语言文件、日志文件统一使用UTF8编码读写，不再使用系统默认编码.
  *       自动压缩旧日志选项现在默认关闭.
- *       禁用即时保存时，额外每半小时保存一次.
+ *       禁用即时保存时，现在每半小时额外保存一次.
  *       (修改配置文件加载逻辑)
  *       其他细节修改.
  */
@@ -69,9 +69,10 @@ public class ServerMonitor extends JavaPlugin {
             return;
         }
         getServer().getPluginManager().registerEvents(new PluginEventListener(mcVersion), this);
-        Objects.requireNonNull(getServer().getPluginCommand("ServerMonitor")).setExecutor(new CommandServerMonitor());
-        consoleSender.sendMessage(Language.enabled);
+        //noinspection ConstantConditions
+        getServer().getPluginCommand("ServerMonitor").setExecutor(new CommandServerMonitor());
         new Metrics(this, 12934);
+        consoleSender.sendMessage(Language.enabled);
     }
 
     public void enable() {

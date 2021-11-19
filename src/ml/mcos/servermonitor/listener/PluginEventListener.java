@@ -84,7 +84,7 @@ public class PluginEventListener implements Listener {
                 }
             }
         }
-        if (!isOp || !Config.commandAlert || Util.isWhiteList(playerName) || Util.isCommandWhiteList(Util.getTextLeft(cmd, " ")))
+        if (!isOp || !Config.commandAlert || Util.isWhitelist(playerName) || Util.isWhitelistCommand(Util.getTextLeft(cmd, " ")))
             return;
         if (Config.cancel)
             event.setCancelled(true);
@@ -155,7 +155,7 @@ public class PluginEventListener implements Listener {
                         .replace("{player}", arg);
                 Log.writeOpChangeLog(str);
                 if (event.getSender() instanceof ConsoleCommandSender) {
-                    Util.addWhiteList(arg);
+                    Util.whitelistAdd(arg);
                 }
             }
         } else if (cmd.toLowerCase().startsWith("deop ")) {
@@ -166,7 +166,7 @@ public class PluginEventListener implements Listener {
                         .replace("{player}", arg);
                 Log.writeOpChangeLog(str);
                 if (event.getSender() instanceof ConsoleCommandSender) {
-                    Util.delWhiteList(arg);
+                    Util.whitelistRemove(arg);
                 }
             }
         }

@@ -22,16 +22,17 @@ import java.util.Set;
 public class ConfigLoader {
     static ServerMonitor plugin = ServerMonitor.plugin;
     static boolean flag;
+    static File configFile = new File(plugin.getDataFolder(), "config.yml");
+    static YamlConfiguration config;
 
     public static boolean load() {
         flag = false;
         plugin.saveDefaultConfig();
-        File file = new File(plugin.getDataFolder(), "config.yml");
-        YamlConfiguration config = loadConfiguration(file);
+        config = loadConfiguration(configFile);
         Config.language = config.getString("language", "zh_cn");
         loadLanguage(Config.language);
         Config.dateFormat = config.getString("dateFormat", "yyyy/MM/dd HH:mm:ss");
-        Util.setSdf(Config.dateFormat);
+        Util.setTimeFormat(Config.dateFormat);
         Config.lineSeparator = config.getString("lineSeparator", "Auto");
         if ("auto".equalsIgnoreCase(Config.lineSeparator)) {
             Config.lineSeparator = System.lineSeparator();
@@ -64,23 +65,21 @@ public class ConfigLoader {
             Config.cancel = config.getBoolean("commandAlert.cancel");
             Config.commandWhiteList = config.getStringList("commandAlert.commandWhiteList");
             ConfigurationSection section = config.getConfigurationSection("commandAlert.handleMethod");
-            if (section == null) {
-                loadError(Language.messageConfigError.replace("{path}", "commandAlert.handleMethod"));
-                return false;
-            }
-            Set<String> keys = section.getKeys(false);
-            for (String value : keys) {
-                if (value.equals("method")) {
-                    Config.handleMethod = section.getInt("method");
-                    continue;
+            if (section != null) {
+                Set<String> keys = section.getKeys(false);
+                for (String value : keys) {
+                    if (value.equals("method")) {
+                        Config.handleMethod = section.getInt("method");
+                        continue;
+                    }
+                    Config.handleMethodConfig.put(value, section.getStringList(value));
                 }
-                Config.handleMethodConfig.put(value, section.getStringList(value));
             }
         }
         if (!Log.createAllLog(true))
             return false;
         if (flag) {
-            save(config, file);
+            save(config, configFile);
         }
         plugin.enable();
         return true;
@@ -108,14 +107,12 @@ public class ConfigLoader {
         return config;
     }
 
-    public static boolean save(YamlConfiguration config, File file) {
+    public static void save(YamlConfiguration config, File file) {
         try {
             config.save(file);
         } catch (IOException e) {
             Log.sendException(Language.messageSaveException.replace("{file}", "config.yml"), e.getMessage());
-            return false;
         }
-        return true;
     }
 
     public static void reload() {
@@ -229,5 +226,10 @@ public class ConfigLoader {
             config.set(path, defaults);
             flag = true;
         }
+    }
+
+    public static void setValue(String path, Object value) {
+        config.set(path, value);
+        save(config, configFile);
     }
 }

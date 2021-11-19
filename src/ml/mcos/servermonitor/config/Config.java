@@ -1,4 +1,4 @@
-package com.github.myunco.servermonitor.config;
+package ml.mcos.servermonitor.config;
 
 import java.util.HashMap;
 import java.util.List;

@@ -8,13 +8,14 @@ dateFormat: 'yyyy/MM/dd HH:mm:ss'
 lineSeparator: 'Auto'
 
 #即时保存 true为启用 false为禁用
-#若启用则每条日志信息即时保存到文件，禁用则有一定缓冲区，但会在插件卸载时完整保存(若插件未正常卸载则存在部分记录丢失的可能)
+#若启用则每条日志信息即时保存到文件。当在线玩家非常多并且较为活跃时可能会频繁向硬盘写出数据，但性能影响微乎其微。
+#禁用此项则每条日志信息会存入缓冲区，每隔半小时或缓冲区存满时向硬盘写出数据。若插件未正常卸载(例如服务器崩溃)则可能导致部分记录丢失。
 realTimeSave: true
 
 #自动压缩旧日志 true为启用 false为禁用
-zipOldLog: true
+zipOldLog: false
 
-#自动删除旧日志 填0为禁用 填正整数X 为删除X天前的日志 负数无效
+#自动删除旧日志 填0为禁用 填正整数n 为删除n天前的日志(例如填 7 表示删除7天前的日志) 负数无效
 delOldLog: 0
 
 #检查更新 true为启用 false为禁用
@@ -55,8 +56,8 @@ commandAlert:
 
   #玩家白名单 按示例格式添加
   whitelist:
-    - player1
-    - player2
+    - 玩家名1
+    - 玩家名2
 
   #命令白名单 按示例格式添加
   commandWhiteList:
@@ -79,7 +80,7 @@ commandAlert:
       - '§e[§d公告§e]§4玩家§a{player}§4因利用bug获取OP权限而惨遭封禁!'
       - '§e[§d公告§e]§4玩家§a{player}§4因利用bug获取OP权限而惨遭封禁!'
 
-    #控制台执行的命令 支持多个 按格式添加
+    #控制台执行的命令 支持多个 按格式添加 不用加"/"
     consoleCmd:
       - 'deop {player}'
       - 'ban {player}'

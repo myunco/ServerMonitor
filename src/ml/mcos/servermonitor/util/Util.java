@@ -1,10 +1,10 @@
-package com.github.myunco.servermonitor.util;
+package ml.mcos.servermonitor.util;
 
-import com.github.myunco.servermonitor.ServerMonitor;
-import com.github.myunco.servermonitor.config.Config;
-import com.github.myunco.servermonitor.config.ConfigLoader;
-import com.github.myunco.servermonitor.config.Language;
-import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
+import ml.mcos.servermonitor.ServerMonitor;
+import ml.mcos.servermonitor.config.Config;
+import ml.mcos.servermonitor.config.ConfigLoader;
+import ml.mcos.servermonitor.config.Language;
+import ml.mcos.servermonitor.command.CommandServerMonitor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -184,31 +184,38 @@ public class Util {
         int code = conn.getResponseCode();
         String[] ret = new String[2];
         if (code == HttpURLConnection.HTTP_OK) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            ret[0] = br.readLine(); //读取最新版本
-            ret[1] = br.readLine(); //读取是否重大更新
-            if (!PluginCommandExecutor.VERSION.equals(ret[0])) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            ret[0] = reader.readLine(); //读取最新版本
+            ret[1] = reader.readLine(); //读取是否重大更新
+            if (!CommandServerMonitor.VERSION.equals(ret[0])) {
                 String str = Language.messageFoundNewVersion
-                        .replace("{version}", PluginCommandExecutor.VERSION)
+                        .replace("{version}", CommandServerMonitor.VERSION)
                         .replace("{$version}", ret[0])
                         .replace("{url}", "https://www.mcbbs.net/thread-995756-1-1.html");
                 consoleSender.sendMessage(Language.MSG_PREFIX + ("true".equals(ret[1]) ? Language.messageMajorUpdate + " - " + str : str));
             }
-            br.close();
+            reader.close();
         } else {
             consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageCheckUpdateError.replace("{code}", String.valueOf(code)));
         }
     }
 
-    public static List<String> getTabList(String[] args, List<String> list, int index) {
-        String arg = args[index].toLowerCase();
+    public static List<String> getCompleteList(String[] args, List<String> list) {
         List<String> ret = new ArrayList<>();
+        if (list == null) {
+            return ret;
+        } else if (list.isEmpty()) {
+            return null;
+        } else if (args[args.length - 1].isEmpty()) {
+            return list;
+        }
+        String arg = args[args.length - 1].toLowerCase();
         for (String value : list) {
             if (value.startsWith(arg)) {
                 ret.add(value);
             }
         }
-        return ret.size() == 0 ? null : ret;
+        return ret;
     }
 
 }

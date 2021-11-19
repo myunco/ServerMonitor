@@ -1,10 +1,10 @@
-package com.github.myunco.servermonitor.listener;
+package ml.mcos.servermonitor.listener;
 
-import com.github.myunco.servermonitor.ServerMonitor;
-import com.github.myunco.servermonitor.config.Config;
-import com.github.myunco.servermonitor.config.Language;
-import com.github.myunco.servermonitor.util.Log;
-import com.github.myunco.servermonitor.util.Util;
+import ml.mcos.servermonitor.ServerMonitor;
+import ml.mcos.servermonitor.config.Config;
+import ml.mcos.servermonitor.config.Language;
+import ml.mcos.servermonitor.util.Log;
+import ml.mcos.servermonitor.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.event.EventHandler;

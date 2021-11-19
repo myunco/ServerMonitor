@@ -1,4 +1,4 @@
-package com.github.myunco.servermonitor.config;
+package ml.mcos.servermonitor.config;
 
 public class Language {
     public static final String MSG_PREFIX = "§3[§aServerMonitor§3] §e-> ";

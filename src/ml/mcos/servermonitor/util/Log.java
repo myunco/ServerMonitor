@@ -1,80 +1,66 @@
-package com.github.myunco.servermonitor.util;
+package ml.mcos.servermonitor.util;
 
-import com.github.myunco.servermonitor.ServerMonitor;
-import com.github.myunco.servermonitor.config.Config;
-import com.github.myunco.servermonitor.config.Language;
+import ml.mcos.servermonitor.ServerMonitor;
+import ml.mcos.servermonitor.config.Config;
+import ml.mcos.servermonitor.config.Language;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class Log {
-    public static FileWriter chatLog;
-    public static FileWriter commandLog;
-    public static FileWriter gameModeLog;
-    public static FileWriter opChangeLog;
-    public static FileWriter joinLeaveLog;
-    public static FileWriter warningLog;
+    public static BufferedWriter chatLog;
+    public static BufferedWriter commandLog;
+    public static BufferedWriter gameModeLog;
+    public static BufferedWriter opChangeLog;
+    public static BufferedWriter joinLeaveLog;
+    public static BufferedWriter warningLog;
 
-    public static HashMap<String, FileWriter> playerChatLog = new HashMap<>();
-    public static HashMap<String, FileWriter> playerCommandLog = new HashMap<>();
-    public static HashMap<String, FileWriter> playerGameModeLog = new HashMap<>();
+    public static HashMap<String, BufferedWriter> playerChatLog = new HashMap<>();
+    public static HashMap<String, BufferedWriter> playerCommandLog = new HashMap<>();
+    public static HashMap<String, BufferedWriter> playerGameModeLog = new HashMap<>();
 
     public static File dateFolder = ServerMonitor.plugin.getDataFolder();
     public static ConsoleCommandSender consoleSender = ServerMonitor.consoleSender;
 
+    public static BufferedWriter openLogFile(File file) throws IOException {
+        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8), 1024);
+    }
+
     public static void createWarningLog() throws IOException {
-        warningLog = new FileWriter(new File(dateFolder, "Warning.log"), true);
-    }
-
-    public static void writeWarningLog(String str) {
-        try {
-            warningLog.write(str + Config.lineSeparator);
-            if (Config.realTimeSave)
-                warningLog.flush();
-        } catch (IOException e) {
-            sendException(Language.messageWriteException.replace("{file}", "Warning.log"), e.getMessage());
-        }
-    }
-
-    public static void closeWarningLog() throws IOException {
-        if (warningLog != null)
-            warningLog.close();
-    }
-
-    public static void createChatLog() throws IOException {
-        File file = new File(dateFolder, "ChatLogs/" + Util.logName + ".log");
-        checkParentFolder(file, Language.MSG_PREFIX + "Chat -> mkdirs error");
-        chatLog = new FileWriter(file, true);
+        warningLog = openLogFile(new File(dateFolder, "Warning.log"));
     }
 
     public static void createCommandLog() throws IOException {
         File file = new File(dateFolder, "CommandLogs/" + Util.logName + ".log");
         checkParentFolder(file, Language.MSG_PREFIX + "Command -> mkdirs error");
-        commandLog = new FileWriter(file, true);
+        commandLog = openLogFile(file);
     }
 
     public static void createGameModeLog() throws IOException {
         File file = new File(dateFolder, "GameModeLogs/" + Util.logName + ".log");
         checkParentFolder(file, Language.MSG_PREFIX + "GameMode -> mkdirs error");
-        gameModeLog = new FileWriter(file, true);
+        gameModeLog = openLogFile(file);
     }
 
     public static void createOpChangeLog() throws IOException {
-        opChangeLog = new FileWriter(new File(dateFolder, "OpChange.log"), true);
+        opChangeLog = openLogFile(new File(dateFolder, "OpChange.log"));
     }
 
     public static void createJoinLeaveLog() throws IOException {
         File file = new File(dateFolder, "JoinLeaveLogs/" + Util.logName + ".log");
         checkParentFolder(file, Language.MSG_PREFIX + "JoinLeave -> mkdirs error");
-        joinLeaveLog = new FileWriter(file, true);
+        joinLeaveLog = openLogFile(file);
     }
 
     public static void closeAllLog() {
-        //本着能关一个尽量关一个的原则
+        //能关一个尽量关一个
         try {
             if (chatLog != null)
                 chatLog.close();
@@ -187,7 +173,7 @@ public class Log {
         File file = new File(dateFolder, "ChatLogs/players/" + playerName + "/" + Util.logName + ".log");
         checkParentFolder(file, Language.MSG_PREFIX + "Chat -> " + playerName + " -> " + "mkdirs error");
         try {
-            playerChatLog.put(playerName, new FileWriter(file, true));
+            playerChatLog.put(playerName, openLogFile(file));
         } catch (IOException e) {
             sendException(Language.messageOpenException.replace("{file}", file.getPath()), e.getMessage());
         }
@@ -197,7 +183,7 @@ public class Log {
         File file = new File(dateFolder, "CommandLogs/players/" + playerName + "/" + Util.logName + ".log");
         checkParentFolder(file, Language.MSG_PREFIX + "Command -> " + playerName + " -> " + "mkdirs error");
         try {
-            playerCommandLog.put(playerName, new FileWriter(file, true));
+            playerCommandLog.put(playerName, openLogFile(file));
         } catch (IOException e) {
             sendException(Language.messageOpenException.replace("{file}", file.getPath()), e.getMessage());
         }
@@ -207,18 +193,18 @@ public class Log {
         File file = new File(dateFolder, "GameModeLogs/players/" + playerName + "/" + Util.logName + ".log");
         checkParentFolder(file, Language.MSG_PREFIX + "GameMode -> " + playerName + " -> " + "mkdirs error");
         try {
-            playerGameModeLog.put(playerName, new FileWriter(file, true));
+            playerGameModeLog.put(playerName, openLogFile(file));
         } catch (IOException e) {
             sendException(Language.messageOpenException.replace("{file}", file.getPath()), e.getMessage());
         }
     }
 
     public static void writePlayerChatLog(String playerName, String str) {
-        FileWriter fw = playerChatLog.get(playerName);
+        BufferedWriter writer = playerChatLog.get(playerName);
         try {
-            fw.write(str + Config.lineSeparator);
+            writer.write(str + Config.lineSeparator);
             if (Config.realTimeSave)
-                fw.flush();
+                writer.flush();
         } catch (IOException e) {
             sendException(Language.messageWriteException.replace("{file}", "Chat -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
         } catch (NullPointerException e) {
@@ -227,11 +213,11 @@ public class Log {
     }
 
     public static void writePlayerCommandLog(String playerName, String str) {
-        FileWriter fw = playerCommandLog.get(playerName);
+        BufferedWriter writer = playerCommandLog.get(playerName);
         try {
-            fw.write(str + Config.lineSeparator);
+            writer.write(str + Config.lineSeparator);
             if (Config.realTimeSave)
-                fw.flush();
+                writer.flush();
         } catch (IOException e) {
             sendException(Language.messageWriteException.replace("{file}", "Command -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
         } catch (NullPointerException e) {
@@ -240,11 +226,11 @@ public class Log {
     }
 
     public static void writePlayerGameModeLog(String playerName, String str) {
-        FileWriter fw = playerGameModeLog.get(playerName);
+        BufferedWriter writer = playerGameModeLog.get(playerName);
         try {
-            fw.write(str + Config.lineSeparator);
+            writer.write(str + Config.lineSeparator);
             if (Config.realTimeSave)
-                fw.flush();
+                writer.flush();
         } catch (IOException e) {
             sendException(Language.messageWriteException.replace("{file}", "GameMode -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
         } catch (NullPointerException e) {
@@ -279,10 +265,30 @@ public class Log {
     public static void checkParentFolder(File file, String message) {
         if (file.getParentFile().exists())
             return;
-        boolean ret = file.getParentFile().mkdirs();
-        if (!ret) {
+        if (!file.getParentFile().mkdirs()) {
             consoleSender.sendMessage(message);
         }
+    }
+
+    public static void writeWarningLog(String str) {
+        try {
+            warningLog.write(str + Config.lineSeparator);
+            if (Config.realTimeSave)
+                warningLog.flush();
+        } catch (IOException e) {
+            sendException(Language.messageWriteException.replace("{file}", "Warning.log"), e.getMessage());
+        }
+    }
+
+    public static void closeWarningLog() throws IOException {
+        if (warningLog != null)
+            warningLog.close();
+    }
+
+    public static void createChatLog() throws IOException {
+        File file = new File(dateFolder, "ChatLogs/" + Util.logName + ".log");
+        checkParentFolder(file, Language.MSG_PREFIX + "Chat -> mkdirs error");
+        chatLog = openLogFile(file);
     }
 
     public static boolean createAllLog(boolean all) {
@@ -340,13 +346,13 @@ public class Log {
 
     public static void updateAllLog(String logName) {
         String tmp_logName = Util.logName;
-        FileWriter tmp_chatLog = chatLog;
-        FileWriter tmp_commandLog = commandLog;
-        FileWriter tmp_gameModeLog = gameModeLog;
-        FileWriter tmp_joinLeaveLog = joinLeaveLog;
-        HashMap<String, FileWriter> tmp_playerChatLog = new HashMap<>(playerChatLog);
-        HashMap<String, FileWriter> tmp_playerCommandLog = new HashMap<>(playerCommandLog);
-        HashMap<String, FileWriter> tmp_playerGameModeLog = new HashMap<>(playerGameModeLog);
+        BufferedWriter tmp_chatLog = chatLog;
+        BufferedWriter tmp_commandLog = commandLog;
+        BufferedWriter tmp_gameModeLog = gameModeLog;
+        BufferedWriter tmp_joinLeaveLog = joinLeaveLog;
+        HashMap<String, BufferedWriter> tmp_playerChatLog = new HashMap<>(playerChatLog);
+        HashMap<String, BufferedWriter> tmp_playerCommandLog = new HashMap<>(playerCommandLog);
+        HashMap<String, BufferedWriter> tmp_playerGameModeLog = new HashMap<>(playerGameModeLog);
         Util.logName = logName;
         createAllLog(false);
         try {
@@ -394,5 +400,9 @@ public class Log {
                 sendException(Language.messageCloseException.replace("{file}", "GameMode -> " + player + " -> " + tmp_logName + ".log"), e.getMessage());
             }
         });
+    }
+
+    public static void flushAllLog() {
+
     }
 }

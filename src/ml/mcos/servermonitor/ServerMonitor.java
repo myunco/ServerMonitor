@@ -1,13 +1,13 @@
-package com.github.myunco.servermonitor;
+package ml.mcos.servermonitor;
 
-import com.github.myunco.servermonitor.config.Config;
-import com.github.myunco.servermonitor.config.ConfigLoader;
-import com.github.myunco.servermonitor.config.Language;
-import com.github.myunco.servermonitor.executor.PluginCommandExecutor;
-import com.github.myunco.servermonitor.listener.PluginEventListener;
-import com.github.myunco.servermonitor.metrics.Metrics;
-import com.github.myunco.servermonitor.util.Log;
-import com.github.myunco.servermonitor.util.Util;
+import ml.mcos.servermonitor.config.Config;
+import ml.mcos.servermonitor.config.ConfigLoader;
+import ml.mcos.servermonitor.config.Language;
+import ml.mcos.servermonitor.command.CommandServerMonitor;
+import ml.mcos.servermonitor.listener.PluginEventListener;
+import ml.mcos.servermonitor.metrics.Metrics;
+import ml.mcos.servermonitor.util.Log;
+import ml.mcos.servermonitor.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -41,28 +41,35 @@ import java.util.Objects;
  * 1.1.4 命令补全支持大写.
  *       指定api-version为1.13.
  *       其他细节修改.
- * 1.1.5 优化op修改判断逻辑
- *       接入bStats.org匿名统计信息
- *       调整部分事件优先级、部分已取消事件不再记录日志了
- *       现在支持1.7.2以及之前的版本了
+ * 1.2.0 接入bStats.org匿名统计信息
+ *       优化op修改判断逻辑.
+ *       调整部分事件优先级、部分已取消事件不再记录日志.
+ *       兼容1.7.2以及之前的版本.
+ *       配置文件、语言文件、日志文件统一使用UTF8编码读写，不再使用系统默认编码.
+ *       自动压缩旧日志选项现在默认关闭.
+ *       禁用即时保存时，额外每半小时保存一次.
+ *       (修改配置文件加载逻辑)
+ *       其他细节修改.
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;
-    public static int mcVersion = Integer.parseInt(Bukkit.getBukkitVersion().replace('-', '.').split("\\.")[1]);
-    public static ConsoleCommandSender consoleSender; // = Bukkit.getConsoleSender();  在1.7.2这样写 下面用到consoleSender会NPE···
+    public static int mcVersion = getMinecraftVersion();
+    public static int mcVersionPatch;
+    public static ConsoleCommandSender consoleSender; // = Bukkit.getConsoleSender();  这样写在1.7.2下面用到consoleSender会NPE···
     public static BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
 
     @Override
     public void onEnable() {
         consoleSender = getServer().getConsoleSender();
-        getLogger().info("minecraft version = 1." + mcVersion);
+        getLogger().info("[ServerMonitor] Minecraft version = 1." + mcVersion + (mcVersionPatch != 0 ? "." + mcVersionPatch : ""));
         plugin = this;
         if (!ConfigLoader.load()) {
-            getPluginLoader().disablePlugin(this);
+            getLogger().severe("[ServerMonitor] 配置文件加载出错！");
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
         getServer().getPluginManager().registerEvents(new PluginEventListener(mcVersion), this);
-        Objects.requireNonNull(getServer().getPluginCommand("ServerMonitor")).setExecutor(new PluginCommandExecutor());
+        Objects.requireNonNull(getServer().getPluginCommand("ServerMonitor")).setExecutor(new CommandServerMonitor());
         consoleSender.sendMessage(Language.enabled);
         new Metrics(this, 12934);
     }
@@ -70,6 +77,9 @@ public class ServerMonitor extends JavaPlugin {
     public void enable() {
         Util.logInit();
         bukkitScheduler.runTaskTimerAsynchronously(this, () -> {
+            if (!Config.realTimeSave) {
+                Log.flushAllLog();
+            }
             String logName = Util.getToday();
             if (!Util.logName.equals(logName)) {
                 Log.updateAllLog(logName);
@@ -98,9 +108,19 @@ public class ServerMonitor extends JavaPlugin {
         Log.closeAllLog();
     }
 
+    public static int getMinecraftVersion() {
+        String[] version = Bukkit.getBukkitVersion().replace('-', '.').split("\\.");
+        int minor = Integer.parseInt(version[1]);
+        try {
+            mcVersionPatch = Integer.parseInt(version[2]);
+        } catch (NumberFormatException ignored) {
+        }
+        return minor;
+    }
+
     public Player[] getOnlinePlayers() {
         try {
-            if (mcVersion > 7) {
+            if (mcVersion > 7 || (mcVersion == 7 && mcVersionPatch == 10)) {
                 throw new Exception();
             }
             return (Player[]) Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers").invoke(getServer());

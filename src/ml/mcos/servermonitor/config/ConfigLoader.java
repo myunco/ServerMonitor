@@ -1,49 +1,45 @@
-package com.github.myunco.servermonitor.config;
+package ml.mcos.servermonitor.config;
 
-import com.github.myunco.servermonitor.ServerMonitor;
-import com.github.myunco.servermonitor.util.Log;
-import com.github.myunco.servermonitor.util.Util;
+import com.google.common.base.Charsets;
+import ml.mcos.servermonitor.ServerMonitor;
+import ml.mcos.servermonitor.util.Log;
+import ml.mcos.servermonitor.util.Util;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Set;
 
 public class ConfigLoader {
-    static ServerMonitor pl = ServerMonitor.plugin;
+    static ServerMonitor plugin = ServerMonitor.plugin;
     static boolean flag;
 
     public static boolean load() {
         flag = false;
-        pl.saveDefaultConfig();
-        File file = new File(pl.getDataFolder(), "/config.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-        Config.language = config.getString("language");
-        if (Config.language == null) {
-            loadError("配置文件错误! 请检查 language 是否存在.");
-            return false;
-        }
+        plugin.saveDefaultConfig();
+        File file = new File(plugin.getDataFolder(), "config.yml");
+        YamlConfiguration config = loadConfiguration(file);
+        Config.language = config.getString("language", "zh_cn");
         loadLanguage(Config.language);
-        Config.dateFormat = config.getString("dateFormat");
-        if (Config.dateFormat == null) {
-            loadError(Language.messageConfigError.replace("{path}", "dateFormat"));
-            return false;
-        }
+        Config.dateFormat = config.getString("dateFormat", "yyyy/MM/dd HH:mm:ss");
         Util.setSdf(Config.dateFormat);
-        Config.lineSeparator = config.getString("lineSeparator");
-        if (Config.lineSeparator == null) {
-            loadError(Language.messageConfigError.replace("{path}", "lineSeparator"));
-            return false;
-        }
-        if (Config.lineSeparator.toLowerCase().equals("auto"))
+        Config.lineSeparator = config.getString("lineSeparator", "Auto");
+        if ("auto".equalsIgnoreCase(Config.lineSeparator)) {
             Config.lineSeparator = System.lineSeparator();
+        }
         Config.realTimeSave = config.getBoolean("realTimeSave");
+
         //1.1.0新增
-        checkContain(config, "zipOldLog", true);
+        checkContain(config, "zipOldLog", false);
         Config.zipOldLog = config.getBoolean("zipOldLog");
         checkContain(config, "delOldLog", 0);
         Config.delOldLog = config.getInt("delOldLog");
@@ -67,22 +63,18 @@ public class ConfigLoader {
             Config.whitelist = config.getStringList("commandAlert.whitelist");
             Config.cancel = config.getBoolean("commandAlert.cancel");
             Config.commandWhiteList = config.getStringList("commandAlert.commandWhiteList");
-            ConfigurationSection cs = config.getConfigurationSection("commandAlert.handleMethod");
-            if (cs == null) {
+            ConfigurationSection section = config.getConfigurationSection("commandAlert.handleMethod");
+            if (section == null) {
                 loadError(Language.messageConfigError.replace("{path}", "commandAlert.handleMethod"));
                 return false;
             }
-            Set<String> s = cs.getKeys(false);
-            if (s.size() < 8) {
-                loadError(Language.messageConfigError.replace("{path}", "commandAlert.handleMethod.?"));
-                return false;
-            }
-            for (String value : s) {
+            Set<String> keys = section.getKeys(false);
+            for (String value : keys) {
                 if (value.equals("method")) {
-                    Config.handleMethod = config.getInt("commandAlert.handleMethod.method");
+                    Config.handleMethod = section.getInt("method");
                     continue;
                 }
-                Config.handleMethodConfig.put(value, config.getStringList("commandAlert.handleMethod." + value));
+                Config.handleMethodConfig.put(value, section.getStringList(value));
             }
         }
         if (!Log.createAllLog(true))
@@ -90,8 +82,30 @@ public class ConfigLoader {
         if (flag) {
             save(config, file);
         }
-        pl.enable();
+        plugin.enable();
         return true;
+    }
+
+    public static YamlConfiguration loadConfiguration(File file) {
+        YamlConfiguration config = new YamlConfiguration();
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Charsets.UTF_8));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            try {
+                while((line = reader.readLine()) != null) {
+                    builder.append(line).append('\n');
+                }
+            } finally {
+                reader.close();
+            }
+            config.loadFromString(builder.toString());
+        } catch (FileNotFoundException e) {
+            Log.sendException(Language.messageConfigError.replace("{path}", file.getName()), e.getMessage());
+        } catch (IOException | InvalidConfigurationException e) {
+            Log.sendException(Language.messageOpenException.replace("{file}", file.getName()), e.getMessage());
+        }
+        return config;
     }
 
     public static boolean save(YamlConfiguration config, File file) {
@@ -105,16 +119,16 @@ public class ConfigLoader {
     }
 
     public static void reload() {
-        pl.disable();
+        plugin.disable();
         load();
     }
 
     public static void loadLanguage(String language) {
         String langPath = "languages/" + language + ".yml";
-        File file = new File(pl.getDataFolder(), langPath);
+        File file = new File(plugin.getDataFolder(), langPath);
         if (!file.exists()) {
-            if (pl.getResource(langPath) == null) {
-                InputStream in = pl.getResource("languages/zh_cn.yml");
+            if (plugin.getResource(langPath) == null) {
+                InputStream in = plugin.getResource("languages/zh_cn.yml");
                 if (in != null) {
                     try {
                         OutputStream out = new FileOutputStream(file);
@@ -128,15 +142,15 @@ public class ConfigLoader {
                     } catch (IOException e) {
                         Log.sendException("§4[错误] §5在保存 " + language + ".yml 时发生IO异常!", e.getMessage());
                     }
-                    System.out.println("[ServerMonitor] 语言文件: " + file.getPath() + " 不存在,已自动创建.");
+                    plugin.getLogger().info("[ServerMonitor] 语言文件: " + file.getPath() + " 不存在,已自动创建.");
                 } else {
-                    System.out.println("[ServerMonitor] 错误! 语言文件: " + language + ".yml 不存在,并且在插件本体内找不到默认语言文件: zh_cn.yml");
+                    plugin.getLogger().severe("[ServerMonitor] 错误! 语言文件: " + language + ".yml 不存在,并且在插件本体内找不到默认语言文件: zh_cn.yml");
                 }
             } else {
-                pl.saveResource(langPath, false);
+                plugin.saveResource(langPath, false);
             }
         }
-        YamlConfiguration lang = YamlConfiguration.loadConfiguration(file);
+        YamlConfiguration lang = loadConfiguration(file);
         Language.version = lang.getInt("version");
         Language.messageSaveException = lang.getString("message.saveException");
         Language.messageLangUpdate = lang.getString("message.langUpdate");
@@ -185,9 +199,7 @@ public class ConfigLoader {
     public static boolean languageUpdate(YamlConfiguration lang) {
         int currentVersion = 2;
         if (Language.version < currentVersion) {
-            ServerMonitor.consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageLangUpdate
-                    .replace("{version}", String.valueOf(Language.version))
-                    .replace("{$version}", String.valueOf(currentVersion)));
+            ServerMonitor.consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageLangUpdate.replace("{version}", String.valueOf(Language.version)).replace("{$version}", String.valueOf(currentVersion)));
             switch (Language.version) {
                 case 1: //如果版本为1 则添加相对于版本2缺少的内容
                     lang.set("message.zipException", "§4[错误] §5在压缩 {file} 时发生IO异常!");
@@ -209,7 +221,7 @@ public class ConfigLoader {
     }
 
     public static void loadError(String msg) {
-        pl.getLogger().warning(msg);
+        plugin.getLogger().warning(msg);
     }
 
     public static void checkContain(YamlConfiguration config, String path, Object defaults) {

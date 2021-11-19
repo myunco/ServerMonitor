@@ -1,6 +1,6 @@
 name: ServerMonitor
-main: com.github.myunco.servermonitor.ServerMonitor
-version: 1.1.5
+main: ml.mcos.servermonitor.ServerMonitor
+version: 1.2.0
 api-version: 1.13
 author: unco_
 website: https://www.mcbbs.net/thread-995756-1-1.html

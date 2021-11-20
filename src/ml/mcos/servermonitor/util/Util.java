@@ -110,14 +110,14 @@ public class Util {
                 try {
                     gzipFile(file);
                 } catch (IOException e) {
-                    Log.sendException(Language.MSG_PREFIX + Language.messageZipException.replace("{file}", file.getAbsolutePath()), e.getMessage());
+                    sendException(Language.MSG_PREFIX + Language.messageZipException.replace("{file}", file.getAbsolutePath()), e.getMessage());
                 }
             }
         }
     }
 
     public static void delOldLog(int days) {
-        if (days <= 0) {
+        if (days < 1) {
             return;
         }
         ArrayList<File> files = getFileList(ServerMonitor.plugin.getDataFolder());
@@ -160,7 +160,7 @@ public class Util {
         return result;
     }
 
-    public static void logInit() {
+    public static void processOldLog() {
         if (Config.zipOldLog) {
             Util.zipOldLog();
         }
@@ -170,17 +170,17 @@ public class Util {
     public static void checkVersionUpdate() throws IOException {
         HttpURLConnection conn = (HttpURLConnection) new URL("https://sinacloud.net/myunco/E776DD23/version.txt").openConnection();
         int code = conn.getResponseCode();
-        String[] ret = new String[2];
         if (code == HttpURLConnection.HTTP_OK) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            ret[0] = reader.readLine(); //读取最新版本
-            ret[1] = reader.readLine(); //读取是否重大更新
-            if (!CommandServerMonitor.VERSION.equals(ret[0])) {
+            String[] line = new String[2];
+            line[0] = reader.readLine(); //读取最新版本
+            line[1] = reader.readLine(); //读取是否重大更新
+            if (!CommandServerMonitor.VERSION.equals(line[0])) {
                 String str = Language.messageFoundNewVersion
                         .replace("{version}", CommandServerMonitor.VERSION)
-                        .replace("{$version}", ret[0])
+                        .replace("{$version}", line[0])
                         .replace("{url}", "https://www.mcbbs.net/thread-995756-1-1.html");
-                consoleSender.sendMessage(Language.MSG_PREFIX + ("true".equals(ret[1]) ? Language.messageMajorUpdate + " - " + str : str));
+                consoleSender.sendMessage(Language.MSG_PREFIX + ("true".equals(line[1]) ? Language.messageMajorUpdate + " - " + str : str));
             }
             reader.close();
         } else {
@@ -188,7 +188,7 @@ public class Util {
         }
     }
 
-    public static List<String> getCompleteList(String[] args, List<String> list) {
+    public static List<String> getTABCompleteList(String[] args, List<String> list) {
         List<String> ret = new ArrayList<>();
         if (list == null) {
             return ret;
@@ -206,4 +206,8 @@ public class Util {
         return ret;
     }
 
+    public static void sendException(String msg, String exceptionMsg) {
+        consoleSender.sendMessage(Language.MSG_PREFIX + msg);
+        consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageExceptionMessage + exceptionMsg);
+    }
 }

@@ -42,7 +42,7 @@ public class CommandServerMonitor implements TabExecutor {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String alias, String[] args) {
         if (args.length == 1) {
-            return Util.getCompleteList(args, tabList);
+            return Util.getTABCompleteList(args, tabList);
         }
         return Collections.emptyList();
     }

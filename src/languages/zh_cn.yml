@@ -1,5 +1,5 @@
 #语言文件版本 请勿修改此项
-version: 2
+version: 3
 
 enabled: '§3[§aServerMonitor§3] §b已启用.'
 disabled: '§3[§aServerMonitor§3] §c已卸载.'
@@ -38,3 +38,4 @@ message:
   checkUpdateError: '§4[错误] §c检查更新失败, 状态码: §b{code}'
   majorUpdate: '§4重大更新'
   foundNewVersion: '§c!发现新版本：{$version} §b当前版本: {version} §e前往查看: §a{url}'
+  exceptionMessage: '异常信息: '

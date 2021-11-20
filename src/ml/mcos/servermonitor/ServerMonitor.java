@@ -15,8 +15,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
+import java.util.Collections;
 
 /*
  * 更新日志：
@@ -39,17 +41,18 @@ import java.util.Objects;
  *       (修复了插件加载时enable()会调用两次的问题)
  * 1.1.3 增加了在控制台op或deop时自动设置玩家白名单的功能.
  * 1.1.4 命令补全支持大写.
- *       指定api-version为1.13.
- *       其他细节修改.
+ *       (指定api-version为1.13)
+ *       其他细节优化.
  * 1.2.0 接入bStats.org匿名统计信息
- *       优化op修改判断逻辑.
+ *       优化op修改判断逻辑、修复自动设置白名单功能可能出现的错误.
  *       调整部分事件优先级、部分已取消事件不再记录日志.
  *       兼容1.7.2以及之前的版本.
  *       配置文件、语言文件、日志文件统一使用UTF8编码读写，不再使用系统默认编码.
  *       自动压缩旧日志选项现在默认关闭.
  *       禁用即时保存时，现在每半小时额外保存一次.
+ *       修改所有日志文件的创建时机，现在当真正需要写出日志时才创建.
  *       (修改配置文件加载逻辑)
- *       其他细节修改.
+ *       其他细节优化.
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;
@@ -57,34 +60,31 @@ public class ServerMonitor extends JavaPlugin {
     public static int mcVersionPatch;
     public static ConsoleCommandSender consoleSender; // = Bukkit.getConsoleSender();  这样写在1.7.2下面用到consoleSender会NPE···
     public static BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
+    static Method getOnlinePlayers;
 
     @Override
     public void onEnable() {
-        consoleSender = getServer().getConsoleSender();
-        getLogger().info("[ServerMonitor] Minecraft version = 1." + mcVersion + (mcVersionPatch != 0 ? "." + mcVersionPatch : ""));
         plugin = this;
-        if (!ConfigLoader.load()) {
-            getLogger().severe("[ServerMonitor] 配置文件加载出错！");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        getServer().getPluginManager().registerEvents(new PluginEventListener(mcVersion), this);
+        consoleSender = getServer().getConsoleSender();
+        getLogger().info("Minecraft version = 1." + mcVersion + (mcVersionPatch != 0 ? "." + mcVersionPatch : ""));
+        ConfigLoader.load();
         //noinspection ConstantConditions
         getServer().getPluginCommand("ServerMonitor").setExecutor(new CommandServerMonitor());
+        getServer().getPluginManager().registerEvents(new PluginEventListener(mcVersion), this);
         new Metrics(this, 12934);
         consoleSender.sendMessage(Language.enabled);
     }
 
     public void enable() {
-        Util.logInit();
+        Util.processOldLog();
         bukkitScheduler.runTaskTimerAsynchronously(this, () -> {
             if (!Config.realTimeSave) {
                 Log.flushAllLog();
             }
             String logName = Util.getToday();
             if (!Util.logName.equals(logName)) {
-                Log.updateAllLog(logName);
-                Util.logInit();
+                Log.updateLog(logName);
+                Util.processOldLog();
             }
         }, 36000, 36000); //30*60*20=36000 半小时检查一次
         if (Config.checkUpdate) {
@@ -92,7 +92,7 @@ public class ServerMonitor extends JavaPlugin {
                 try {
                     Util.checkVersionUpdate();
                 } catch (IOException e) {
-                    Log.sendException(Language.messageCheckUpdateException, e.getMessage());
+                    Util.sendException(Language.messageCheckUpdateException, e.getMessage());
                 }
             }, 200, 864000); //12*60*60*20=864000 10秒后检查一次，以后每12小时检查一次
         }
@@ -119,17 +119,18 @@ public class ServerMonitor extends JavaPlugin {
         return minor;
     }
 
-    public Player[] getOnlinePlayers() {
+    public Collection<? extends Player> getOnlinePlayers() {
+        if (mcVersion > 7 || (mcVersion == 7 && mcVersionPatch == 10)) {
+            return getServer().getOnlinePlayers();
+        }
         try {
-            if (mcVersion > 7 || (mcVersion == 7 && mcVersionPatch == 10)) {
-                throw new Exception();
+            if (getOnlinePlayers == null) {
+                getOnlinePlayers = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers");
             }
-            return (Player[]) Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers").invoke(getServer());
+            return Arrays.asList((Player[]) getOnlinePlayers.invoke(getServer()));
         } catch (Exception e) {
-            Collection<? extends Player> collection = getServer().getOnlinePlayers();
-            Player[] players = new Player[collection.size()];
-            collection.toArray(players);
-            return players;
+            e.printStackTrace();
+            return Collections.emptyList();
         }
     }
 

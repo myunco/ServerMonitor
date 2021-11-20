@@ -34,4 +34,5 @@ public class Language {
     public static String messageCheckUpdateError;
     public static String messageMajorUpdate;
     public static String messageFoundNewVersion;
+    public static String messageExceptionMessage = "Message: ";
 }

@@ -2,7 +2,6 @@ package ml.mcos.servermonitor.config;
 
 import com.google.common.base.Charsets;
 import ml.mcos.servermonitor.ServerMonitor;
-import ml.mcos.servermonitor.util.Log;
 import ml.mcos.servermonitor.util.Util;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -25,7 +24,7 @@ public class ConfigLoader {
     static File configFile = new File(plugin.getDataFolder(), "config.yml");
     static YamlConfiguration config;
 
-    public static boolean load() {
+    public static void load() {
         flag = false;
         plugin.saveDefaultConfig();
         config = loadConfiguration(configFile);
@@ -54,7 +53,6 @@ public class ConfigLoader {
         Config.playerCommand.put("consoleCommand", config.getBoolean("playerCommand.consoleCommand"));
         checkContain(config, "playerCommand.commandBlockCommand", true);
         Config.playerCommand.put("commandBlockCommand", config.getBoolean("playerCommand.commandBlockCommand"));
-
         Config.playerGameModeChange.put("enable", config.getBoolean("playerGameModeChange.enable"));
         Config.playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer"));
         Config.opChange = config.getBoolean("playerCommand.opChange");
@@ -76,43 +74,10 @@ public class ConfigLoader {
                 }
             }
         }
-        if (!Log.createAllLog(true))
-            return false;
         if (flag) {
-            save(config, configFile);
+            saveConfig();
         }
         plugin.enable();
-        return true;
-    }
-
-    public static YamlConfiguration loadConfiguration(File file) {
-        YamlConfiguration config = new YamlConfiguration();
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Charsets.UTF_8));
-            StringBuilder builder = new StringBuilder();
-            String line;
-            try {
-                while((line = reader.readLine()) != null) {
-                    builder.append(line).append('\n');
-                }
-            } finally {
-                reader.close();
-            }
-            config.loadFromString(builder.toString());
-        } catch (FileNotFoundException e) {
-            Log.sendException(Language.messageConfigError.replace("{path}", file.getName()), e.getMessage());
-        } catch (IOException | InvalidConfigurationException e) {
-            Log.sendException(Language.messageOpenException.replace("{file}", file.getName()), e.getMessage());
-        }
-        return config;
-    }
-
-    public static void save(YamlConfiguration config, File file) {
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            Log.sendException(Language.messageSaveException.replace("{file}", "config.yml"), e.getMessage());
-        }
     }
 
     public static void reload() {
@@ -137,11 +102,11 @@ public class ConfigLoader {
                         out.close();
                         in.close();
                     } catch (IOException e) {
-                        Log.sendException("§4[错误] §5在保存 " + language + ".yml 时发生IO异常!", e.getMessage());
+                        Util.sendException("§4[错误] §5在保存 " + language + ".yml 时发生IO异常!", e.getMessage());
                     }
-                    plugin.getLogger().info("[ServerMonitor] 语言文件: " + file.getPath() + " 不存在,已自动创建.");
+                    plugin.getLogger().info("语言文件: " + file.getPath() + " 不存在,已自动创建.");
                 } else {
-                    plugin.getLogger().severe("[ServerMonitor] 错误! 语言文件: " + language + ".yml 不存在,并且在插件本体内找不到默认语言文件: zh_cn.yml");
+                    plugin.getLogger().severe("错误: 语言文件: " + language + ".yml 不存在,并且在插件本体内找不到默认语言文件: zh_cn.yml");
                 }
             } else {
                 plugin.saveResource(langPath, false);
@@ -157,10 +122,9 @@ public class ConfigLoader {
                 lang.save(file);
                 ServerMonitor.consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageLangUpdated);
             } catch (IOException e) {
-                Log.sendException(Language.messageSaveException.replace("{file}", language + ".yml"), e.getMessage());
+                Util.sendException(Language.messageSaveException.replace("{file}", language + ".yml"), e.getMessage());
             }
         }
-        //不判断空指针了，乱搞就要有报错的准备。
         Language.enabled = lang.getString("enabled");
         Language.disabled = lang.getString("disabled");
         StringBuilder helpMsg = new StringBuilder();
@@ -191,10 +155,11 @@ public class ConfigLoader {
         Language.messageCheckUpdateError = lang.getString("message.checkUpdateError");
         Language.messageMajorUpdate = lang.getString("message.majorUpdate");
         Language.messageFoundNewVersion = lang.getString("message.foundNewVersion");
+        Language.messageExceptionMessage = lang.getString("message.exceptionMessage", "异常信息: ");
     }
 
     public static boolean languageUpdate(YamlConfiguration lang) {
-        int currentVersion = 2;
+        int currentVersion = 3;
         if (Language.version < currentVersion) {
             ServerMonitor.consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageLangUpdate.replace("{version}", String.valueOf(Language.version)).replace("{$version}", String.valueOf(currentVersion)));
             switch (Language.version) {
@@ -206,9 +171,10 @@ public class ConfigLoader {
                     lang.set("message.majorUpdate", "§4重大更新");
                     lang.set("message.foundNewVersion", "§c发现新版本：{$version} §b当前版本: {version} 前往查看: {url}");
                 case 2: //如果版本为2 则添加相对于版本3缺少的内容
-                    break; //最后一个case才break
+                    lang.set("message.exceptionMessage", "异常信息: ");
+                    break;
                 default:
-                    loadError("Language version error.");
+                    plugin.getLogger().warning("语言文件版本错误: " + Language.version);
             }
             Language.version = currentVersion;
             lang.set("version", Language.version);
@@ -217,8 +183,36 @@ public class ConfigLoader {
         return false;
     }
 
-    public static void loadError(String msg) {
-        plugin.getLogger().warning(msg);
+    public static YamlConfiguration loadConfiguration(File file) {
+        YamlConfiguration config = new YamlConfiguration();
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), Charsets.UTF_8));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            try {
+                while((line = reader.readLine()) != null) {
+                    builder.append(line).append('\n');
+                }
+            } finally {
+                reader.close();
+            }
+            config.loadFromString(builder.toString());
+        } catch (FileNotFoundException e) {
+            Util.sendException("FileNotFoundException: " + file.getName(), e.getMessage());
+        } catch (IOException e) {
+            Util.sendException("IOException: " + file.getName(), e.getMessage());
+        } catch (InvalidConfigurationException e) {
+            Util.sendException("InvalidConfigurationException: " + file.getName(), e.getMessage());
+        }
+        return config;
+    }
+
+    public static void saveConfig() {
+        try {
+            config.save(configFile);
+        } catch (IOException e) {
+            Util.sendException(Language.messageSaveException.replace("{file}", "config.yml"), e.getMessage());
+        }
     }
 
     public static void checkContain(YamlConfiguration config, String path, Object defaults) {
@@ -230,6 +224,6 @@ public class ConfigLoader {
 
     public static void setValue(String path, Object value) {
         config.set(path, value);
-        save(config, configFile);
+        saveConfig();
     }
 }

@@ -1,24 +1,19 @@
 package ml.mcos.servermonitor;
 
+import ml.mcos.servermonitor.command.CommandServerMonitor;
 import ml.mcos.servermonitor.config.Config;
 import ml.mcos.servermonitor.config.ConfigLoader;
 import ml.mcos.servermonitor.config.Language;
-import ml.mcos.servermonitor.command.CommandServerMonitor;
 import ml.mcos.servermonitor.listener.PluginEventListener;
 import ml.mcos.servermonitor.metrics.Metrics;
 import ml.mcos.servermonitor.util.Log;
 import ml.mcos.servermonitor.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 /*
  * 更新日志：
@@ -57,16 +52,13 @@ import java.util.Collections;
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;
     public static int mcVersion = getMinecraftVersion();
-    public static int mcVersionPatch;
     public static ConsoleCommandSender consoleSender; // = Bukkit.getConsoleSender();  这样写在1.7.2下面用到consoleSender会NPE···
     public static BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
-    static Method getOnlinePlayers;
 
     @Override
     public void onEnable() {
         plugin = this;
         consoleSender = getServer().getConsoleSender();
-        getLogger().info("Minecraft version = 1." + mcVersion + (mcVersionPatch != 0 ? "." + mcVersionPatch : ""));
         ConfigLoader.load();
         //noinspection ConstantConditions
         getServer().getPluginCommand("ServerMonitor").setExecutor(new CommandServerMonitor());
@@ -110,28 +102,7 @@ public class ServerMonitor extends JavaPlugin {
     }
 
     public static int getMinecraftVersion() {
-        String[] version = Bukkit.getBukkitVersion().replace('-', '.').split("\\.");
-        int minor = Integer.parseInt(version[1]);
-        try {
-            mcVersionPatch = Integer.parseInt(version[2]);
-        } catch (NumberFormatException ignored) {
-        }
-        return minor;
-    }
-
-    public Collection<? extends Player> getOnlinePlayers() {
-        if (mcVersion > 7 || (mcVersion == 7 && mcVersionPatch == 10)) {
-            return getServer().getOnlinePlayers();
-        }
-        try {
-            if (getOnlinePlayers == null) {
-                getOnlinePlayers = Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers");
-            }
-            return Arrays.asList((Player[]) getOnlinePlayers.invoke(getServer()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
+        return Integer.parseInt(Bukkit.getBukkitVersion().replace('-', '.').split("\\.")[1]);
     }
 
 }

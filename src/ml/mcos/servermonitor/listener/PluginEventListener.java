@@ -155,7 +155,7 @@ public class PluginEventListener implements Listener {
                         .replace("{sender}", name)
                         .replace("{player}", arg);
                 Log.writeOpChangeLog(str);
-                if (event.getSender() instanceof ConsoleCommandSender) {
+                if (Config.commandAlert && event.getSender() instanceof ConsoleCommandSender) {
                     Util.whitelistAdd(arg);
                 }
             }
@@ -166,7 +166,7 @@ public class PluginEventListener implements Listener {
                         .replace("{sender}", name)
                         .replace("{player}", arg);
                 Log.writeOpChangeLog(str);
-                if (event.getSender() instanceof ConsoleCommandSender) {
+                if (Config.commandAlert && event.getSender() instanceof ConsoleCommandSender) {
                     Util.whitelistRemove(arg);
                 }
             }

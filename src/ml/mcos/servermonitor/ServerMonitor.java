@@ -48,6 +48,7 @@ import java.io.IOException;
  *       修改所有日志文件的创建时机，现在当真正需要写出日志时才创建.
  *       (修改配置文件加载逻辑)
  *       其他细节优化.
+ * 1.2.1 修复了未启用命令警报时在控制台op/deop会出现报错的问题
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;

@@ -172,15 +172,21 @@ public class Util {
         int code = conn.getResponseCode();
         if (code == HttpURLConnection.HTTP_OK) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String[] line = new String[2];
-            line[0] = reader.readLine(); //读取最新版本
-            line[1] = reader.readLine(); //读取是否重大更新
-            if (!CommandServerMonitor.VERSION.equals(line[0])) {
+            String latestVersion = reader.readLine();
+            if (!CommandServerMonitor.VERSION.equals(latestVersion)) {
+                String[] latest = latestVersion.split("\\."); // version: x.x.x
+                String[] current = CommandServerMonitor.VERSION.split("\\.");
+                boolean majorUpdate;
+                if (!latest[0].equals(current[0])) {
+                    majorUpdate = true;
+                } else {
+                    majorUpdate = !latest[1].equals(current[1]);
+                }
                 String str = Language.messageFoundNewVersion
                         .replace("{version}", CommandServerMonitor.VERSION)
-                        .replace("{$version}", line[0])
+                        .replace("{$version}", latestVersion)
                         .replace("{url}", "https://www.mcbbs.net/thread-995756-1-1.html");
-                consoleSender.sendMessage(Language.MSG_PREFIX + ("true".equals(line[1]) ? Language.messageMajorUpdate + " - " + str : str));
+                consoleSender.sendMessage(Language.MSG_PREFIX + (majorUpdate ? Language.messageMajorUpdate + " - " + str : str));
             }
             reader.close();
         } else {

@@ -7,18 +7,18 @@ import ml.mcos.servermonitor.util.Util;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("NullableProblems")
 public class CommandServerMonitor implements TabExecutor {
     public static final String VERSION = ServerMonitor.plugin.getDescription().getVersion();
     public static List<String> tabList = Arrays.asList("help", "reload", "version");
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -40,7 +40,7 @@ public class CommandServerMonitor implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String alias, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
         if (args.length == 1) {
             return Util.getTABCompleteList(args, tabList);
         }

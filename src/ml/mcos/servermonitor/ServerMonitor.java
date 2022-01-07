@@ -62,7 +62,7 @@ public class ServerMonitor extends JavaPlugin {
         consoleSender = getServer().getConsoleSender();
         ConfigLoader.load();
         //noinspection ConstantConditions
-        getServer().getPluginCommand("ServerMonitor").setExecutor(new CommandServerMonitor());
+        getCommand("ServerMonitor").setExecutor(new CommandServerMonitor());
         getServer().getPluginManager().registerEvents(new PluginEventListener(mcVersion), this);
         new Metrics(this, 12934);
         consoleSender.sendMessage(Language.enabled);

@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 public class ConfigLoader {
@@ -38,12 +41,8 @@ public class ConfigLoader {
         }
         Config.realTimeSave = config.getBoolean("realTimeSave");
 
-        //1.1.0新增
-        checkContain(config, "zipOldLog", false);
         Config.zipOldLog = config.getBoolean("zipOldLog");
-        checkContain(config, "delOldLog", 0);
         Config.delOldLog = config.getInt("delOldLog");
-        checkContain(config, "checkUpdate", true);
         Config.checkUpdate = config.getBoolean("checkUpdate");
 
         Config.playerChat.put("enable", config.getBoolean("playerChat.enable"));
@@ -51,7 +50,6 @@ public class ConfigLoader {
         Config.playerCommand.put("enable", config.getBoolean("playerCommand.enable"));
         Config.playerCommand.put("perPlayer", config.getBoolean("playerCommand.perPlayer"));
         Config.playerCommand.put("consoleCommand", config.getBoolean("playerCommand.consoleCommand"));
-        checkContain(config, "playerCommand.commandBlockCommand", true);
         Config.playerCommand.put("commandBlockCommand", config.getBoolean("playerCommand.commandBlockCommand"));
         Config.playerGameModeChange.put("enable", config.getBoolean("playerGameModeChange.enable"));
         Config.playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer"));
@@ -73,9 +71,6 @@ public class ConfigLoader {
                     Config.handleMethodConfig.put(value, section.getStringList(value));
                 }
             }
-        }
-        if (flag) {
-            saveConfig();
         }
         plugin.enable();
     }
@@ -207,23 +202,16 @@ public class ConfigLoader {
         return config;
     }
 
-    public static void saveConfig() {
-        try {
-            config.save(configFile);
+    public static void saveConfiguration(YamlConfiguration config, File file) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+            writer.write(config.saveToString());
         } catch (IOException e) {
             Util.sendException(Language.messageSaveException.replace("{file}", "config.yml"), e.getMessage());
         }
     }
 
-    public static void checkContain(YamlConfiguration config, String path, Object defaults) {
-        if (!config.contains(path)) {
-            config.set(path, defaults);
-            flag = true;
-        }
-    }
-
     public static void setValue(String path, Object value) {
         config.set(path, value);
-        saveConfig();
+        saveConfiguration(config, configFile);
     }
 }

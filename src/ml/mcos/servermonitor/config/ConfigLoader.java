@@ -19,16 +19,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.Set;
 
 public class ConfigLoader {
     static ServerMonitor plugin = ServerMonitor.plugin;
-    static boolean flag;
     static File configFile = new File(plugin.getDataFolder(), "config.yml");
     static YamlConfiguration config;
 
     public static void load() {
-        flag = false;
         plugin.saveDefaultConfig();
         config = loadConfiguration(configFile);
         Config.language = config.getString("language", "zh_cn");
@@ -39,31 +36,30 @@ public class ConfigLoader {
         if ("auto".equalsIgnoreCase(Config.lineSeparator)) {
             Config.lineSeparator = System.lineSeparator();
         }
-        Config.realTimeSave = config.getBoolean("realTimeSave");
+        Config.realTimeSave = config.getBoolean("realTimeSave", true);
 
         Config.zipOldLog = config.getBoolean("zipOldLog");
         Config.delOldLog = config.getInt("delOldLog");
-        Config.checkUpdate = config.getBoolean("checkUpdate");
+        Config.checkUpdate = config.getBoolean("checkUpdate", true);
 
-        Config.playerChat.put("enable", config.getBoolean("playerChat.enable"));
-        Config.playerChat.put("perPlayer", config.getBoolean("playerChat.perPlayer"));
-        Config.playerCommand.put("enable", config.getBoolean("playerCommand.enable"));
-        Config.playerCommand.put("perPlayer", config.getBoolean("playerCommand.perPlayer"));
-        Config.playerCommand.put("consoleCommand", config.getBoolean("playerCommand.consoleCommand"));
-        Config.playerCommand.put("commandBlockCommand", config.getBoolean("playerCommand.commandBlockCommand"));
-        Config.playerGameModeChange.put("enable", config.getBoolean("playerGameModeChange.enable"));
+        Config.playerChat.put("enable", config.getBoolean("playerChat.enable", true));
+        Config.playerChat.put("perPlayer", config.getBoolean("playerChat.perPlayer", true));
+        Config.playerCommand.put("enable", config.getBoolean("playerCommand.enable", true));
+        Config.playerCommand.put("perPlayer", config.getBoolean("playerCommand.perPlayer", true));
+        Config.playerCommand.put("consoleCommand", config.getBoolean("playerCommand.consoleCommand", true));
+        Config.playerCommand.put("commandBlockCommand", config.getBoolean("playerCommand.commandBlockCommand", true));
+        Config.playerGameModeChange.put("enable", config.getBoolean("playerGameModeChange.enable", true));
         Config.playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer"));
-        Config.opChange = config.getBoolean("playerCommand.opChange");
-        Config.joinAndLeave = config.getBoolean("joinAndLeave");
-        Config.commandAlert = config.getBoolean("commandAlert.enable");
+        Config.opChange = config.getBoolean("playerCommand.opChange", true);
+        Config.joinAndLeave = config.getBoolean("joinAndLeave", true);
+        Config.commandAlert = config.getBoolean("commandAlert.enable", true);
         if (Config.commandAlert) {
             Config.whitelist = config.getStringList("commandAlert.whitelist");
-            Config.cancel = config.getBoolean("commandAlert.cancel");
+            Config.cancel = config.getBoolean("commandAlert.cancel", true);
             Config.commandWhiteList = config.getStringList("commandAlert.commandWhiteList");
             ConfigurationSection section = config.getConfigurationSection("commandAlert.handleMethod");
             if (section != null) {
-                Set<String> keys = section.getKeys(false);
-                for (String value : keys) {
+                for (String value : section.getKeys(false)) {
                     if (value.equals("method")) {
                         Config.handleMethod = section.getInt("method");
                         continue;

@@ -189,6 +189,7 @@ public class Util {
                 consoleSender.sendMessage(Language.MSG_PREFIX + (majorUpdate ? Language.messageMajorUpdate + " - " + str : str));
             }
             reader.close();
+            conn.disconnect();
         } else {
             consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageCheckUpdateError.replace("{code}", String.valueOf(code)));
         }

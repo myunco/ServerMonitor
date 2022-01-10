@@ -53,7 +53,7 @@ import java.io.IOException;
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;
     public static int mcVersion = getMinecraftVersion();
-    public static ConsoleCommandSender consoleSender; // = Bukkit.getConsoleSender();  这样写在1.7.2下面用到consoleSender会NPE···
+    public static ConsoleCommandSender consoleSender; //consoleSender = Bukkit.getConsoleSender();  这样写在1.7.2下面用到consoleSender会NPE···
     public static BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
 
     @Override

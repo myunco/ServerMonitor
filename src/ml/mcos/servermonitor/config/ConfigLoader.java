@@ -38,8 +38,8 @@ public class ConfigLoader {
         }
         Config.realTimeSave = config.getBoolean("realTimeSave", true);
 
-        Config.zipOldLog = config.getBoolean("zipOldLog");
-        Config.delOldLog = config.getInt("delOldLog");
+        Config.zipOldLog = config.getBoolean("zipOldLog", false);
+        Config.delOldLog = config.getInt("delOldLog", 0);
         Config.checkUpdate = config.getBoolean("checkUpdate", true);
 
         Config.playerChat.put("enable", config.getBoolean("playerChat.enable", true));
@@ -49,7 +49,7 @@ public class ConfigLoader {
         Config.playerCommand.put("consoleCommand", config.getBoolean("playerCommand.consoleCommand", true));
         Config.playerCommand.put("commandBlockCommand", config.getBoolean("playerCommand.commandBlockCommand", true));
         Config.playerGameModeChange.put("enable", config.getBoolean("playerGameModeChange.enable", true));
-        Config.playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer"));
+        Config.playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer", false));
         Config.opChange = config.getBoolean("playerCommand.opChange", true);
         Config.joinAndLeave = config.getBoolean("joinAndLeave", true);
         Config.commandAlert = config.getBoolean("commandAlert.enable", true);

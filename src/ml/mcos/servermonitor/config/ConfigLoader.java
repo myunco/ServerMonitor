@@ -3,7 +3,6 @@ package ml.mcos.servermonitor.config;
 import com.google.common.base.Charsets;
 import ml.mcos.servermonitor.ServerMonitor;
 import ml.mcos.servermonitor.util.Util;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -57,16 +56,14 @@ public class ConfigLoader {
             Config.whitelist = config.getStringList("commandAlert.whitelist");
             Config.cancel = config.getBoolean("commandAlert.cancel", true);
             Config.commandWhiteList = config.getStringList("commandAlert.commandWhiteList");
-            ConfigurationSection section = config.getConfigurationSection("commandAlert.handleMethod");
-            if (section != null) {
-                for (String value : section.getKeys(false)) {
-                    if (value.equals("method")) {
-                        Config.handleMethod = section.getInt("method");
-                        continue;
-                    }
-                    Config.handleMethodConfig.put(value, section.getStringList(value));
-                }
-            }
+            Config.handleMethod = config.getInt("commandAlert.handleMethod.method", 0);
+            Config.handleMethodConfig.put("broadcast", config.getStringList("commandAlert.handleMethod.broadcast"));
+            Config.handleMethodConfig.put("consoleCmd", config.getStringList("commandAlert.handleMethod.consoleCmd"));
+            Config.handleMethodConfig.put("playerCmd", config.getStringList("commandAlert.handleMethod.playerCmd"));
+            Config.handleMethodConfig.put("playerSendMsg", config.getStringList("commandAlert.handleMethod.playerSendMsg"));
+            Config.handleMethodConfig.put("sendMsgToPlayer", config.getStringList("commandAlert.handleMethod.sendMsgToPlayer"));
+            Config.handleMethodConfig.put("consoleWarning", config.getStringList("commandAlert.handleMethod.consoleWarning"));
+            Config.handleMethodConfig.put("warningLog", config.getStringList("commandAlert.handleMethod.warningLog"));
         }
         plugin.enable();
     }

@@ -10,6 +10,8 @@ import ml.mcos.servermonitor.util.Log;
 import ml.mcos.servermonitor.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -49,6 +51,7 @@ import java.io.IOException;
  *       (修改配置文件加载逻辑)
  *       其他细节优化.
  * 1.2.1 修复了未启用命令警报时在控制台op/deop会出现报错的问题
+ * 1.2.2 (解决了安装Yum后命令不能TAB补全的问题)
  */
 public class ServerMonitor extends JavaPlugin {
     public static ServerMonitor plugin;
@@ -61,8 +64,11 @@ public class ServerMonitor extends JavaPlugin {
         plugin = this;
         consoleSender = getServer().getConsoleSender();
         ConfigLoader.load();
-        //noinspection ConstantConditions
-        getCommand("ServerMonitor").setExecutor(new CommandServerMonitor());
+        PluginCommand command = getCommand("ServerMonitor");
+        if (command != null) {
+            command.setExecutor(new CommandServerMonitor());
+            command.setTabCompleter((TabCompleter) command.getExecutor());
+        }
         getServer().getPluginManager().registerEvents(new PluginEventListener(mcVersion), this);
         new Metrics(this, 12934);
         consoleSender.sendMessage(Language.enabled);

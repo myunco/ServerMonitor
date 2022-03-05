@@ -2,31 +2,23 @@ package ml.mcos.servermonitor.util;
 
 import ml.mcos.servermonitor.ServerMonitor;
 import ml.mcos.servermonitor.config.Config;
-import ml.mcos.servermonitor.config.ConfigLoader;
 import ml.mcos.servermonitor.config.Language;
-import ml.mcos.servermonitor.command.CommandServerMonitor;
-import org.bukkit.command.ConsoleCommandSender;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 public class Util {
-    static SimpleDateFormat timeFormat;
-    static SimpleDateFormat nameFormat = new SimpleDateFormat("yyyy-MM-dd");
-    static ConsoleCommandSender consoleSender = ServerMonitor.consoleSender;
+    private static final ServerMonitor plugin = ServerMonitor.getPlugin();
+    public static SimpleDateFormat timeFormat;
+    public static SimpleDateFormat nameFormat = new SimpleDateFormat("yyyy-MM-dd");
     public static String logName = getToday();
 
     public static void setTimeFormat(String dateFormat) {
@@ -63,14 +55,14 @@ public class Util {
     public static void whitelistAdd(String playerName) {
         if (!isWhitelist(playerName)) {
             Config.whitelist.add(playerName);
-            ConfigLoader.setValue("commandAlert.whitelist", Config.whitelist);
+            Config.setValue("commandAlert.whitelist", Config.whitelist);
         }
     }
 
     public static void whitelistRemove(String playerName) {
         if (isWhitelist(playerName)) {
             Config.whitelist.remove(playerName);
-            ConfigLoader.setValue("commandAlert.whitelist", Config.whitelist);
+            Config.setValue("commandAlert.whitelist", Config.whitelist);
         }
     }
 
@@ -99,18 +91,18 @@ public class Util {
         in.close();
         gzip.close();
         if (!file.delete())
-            consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError.replace("{file}", file.getAbsolutePath()));
+            plugin.logMessage(Language.messageErrorDelete.replace("{file}", file.getAbsolutePath()));
     }
 
     public static void zipOldLog() {
-        ArrayList<File> files = getFileList(ServerMonitor.plugin.getDataFolder());
+        ArrayList<File> files = getFileList(plugin.getDataFolder());
         for (File file : files) {
             String fileName = file.getName();
             if (fileName.endsWith(".log") && !getTextLeft(fileName, ".log").equals(logName)) {
                 try {
                     gzipFile(file);
                 } catch (IOException e) {
-                    sendException(Language.MSG_PREFIX + Language.messageZipException.replace("{file}", file.getAbsolutePath()), e.getMessage());
+                    sendException(Language.messageExceptionZip.replace("{file}", file.getAbsolutePath()), e.getMessage());
                 }
             }
         }
@@ -120,13 +112,14 @@ public class Util {
         if (days < 1) {
             return;
         }
-        ArrayList<File> files = getFileList(ServerMonitor.plugin.getDataFolder());
+        ArrayList<File> files = getFileList(plugin.getDataFolder());
         for (File file : files) {
             String fileTime = getTextLeft(file.getName(), ".log");
             long diff = getDayDiff(logName, fileTime);
             if (diff > days) {
-                if (!file.delete())
-                    consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageDeleteError.replace("{file}", file.getAbsolutePath()));
+                if (!file.delete()) {
+                    plugin.logMessage(Language.messageErrorDelete.replace("{file}", file.getAbsolutePath()));
+                }
             }
         }
     }
@@ -162,59 +155,14 @@ public class Util {
 
     public static void processOldLog() {
         if (Config.zipOldLog) {
-            Util.zipOldLog();
+            zipOldLog();
         }
-        Util.delOldLog(Config.delOldLog);
-    }
-
-    public static void checkVersionUpdate() throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) new URL("https://sinacloud.net/myunco/E776DD23/version.txt").openConnection();
-        int code = conn.getResponseCode();
-        if (code == HttpURLConnection.HTTP_OK) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String latestVersion = reader.readLine();
-            if (!CommandServerMonitor.VERSION.equals(latestVersion)) {
-                String[] latest = latestVersion.split("\\."); // version: x.x.x
-                String[] current = CommandServerMonitor.VERSION.split("\\.");
-                boolean majorUpdate;
-                if (!latest[0].equals(current[0])) {
-                    majorUpdate = true;
-                } else {
-                    majorUpdate = !latest[1].equals(current[1]);
-                }
-                String str = Language.messageFoundNewVersion
-                        .replace("{version}", CommandServerMonitor.VERSION)
-                        .replace("{$version}", latestVersion)
-                        .replace("{url}", "https://www.mcbbs.net/thread-995756-1-1.html");
-                consoleSender.sendMessage(Language.MSG_PREFIX + (majorUpdate ? Language.messageMajorUpdate + " - " + str : str));
-            }
-            reader.close();
-            conn.disconnect();
-        } else {
-            consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageCheckUpdateError.replace("{code}", String.valueOf(code)));
-        }
-    }
-
-    public static List<String> getTABCompleteList(String[] args, List<String> list) {
-        List<String> ret = new ArrayList<>();
-        if (list == null) {
-            return ret;
-        } else if (list.isEmpty()) {
-            return null;
-        } else if (args[args.length - 1].isEmpty()) {
-            return list;
-        }
-        String arg = args[args.length - 1].toLowerCase();
-        for (String value : list) {
-            if (value.startsWith(arg)) {
-                ret.add(value);
-            }
-        }
-        return ret;
+        delOldLog(Config.delOldLog);
     }
 
     public static void sendException(String msg, String exceptionMsg) {
-        consoleSender.sendMessage(Language.MSG_PREFIX + msg);
-        consoleSender.sendMessage(Language.MSG_PREFIX + Language.messageExceptionMessage + exceptionMsg);
+        plugin.logMessage(msg);
+        plugin.logMessage(Language.messageException + exceptionMsg);
     }
+
 }

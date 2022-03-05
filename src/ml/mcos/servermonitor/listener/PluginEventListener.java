@@ -1,6 +1,5 @@
 package ml.mcos.servermonitor.listener;
 
-import ml.mcos.servermonitor.ServerMonitor;
 import ml.mcos.servermonitor.config.Config;
 import ml.mcos.servermonitor.config.Language;
 import ml.mcos.servermonitor.util.Log;
@@ -22,10 +21,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class PluginEventListener implements Listener {
+    private final int mcVersion;
     String opGivePermission;
     String opTakePermission;
 
     public PluginEventListener(int mcVersion) {
+        this.mcVersion = mcVersion;
         if (mcVersion < 8) {
             opGivePermission = "bukkit.command.op.give";
             opTakePermission = "bukkit.command.op.take";
@@ -60,7 +61,7 @@ public class PluginEventListener implements Listener {
         boolean isOp = event.getPlayer().isOp();
         String str = Util.getTime() + Language.logPlayerCommand
                 .replace("{player}", playerName)
-                .replace("{op?}", isOp ? Language.logIsOp : Language.logNonOp)
+                .replace("{op?}", isOp ? Language.logPlayerCommandOp : Language.logPlayerCommandNonOp)
                 .replace("{command}", cmd);
         Log.writeCommandLog(str);
         if (Config.playerCommand.get("perPlayer")) {
@@ -73,7 +74,7 @@ public class PluginEventListener implements Listener {
             if ((isOp || event.getPlayer().hasPermission(opGivePermission)) && cmd.toLowerCase().startsWith("/op ")) {
                 String arg = Util.getTextRight(cmd, " ").trim();
                 if (arg.indexOf(' ') == -1) {
-                    str = Util.getTime() + Language.logOpped
+                    str = Util.getTime() + Language.logOpChangeOpPlayer
                             .replace("{player1}", playerName)
                             .replace("{player2}", arg.trim());
                     Log.writeOpChangeLog(str);
@@ -81,7 +82,7 @@ public class PluginEventListener implements Listener {
             } else if ((isOp || event.getPlayer().hasPermission(opTakePermission)) && cmd.toLowerCase().startsWith("/deop ")) {
                 String arg = Util.getTextRight(cmd, " ").trim();
                 if (arg.indexOf(' ') == -1) {
-                    str = Util.getTime() + Language.logDeOpped
+                    str = Util.getTime() + Language.logOpChangeDeopPlayer
                             .replace("{player1}", playerName)
                             .replace("{player2}", arg.trim());
                     Log.writeOpChangeLog(str);
@@ -105,7 +106,7 @@ public class PluginEventListener implements Listener {
         }
         if ((method & 2) == 2) {
             list = Config.handleMethodConfig.get("consoleCmd");
-            list.forEach(value -> Bukkit.dispatchCommand(ServerMonitor.consoleSender, value.replace("{player}", playerName).replace("{command}", cmd)));
+            list.forEach(value -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 4) == 4) {
             list = Config.handleMethodConfig.get("playerCmd");
@@ -122,7 +123,7 @@ public class PluginEventListener implements Listener {
         }
         if ((method & 32) == 32) {
             list = Config.handleMethodConfig.get("consoleWarning");
-            list.forEach(value -> ServerMonitor.consoleSender.sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
+            list.forEach(value -> Bukkit.getConsoleSender().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 64) == 64) {
             list = Config.handleMethodConfig.get("warningLog");
@@ -145,13 +146,13 @@ public class PluginEventListener implements Listener {
                 .replace("{sender}", name)
                 .replace("{command}", cmd);
         Log.writeCommandLog(str);
-        if (!Config.opChange || (ServerMonitor.mcVersion > 8 && event.isCancelled())) {
+        if (!Config.opChange || (mcVersion > 8 && event.isCancelled())) {
             return;
         }
         if (cmd.toLowerCase().startsWith("op ")) {
             String arg = Util.getTextRight(cmd, " ").trim();
             if (arg.indexOf(' ') == -1) {
-                str = Util.getTime() + Language.logConsoleOpped
+                str = Util.getTime() + Language.logOpChangeOpConsole
                         .replace("{sender}", name)
                         .replace("{player}", arg);
                 Log.writeOpChangeLog(str);
@@ -162,7 +163,7 @@ public class PluginEventListener implements Listener {
         } else if (cmd.toLowerCase().startsWith("deop ")) {
             String arg = Util.getTextRight(cmd, " ").trim();
             if (arg.indexOf(' ') == -1) {
-                str = Util.getTime() + Language.logConsoleDeOpped
+                str = Util.getTime() + Language.logOpChangeDeopConsole
                         .replace("{sender}", name)
                         .replace("{player}", arg);
                 Log.writeOpChangeLog(str);

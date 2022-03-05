@@ -1,6 +1,5 @@
 package ml.mcos.servermonitor.update;
 
-
 import ml.mcos.servermonitor.ServerMonitor;
 import ml.mcos.servermonitor.config.Language;
 
@@ -13,10 +12,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class UpdateChecker {
-    public static ServerMonitor plugin = ServerMonitor.getPlugin();
-    public static String currentVersion = plugin.getDescription().getVersion();
-    public static String[] current = currentVersion.split("\\.");
-    public static Timer timer;
+    private static final ServerMonitor plugin = ServerMonitor.getPlugin();
+    private static final String currentVersion = plugin.getDescription().getVersion();
+    private static final String[] current = currentVersion.split("\\.");
+    private static Timer timer;
 
     public static void start() {
         plugin.getServer().getScheduler().runTask(plugin, () -> {

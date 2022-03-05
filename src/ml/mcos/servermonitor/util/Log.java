@@ -14,17 +14,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Log {
-    static BufferedWriter chatLog;
-    static BufferedWriter commandLog;
-    static BufferedWriter gameModeLog;
-    static BufferedWriter opChangeLog;
-    static BufferedWriter joinLeaveLog;
-    static BufferedWriter warningLog;
-    static HashMap<String, BufferedWriter> playerChatLog = new HashMap<>();
-    static HashMap<String, BufferedWriter> playerCommandLog = new HashMap<>();
-    static HashMap<String, BufferedWriter> playerGameModeLog = new HashMap<>();
-    static ServerMonitor plugin = ServerMonitor.plugin;
-    static File dateFolder = plugin.getDataFolder();
+    private static final ServerMonitor plugin = ServerMonitor.getPlugin();
+    private static final File dateFolder = plugin.getDataFolder();
+    private static BufferedWriter chatLog;
+    private static BufferedWriter commandLog;
+    private static BufferedWriter gameModeLog;
+    private static BufferedWriter opChangeLog;
+    private static BufferedWriter joinLeaveLog;
+    private static BufferedWriter warningLog;
+    private static final HashMap<String, BufferedWriter> playerChatLog = new HashMap<>();
+    private static final HashMap<String, BufferedWriter> playerCommandLog = new HashMap<>();
+    private static final HashMap<String, BufferedWriter> playerGameModeLog = new HashMap<>();
 
     public static BufferedWriter openLogFile(File file) throws IOException {
         return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8), 1024);
@@ -35,17 +35,17 @@ public class Log {
             return;
         }
         if (!file.getParentFile().mkdirs()) {
-            ServerMonitor.consoleSender.sendMessage(message);
+            plugin.logMessage(message);
         }
     }
 
     public static void createChatLog() {
         File file = new File(dateFolder, "ChatLogs/" + Util.logName + ".log");
-        checkParentFolder(file, Language.MSG_PREFIX + "Chat -> mkdirs error");
+        checkParentFolder(file, "Chat -> mkdirs error");
         try {
             chatLog = openLogFile(file);
         } catch (IOException e) {
-            Util.sendException(Language.messageOpenException.replace("{file}", "Chat -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", "Chat -> " + Util.logName + ".log"), e.getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class Log {
                 chatLog.flush();
             }
         } catch (IOException e) {
-            Util.sendException(Language.messageWriteException.replace("{file}", "Chat -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionWrite.replace("{file}", "Chat -> " + Util.logName + ".log"), e.getMessage());
         }
     }
 
@@ -68,7 +68,7 @@ public class Log {
             try {
                 chatLog.close();
             } catch (IOException e) {
-                Util.sendException(Language.messageCloseException.replace("{file}", "Chat -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionClose.replace("{file}", "Chat -> " + Util.logName + ".log"), e.getMessage());
             }
             chatLog = null;
         }
@@ -76,11 +76,11 @@ public class Log {
 
     public static void createCommandLog() {
         File file = new File(dateFolder, "CommandLogs/" + Util.logName + ".log");
-        checkParentFolder(file, Language.MSG_PREFIX + "Command -> mkdirs error");
+        checkParentFolder(file, "Command -> mkdirs error");
         try {
             commandLog = openLogFile(file);
         } catch (IOException e) {
-            Util.sendException(Language.messageOpenException.replace("{file}", "Command -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", "Command -> " + Util.logName + ".log"), e.getMessage());
         }
     }
 
@@ -94,7 +94,7 @@ public class Log {
                 commandLog.flush();
             }
         } catch (IOException e) {
-            Util.sendException(Language.messageWriteException.replace("{file}", "Command -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionWrite.replace("{file}", "Command -> " + Util.logName + ".log"), e.getMessage());
         }
     }
 
@@ -103,7 +103,7 @@ public class Log {
             try {
                 commandLog.close();
             } catch (IOException e) {
-                Util.sendException(Language.messageCloseException.replace("{file}", "Command -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionClose.replace("{file}", "Command -> " + Util.logName + ".log"), e.getMessage());
             }
             commandLog = null;
         }
@@ -111,11 +111,11 @@ public class Log {
 
     public static void createGameModeLog() {
         File file = new File(dateFolder, "GameModeLogs/" + Util.logName + ".log");
-        checkParentFolder(file, Language.MSG_PREFIX + "GameMode -> mkdirs error");
+        checkParentFolder(file, "GameMode -> mkdirs error");
         try {
             gameModeLog = openLogFile(file);
         } catch (IOException e) {
-            Util.sendException(Language.messageOpenException.replace("{file}", "GameMode -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", "GameMode -> " + Util.logName + ".log"), e.getMessage());
         }
     }
 
@@ -129,7 +129,7 @@ public class Log {
                 gameModeLog.flush();
             }
         } catch (IOException e) {
-            Util.sendException(Language.messageWriteException.replace("{file}", "GameMode -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionWrite.replace("{file}", "GameMode -> " + Util.logName + ".log"), e.getMessage());
         }
     }
 
@@ -138,7 +138,7 @@ public class Log {
             try {
                 gameModeLog.close();
             } catch (IOException e) {
-                Util.sendException(Language.messageCloseException.replace("{file}", "GameMode -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionClose.replace("{file}", "GameMode -> " + Util.logName + ".log"), e.getMessage());
             }
             gameModeLog = null;
         }
@@ -148,7 +148,7 @@ public class Log {
         try {
             opChangeLog = openLogFile(new File(dateFolder, "OpChange.log"));
         } catch (IOException e) {
-            Util.sendException(Language.messageOpenException.replace("{file}", "OpChange.log"), e.getMessage());
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", "OpChange.log"), e.getMessage());
         }
     }
 
@@ -162,7 +162,7 @@ public class Log {
                 opChangeLog.flush();
             }
         } catch (IOException e) {
-            Util.sendException(Language.messageWriteException.replace("{file}", "OpChange.log"), e.getMessage());
+            Util.sendException(Language.messageExceptionWrite.replace("{file}", "OpChange.log"), e.getMessage());
         }
     }
 
@@ -171,7 +171,7 @@ public class Log {
             try {
                 opChangeLog.close();
             } catch (IOException e) {
-                Util.sendException(Language.messageCloseException.replace("{file}", "OpChange.log"), e.getMessage());
+                Util.sendException(Language.messageExceptionClose.replace("{file}", "OpChange.log"), e.getMessage());
             }
             opChangeLog = null;
         }
@@ -179,11 +179,11 @@ public class Log {
 
     public static void createJoinLeaveLog() {
         File file = new File(dateFolder, "JoinLeaveLogs/" + Util.logName + ".log");
-        checkParentFolder(file, Language.MSG_PREFIX + "JoinLeave -> mkdirs error");
+        checkParentFolder(file, "JoinLeave -> mkdirs error");
         try {
             joinLeaveLog = openLogFile(file);
         } catch (IOException e) {
-            Util.sendException(Language.messageOpenException.replace("{file}", "JoinLeave -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", "JoinLeave -> " + Util.logName + ".log"), e.getMessage());
         }
     }
 
@@ -197,7 +197,7 @@ public class Log {
                 joinLeaveLog.flush();
             }
         } catch (IOException e) {
-            Util.sendException(Language.messageWriteException.replace("{file}", "JoinLeave -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionWrite.replace("{file}", "JoinLeave -> " + Util.logName + ".log"), e.getMessage());
         }
     }
 
@@ -206,7 +206,7 @@ public class Log {
             try {
                 joinLeaveLog.close();
             } catch (IOException e) {
-                Util.sendException(Language.messageCloseException.replace("{file}", "JoinLeave -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionClose.replace("{file}", "JoinLeave -> " + Util.logName + ".log"), e.getMessage());
             }
             joinLeaveLog = null;
         }
@@ -214,11 +214,11 @@ public class Log {
 
     public static BufferedWriter addPlayerChatLog(String playerName) {
         File file = new File(dateFolder, "ChatLogs/players/" + playerName + "/" + Util.logName + ".log");
-        checkParentFolder(file, Language.MSG_PREFIX + "Chat -> " + playerName + " -> " + "mkdirs error");
+        checkParentFolder(file, "Chat -> " + playerName + " -> " + "mkdirs error");
         try {
             playerChatLog.put(playerName, openLogFile(file));
         } catch (IOException e) {
-            Util.sendException(Language.messageOpenException.replace("{file}", file.getPath()), e.getMessage());
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", file.getPath()), e.getMessage());
         }
         return playerChatLog.get(playerName);
     }
@@ -234,7 +234,7 @@ public class Log {
                 writer.flush();
             }
         } catch (IOException e) {
-            Util.sendException(Language.messageWriteException.replace("{file}", "Chat -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionWrite.replace("{file}", "Chat -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -246,18 +246,18 @@ public class Log {
             try {
                 writer.close();
             } catch (IOException e) {
-                Util.sendException(Language.messageCloseException.replace("{file}", "Chat -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionClose.replace("{file}", "Chat -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
             }
         }
     }
 
     public static BufferedWriter addPlayerCommandLog(String playerName) {
         File file = new File(dateFolder, "CommandLogs/players/" + playerName + "/" + Util.logName + ".log");
-        checkParentFolder(file, Language.MSG_PREFIX + "Command -> " + playerName + " -> " + "mkdirs error");
+        checkParentFolder(file, "Command -> " + playerName + " -> " + "mkdirs error");
         try {
             playerCommandLog.put(playerName, openLogFile(file));
         } catch (IOException e) {
-            Util.sendException(Language.messageOpenException.replace("{file}", file.getPath()), e.getMessage());
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", file.getPath()), e.getMessage());
         }
         return playerCommandLog.get(playerName);
     }
@@ -273,7 +273,7 @@ public class Log {
                 writer.flush();
             }
         } catch (IOException e) {
-            Util.sendException(Language.messageWriteException.replace("{file}", "Command -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionWrite.replace("{file}", "Command -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -285,18 +285,18 @@ public class Log {
             try {
                 writer.close();
             } catch (IOException e) {
-                Util.sendException(Language.messageCloseException.replace("{file}", "Command -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionClose.replace("{file}", "Command -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
             }
         }
     }
 
     public static BufferedWriter addPlayerGameModeLog(String playerName) {
         File file = new File(dateFolder, "GameModeLogs/players/" + playerName + "/" + Util.logName + ".log");
-        checkParentFolder(file, Language.MSG_PREFIX + "GameMode -> " + playerName + " -> " + "mkdirs error");
+        checkParentFolder(file, "GameMode -> " + playerName + " -> " + "mkdirs error");
         try {
             playerGameModeLog.put(playerName, openLogFile(file));
         } catch (IOException e) {
-            Util.sendException(Language.messageOpenException.replace("{file}", file.getPath()), e.getMessage());
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", file.getPath()), e.getMessage());
         }
         return playerGameModeLog.get(playerName);
     }
@@ -312,7 +312,7 @@ public class Log {
                 writer.flush();
             }
         } catch (IOException e) {
-            Util.sendException(Language.messageWriteException.replace("{file}", "GameMode -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
+            Util.sendException(Language.messageExceptionWrite.replace("{file}", "GameMode -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -324,7 +324,7 @@ public class Log {
             try {
                 writer.close();
             } catch (IOException e) {
-                Util.sendException(Language.messageCloseException.replace("{file}", "GameMode -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionClose.replace("{file}", "GameMode -> " + playerName + " -> " + Util.logName + ".log"), e.getMessage());
             }
         }
     }
@@ -333,7 +333,7 @@ public class Log {
         try {
             warningLog = openLogFile(new File(dateFolder, "Warning.log"));
         } catch (IOException e) {
-            Util.sendException(Language.messageOpenException.replace("{file}", "Warning.log"), e.getMessage());
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", "Warning.log"), e.getMessage());
         }
     }
 
@@ -346,7 +346,7 @@ public class Log {
             if (Config.realTimeSave)
                 warningLog.flush();
         } catch (IOException e) {
-            Util.sendException(Language.messageWriteException.replace("{file}", "Warning.log"), e.getMessage());
+            Util.sendException(Language.messageExceptionWrite.replace("{file}", "Warning.log"), e.getMessage());
         }
     }
 
@@ -355,7 +355,7 @@ public class Log {
             try {
                 warningLog.close();
             } catch (IOException e) {
-                Util.sendException(Language.messageCloseException.replace("{file}", "Warning.log"), e.getMessage());
+                Util.sendException(Language.messageExceptionClose.replace("{file}", "Warning.log"), e.getMessage());
             }
             warningLog = null;
         }
@@ -388,35 +388,35 @@ public class Log {
             try {
                 chatLog.flush();
             } catch (IOException e) {
-                Util.sendException(Language.messageWriteException.replace("{file}", "Chat -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionWrite.replace("{file}", "Chat -> " + Util.logName + ".log"), e.getMessage());
             }
         }
         if (commandLog != null) {
             try {
                 commandLog.flush();
             } catch (IOException e) {
-                Util.sendException(Language.messageWriteException.replace("{file}", "Command -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionWrite.replace("{file}", "Command -> " + Util.logName + ".log"), e.getMessage());
             }
         }
         if (gameModeLog != null) {
             try {
                 gameModeLog.flush();
             } catch (IOException e) {
-                Util.sendException(Language.messageWriteException.replace("{file}", "GameMode -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionWrite.replace("{file}", "GameMode -> " + Util.logName + ".log"), e.getMessage());
             }
         }
         if (opChangeLog != null) {
             try {
                 opChangeLog.flush();
             } catch (IOException e) {
-                Util.sendException(Language.messageWriteException.replace("{file}", "OpChange.log"), e.getMessage());
+                Util.sendException(Language.messageExceptionWrite.replace("{file}", "OpChange.log"), e.getMessage());
             }
         }
         if (joinLeaveLog != null) {
             try {
                 joinLeaveLog.flush();
             } catch (IOException e) {
-                Util.sendException(Language.messageWriteException.replace("{file}", "JoinLeave -> " + Util.logName + ".log"), e.getMessage());
+                Util.sendException(Language.messageExceptionWrite.replace("{file}", "JoinLeave -> " + Util.logName + ".log"), e.getMessage());
             }
         }
         if (Config.playerChat.get("perPlayer")) {
@@ -424,7 +424,7 @@ public class Log {
                 try {
                     writer.flush();
                 } catch (IOException e) {
-                    Util.sendException(Language.messageWriteException.replace("{file}", "Chat -> " + player + " -> " + Util.logName + ".log"), e.getMessage());
+                    Util.sendException(Language.messageExceptionWrite.replace("{file}", "Chat -> " + player + " -> " + Util.logName + ".log"), e.getMessage());
                 }
             });
         }
@@ -433,7 +433,7 @@ public class Log {
                 try {
                     writer.flush();
                 } catch (IOException e) {
-                    Util.sendException(Language.messageWriteException.replace("{file}", "Command -> " + player + " -> " + Util.logName + ".log"), e.getMessage());
+                    Util.sendException(Language.messageExceptionWrite.replace("{file}", "Command -> " + player + " -> " + Util.logName + ".log"), e.getMessage());
                 }
             });
         }
@@ -442,9 +442,10 @@ public class Log {
                 try {
                     writer.flush();
                 } catch (IOException e) {
-                    Util.sendException(Language.messageWriteException.replace("{file}", "GameMode -> " + player + " -> " + Util.logName + ".log"), e.getMessage());
+                    Util.sendException(Language.messageExceptionWrite.replace("{file}", "GameMode -> " + player + " -> " + Util.logName + ".log"), e.getMessage());
                 }
             });
         }
     }
+
 }

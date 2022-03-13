@@ -173,9 +173,9 @@ public class Language {
                     config.set("command-unknown", config.getString("commandError"));
                     config.set("commandError", null);
                     config.set("log-player-chat", config.getString("log.playerChat"));
-                    config.set("log-player-command", config.getString("log.isOP"));
-                    config.set("log-player-command-op", config.getString("log.nonOP"));
-                    config.set("log-player-command-non-op", config.getString("log.playerCommand"));
+                    config.set("log-player-command", config.getString("log.playerCommand"));
+                    config.set("log-player-command-op", config.getString("log.isOP"));
+                    config.set("log-player-command-non-op", config.getString("log.nonOP"));
                     config.set("log-console-command", config.getString("log.consoleCommand"));
                     config.set("log-op-change-op-player", config.getString("log.opped"));
                     config.set("log-op-change-deop-player", config.getString("log.deOpped"));

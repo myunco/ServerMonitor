@@ -18,7 +18,7 @@ public class UpdateChecker {
     private static Timer timer;
 
     public static void start() {
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
+        plugin.getServer().getScheduler().runTask(plugin, () -> { //直接使用Timer不能等到开服完成后再检查更新
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override

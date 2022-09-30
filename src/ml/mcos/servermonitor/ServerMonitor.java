@@ -15,6 +15,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Timer;
 import java.util.TimerTask;
 
+//TODO
+/*
+ "可以将数据保存到数据库吗" #282
+ (是否有必要这么做还有待商榷。
+ 直接保存到文本文件的目的就是方便查看日志内容，如果存到数据库显然不便查看。)
+ */
+
 public class ServerMonitor extends JavaPlugin {
     private static ServerMonitor plugin;
     private static Timer timer;

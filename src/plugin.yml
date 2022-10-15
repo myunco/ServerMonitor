@@ -8,7 +8,7 @@ commands:
   ServerMonitor:
     description: This is main command of the plugin.
     usage: §e/ServerMonitor §3<§ahelp§c|§areload§c|§aversion§3>
-    aliases: [sm]
+    aliases: sm
     permission: servermonitor.use
     permission-message: "§cYou don't have permission!"
 permissions:

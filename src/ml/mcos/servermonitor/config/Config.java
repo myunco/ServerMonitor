@@ -2,19 +2,16 @@ package ml.mcos.servermonitor.config;
 
 import ml.mcos.servermonitor.ServerMonitor;
 import ml.mcos.servermonitor.util.Util;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 
@@ -90,7 +87,7 @@ public class Config {
     public static YamlConfiguration loadConfiguration(File file) {
         YamlConfiguration config = new YamlConfiguration();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder();
             String line;
             try {
@@ -101,18 +98,14 @@ public class Config {
                 reader.close();
             }
             config.loadFromString(builder.toString());
-        } catch (FileNotFoundException e) {
-            Util.sendException("FileNotFoundException: " + file.getName(), e.getMessage());
-        } catch (IOException e) {
-            Util.sendException("IOException: " + file.getName(), e.getMessage());
-        } catch (InvalidConfigurationException e) {
-            Util.sendException("InvalidConfigurationException: " + file.getName(), e.getMessage());
+        } catch (Exception e) {
+            Util.sendException(e.getClass().getName() + ": " + file.getName(), e.getMessage());
         }
         return config;
     }
 
     public static void saveConfiguration(YamlConfiguration config, File file) {
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8)) {
             writer.write(config.saveToString());
         } catch (IOException e) {
             Util.sendException(Language.messageExceptionSave.replace("{file}", "config.yml"), e.getMessage());

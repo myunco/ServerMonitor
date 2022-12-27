@@ -5,10 +5,10 @@ import ml.mcos.servermonitor.util.Util;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 public class Language {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();
@@ -116,7 +116,7 @@ public class Language {
                 InputStream in = plugin.getResource("languages/zh_cn.yml");
                 if (in != null) {
                     try {
-                        OutputStream out = new FileOutputStream(lang);
+                        OutputStream out = Files.newOutputStream(lang.toPath());
                         byte[] buf = new byte[1024];
                         int len;
                         while ((len = in.read(buf)) != -1) {

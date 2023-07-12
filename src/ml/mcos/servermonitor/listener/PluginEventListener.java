@@ -22,8 +22,8 @@ import java.util.Objects;
 
 public class PluginEventListener implements Listener {
     private final int mcVersion;
-    String opGivePermission;
-    String opTakePermission;
+    private final String opGivePermission;
+    private final String opTakePermission;
 
     public PluginEventListener(int mcVersion) {
         this.mcVersion = mcVersion;
@@ -56,7 +56,12 @@ public class PluginEventListener implements Listener {
         if (!Config.playerCommand.get("enable")) {
             return;
         }
-        String cmd = event.getMessage();
+        String cmd;
+        if (isLoginCommand(event.getMessage())) {
+            cmd = hidePassword(event.getMessage());
+        } else {
+            cmd = event.getMessage();
+        }
         String playerName = event.getPlayer().getName();
         boolean isOp = event.getPlayer().isOp();
         String str = Util.getTime() + Language.logPlayerCommand
@@ -130,6 +135,32 @@ public class PluginEventListener implements Listener {
             list.forEach(value -> Log.writeWarningLog(Util.getTime() + value.replace("{player}", playerName).replace("{command}", cmd)));
             Log.closeWarningLog();
         }
+    }
+
+    private final String[] loginCommand = {"/login", "/log", "/l", "/register", "/reg"};
+
+    private boolean isLoginCommand(String cmd) {
+        for (String s : loginCommand) {
+            if (cmd.startsWith(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String hidePassword(String cmd) {
+        StringBuilder builder = new StringBuilder();
+        int index = cmd.indexOf(' ');
+        for (int i = 0; i < cmd.length(); i++) {
+            if (i <= index) {
+                builder.append(cmd.charAt(i));
+            } else if (cmd.charAt(i) != ' '){
+                builder.append('*');
+            } else {
+                builder.append(' ');
+            }
+        }
+        return builder.toString();
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

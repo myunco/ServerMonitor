@@ -236,7 +236,6 @@ public class Metrics {
             baseJsonBuilder.appendField("serverUUID", serverUuid);
             baseJsonBuilder.appendField("metricsVersion", METRICS_VERSION);
             JsonObjectBuilder.JsonObject data = baseJsonBuilder.build();
-            System.out.println("data = " + data.toString());
             scheduler.execute(
                     () -> {
                         try {

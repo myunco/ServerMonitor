@@ -13,8 +13,6 @@ import java.util.TimerTask;
 
 public class UpdateChecker {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();
-    private static final String currentVersion = plugin.getDescription().getVersion();
-    private static final String[] current = currentVersion.split("\\.");
     private static Timer timer;
 
     public static void start() {
@@ -27,7 +25,7 @@ public class UpdateChecker {
                         CheckResult result = checkVersionUpdate("https://sinacloud.net/myunco/E776DD23/version.txt");
                         if (result.getResultType() == CheckResult.ResultType.SUCCESS) {
                             if (result.hasNewVersion()) {
-                                String str = Language.replaceArgs(Language.updateFoundNewVersion, currentVersion, result.getLatestVersion());
+                                String str = Language.replaceArgs(Language.updateFoundNewVersion, CheckResult.currentVersion, result.getLatestVersion());
                                 plugin.logMessage(result.hasMajorUpdate() ? Language.updateMajorUpdate + str : str);
                                 plugin.logMessage(Language.updateDownloadLink + "https://www.mcbbs.net/thread-995756-1-1.html");
                             }
@@ -57,65 +55,10 @@ public class UpdateChecker {
             String latestVersion = reader.readLine();
             reader.close();
             conn.disconnect();
-            if (currentVersion.equals(latestVersion)) {
-                return new CheckResult(null, false, code, CheckResult.ResultType.SUCCESS);
-            } else {
-                String[] latest = latestVersion.split("\\.");
-                boolean majorUpdate;
-                if (!latest[0].equals(current[0])) {
-                    majorUpdate = true;
-                } else {
-                    majorUpdate = !latest[1].equals(current[1]);
-                }
-                return new CheckResult(latestVersion, majorUpdate, code, CheckResult.ResultType.SUCCESS);
-            }
+            return new CheckResult(latestVersion, code, CheckResult.ResultType.SUCCESS);
         } else {
             return new CheckResult(code, CheckResult.ResultType.FAILURE);
         }
-    }
-
-}
-
- class CheckResult {
-
-    public enum ResultType {
-        SUCCESS, FAILURE
-    }
-
-    private final ResultType resultType;
-    private final String latestVersion;
-    private final boolean majorUpdate;
-    private final int responseCode;
-
-    public CheckResult(int responseCode, ResultType type) {
-        this(null, false, responseCode, type);
-    }
-
-    public CheckResult(String latestVersion, boolean majorUpdate, int responseCode, ResultType type) {
-        this.latestVersion = latestVersion;
-        this.majorUpdate = majorUpdate;
-        this.responseCode = responseCode;
-        this.resultType = type;
-    }
-
-    public ResultType getResultType() {
-        return resultType;
-    }
-
-    public String getLatestVersion() {
-        return latestVersion;
-    }
-
-    public boolean hasNewVersion() {
-        return latestVersion != null;
-    }
-
-    public boolean hasMajorUpdate() {
-        return majorUpdate;
-    }
-
-    public int getResponseCode() {
-        return responseCode;
     }
 
 }

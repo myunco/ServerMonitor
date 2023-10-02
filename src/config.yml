@@ -51,11 +51,36 @@ playerGameModeChange:
 #记录玩家加入/离开/被踢出
 joinAndLeave: true
 
+#关键词警报 当任何非OP玩家执行包含指定关键词的命令时向后台或在线OP发出警报
+keywordsAlert:
+  #是否启用 true为启用 false为禁用
+  enable: false
+
+  #关键词列表 不区分大小写 按示例格式添加
+  keywords:
+    - gamemode
+    - give
+    - op
+    - deop
+
+  #命令取消执行 true为取消 false为不取消（即使不取消 玩家也未必有权限使用）
+  cancel: false
+
+  #警报信息 支持多行 按格式添加
+  alertMsg:
+    - '§c玩家§a{player}§c尝试使用命令：§b{command}'
+
+  #是否通知在线OP true为通知 false为不通知
+  reportAdmin: true
+
+  #是否通知控制台 true为通知 false为不通知
+  reportConsole: true
+
 commandAlert:
   #非白名单OP执行命令警报 true为启用 false为禁用
   enable: true
 
-  #玩家白名单 按示例格式添加
+  #玩家白名单 按示例格式添加（记得删除示例玩家名）
   whitelist:
     - 玩家名1
     - 玩家名2
@@ -100,7 +125,7 @@ commandAlert:
     sendMsgToPlayer:
       - '惊喜不惊喜？意外不意外？'
 
-    #控制台显示警告信息 支持多条 按格式添加
+    #控制台显示警告信息 支持多行 按格式添加
     consoleWarning:
       - '§4§l------------------警告------------------'
       - '§4玩家§b{player}§4不在白名单并以OP身份执行命令：§6{command}'

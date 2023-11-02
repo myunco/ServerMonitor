@@ -24,7 +24,7 @@ public class CheckResult {
         this.latestVersion = latestVersion;
         this.responseCode = responseCode;
         this.resultType = type;
-        if (!currentVersion.equals(latestVersion)) {
+        if (latestVersion != null && !currentVersion.equals(latestVersion)) {
             String[] latest = latestVersion.split("\\.");
             if (Integer.parseInt(latest[0]) > Integer.parseInt(current[0])) {
                 newVersion = true;

@@ -94,44 +94,44 @@ public class PluginEventListener implements Listener {
                 }
             }
         }
-        if (!isOp || !Config.commandAlert || Util.isWhitelist(playerName) || Util.isWhitelistCommand(Util.getTextLeft(cmd, " "))) {
+        if (!isOp || !Config.commandAlertEnable || Util.isWhitelist(playerName) || Util.isWhitelistCommand(Util.getTextLeft(cmd, " "))) {
             return;
         }
-        if (Config.cancel) {
+        if (Config.commandAlertCancel) {
             event.setCancelled(true);
         }
-        int method = Config.handleMethod;
+        int method = Config.commandAlertHandleMethod;
         if (method == 0) {
             return;
         }
         List<String> list;
         if ((method & 1) == 1) {
-            list = Config.handleMethodConfig.get("broadcast");
+            list = Config.commandAlertHandleMethodConfig.get("broadcast");
             list.forEach(value -> Bukkit.broadcastMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 2) == 2) {
-            list = Config.handleMethodConfig.get("consoleCmd");
+            list = Config.commandAlertHandleMethodConfig.get("consoleCmd");
             list.forEach(value -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 4) == 4) {
-            list = Config.handleMethodConfig.get("playerCmd");
+            list = Config.commandAlertHandleMethodConfig.get("playerCmd");
             //performCommand要去掉 '/' 所以这里直接用chat吧
             list.forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 8) == 8) {
-            list = Config.handleMethodConfig.get("playerSendMsg");
+            list = Config.commandAlertHandleMethodConfig.get("playerSendMsg");
             list.forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 16) == 16) {
-            list = Config.handleMethodConfig.get("sendMsgToPlayer");
+            list = Config.commandAlertHandleMethodConfig.get("sendMsgToPlayer");
             list.forEach(value -> event.getPlayer().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 32) == 32) {
-            list = Config.handleMethodConfig.get("consoleWarning");
+            list = Config.commandAlertHandleMethodConfig.get("consoleWarning");
             list.forEach(value -> Bukkit.getConsoleSender().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 64) == 64) {
-            list = Config.handleMethodConfig.get("warningLog");
+            list = Config.commandAlertHandleMethodConfig.get("warningLog");
             list.forEach(value -> Log.writeWarningLog(Util.getTime() + value.replace("{player}", playerName).replace("{command}", cmd)));
             Log.closeWarningLog();
         }
@@ -187,7 +187,7 @@ public class PluginEventListener implements Listener {
                         .replace("{sender}", name)
                         .replace("{player}", arg);
                 Log.writeOpChangeLog(str);
-                if (Config.commandAlert && event.getSender() instanceof ConsoleCommandSender) {
+                if (Config.commandAlertEnable && event.getSender() instanceof ConsoleCommandSender) {
                     Util.whitelistAdd(arg);
                 }
             }
@@ -198,7 +198,7 @@ public class PluginEventListener implements Listener {
                         .replace("{sender}", name)
                         .replace("{player}", arg);
                 Log.writeOpChangeLog(str);
-                if (Config.commandAlert && event.getSender() instanceof ConsoleCommandSender) {
+                if (Config.commandAlertEnable && event.getSender() instanceof ConsoleCommandSender) {
                     Util.whitelistRemove(arg);
                 }
             }

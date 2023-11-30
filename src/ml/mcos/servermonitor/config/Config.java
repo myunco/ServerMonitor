@@ -31,12 +31,13 @@ public class Config {
     public static HashMap<String, Boolean> playerGameModeChange = new HashMap<>();
     public static boolean opChange;
     public static boolean joinAndLeave;
-    public static List<String> whitelist;
-    public static boolean commandAlert;
-    public static List<String> commandWhiteList;
-    public static boolean cancel;
-    public static int handleMethod;
-    public static HashMap<String, List<String>> handleMethodConfig = new HashMap<>();
+    public static boolean keywordsAlertEnable;
+    public static boolean commandAlertEnable;
+    public static List<String> commandAlertPlayerWhitelist;
+    public static List<String> commandAlertCommandWhiteList;
+    public static boolean commandAlertCancel;
+    public static int commandAlertHandleMethod;
+    public static HashMap<String, List<String>> commandAlertHandleMethodConfig = new HashMap<>();
 
     public static void loadConfig() {
         plugin.saveDefaultConfig();
@@ -63,19 +64,19 @@ public class Config {
         playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer", false));
         opChange = config.getBoolean("playerCommand.opChange", true);
         joinAndLeave = config.getBoolean("joinAndLeave", true);
-        commandAlert = config.getBoolean("commandAlert.enable", false);
-        if (commandAlert) {
-            whitelist = config.getStringList("commandAlert.whitelist");
-            cancel = config.getBoolean("commandAlert.cancel", true);
-            commandWhiteList = config.getStringList("commandAlert.commandWhiteList");
-            handleMethod = config.getInt("commandAlert.handleMethod.method", 0);
-            handleMethodConfig.put("broadcast", config.getStringList("commandAlert.handleMethod.broadcast"));
-            handleMethodConfig.put("consoleCmd", config.getStringList("commandAlert.handleMethod.consoleCmd"));
-            handleMethodConfig.put("playerCmd", config.getStringList("commandAlert.handleMethod.playerCmd"));
-            handleMethodConfig.put("playerSendMsg", config.getStringList("commandAlert.handleMethod.playerSendMsg"));
-            handleMethodConfig.put("sendMsgToPlayer", config.getStringList("commandAlert.handleMethod.sendMsgToPlayer"));
-            handleMethodConfig.put("consoleWarning", config.getStringList("commandAlert.handleMethod.consoleWarning"));
-            handleMethodConfig.put("warningLog", config.getStringList("commandAlert.handleMethod.warningLog"));
+        commandAlertEnable = config.getBoolean("commandAlert.enable", false);
+        if (commandAlertEnable) {
+            commandAlertPlayerWhitelist = config.getStringList("commandAlert.whitelist");
+            commandAlertCancel = config.getBoolean("commandAlert.cancel", true);
+            commandAlertCommandWhiteList = config.getStringList("commandAlert.commandWhiteList");
+            commandAlertHandleMethod = config.getInt("commandAlert.handleMethod.method", 0);
+            commandAlertHandleMethodConfig.put("broadcast", config.getStringList("commandAlert.handleMethod.broadcast"));
+            commandAlertHandleMethodConfig.put("consoleCmd", config.getStringList("commandAlert.handleMethod.consoleCmd"));
+            commandAlertHandleMethodConfig.put("playerCmd", config.getStringList("commandAlert.handleMethod.playerCmd"));
+            commandAlertHandleMethodConfig.put("playerSendMsg", config.getStringList("commandAlert.handleMethod.playerSendMsg"));
+            commandAlertHandleMethodConfig.put("sendMsgToPlayer", config.getStringList("commandAlert.handleMethod.sendMsgToPlayer"));
+            commandAlertHandleMethodConfig.put("consoleWarning", config.getStringList("commandAlert.handleMethod.consoleWarning"));
+            commandAlertHandleMethodConfig.put("warningLog", config.getStringList("commandAlert.handleMethod.warningLog"));
         }
     }
 

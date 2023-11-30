@@ -44,7 +44,7 @@ public class Util {
     }
 
     public static boolean isWhitelist(String playerName) {
-        for (String s : Config.whitelist) {
+        for (String s : Config.commandAlertPlayerWhitelist) {
             if (s.equalsIgnoreCase(playerName)) {
                 return true;
             }
@@ -54,20 +54,20 @@ public class Util {
 
     public static void whitelistAdd(String playerName) {
         if (!isWhitelist(playerName)) {
-            Config.whitelist.add(playerName);
-            Config.setValue("commandAlert.whitelist", Config.whitelist);
+            Config.commandAlertPlayerWhitelist.add(playerName);
+            Config.setValue("commandAlert.whitelist", Config.commandAlertPlayerWhitelist);
         }
     }
 
     public static void whitelistRemove(String playerName) {
         if (isWhitelist(playerName)) {
-            Config.whitelist.remove(playerName);
-            Config.setValue("commandAlert.whitelist", Config.whitelist);
+            Config.commandAlertPlayerWhitelist.remove(playerName);
+            Config.setValue("commandAlert.whitelist", Config.commandAlertPlayerWhitelist);
         }
     }
 
     public static boolean isWhitelistCommand(String command) {
-        for (String s : Config.commandWhiteList) {
+        for (String s : Config.commandAlertCommandWhiteList) {
             if (s.equalsIgnoreCase(command)) {
                 return true;
             }

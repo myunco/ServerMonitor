@@ -1,11 +1,13 @@
 package ml.mcos.servermonitor.listener;
 
+import ml.mcos.servermonitor.ServerMonitor;
 import ml.mcos.servermonitor.config.Config;
 import ml.mcos.servermonitor.config.Language;
 import ml.mcos.servermonitor.util.Log;
 import ml.mcos.servermonitor.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -21,13 +23,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class PluginEventListener implements Listener {
-    private final int mcVersion;
+    private final ServerMonitor plugin;
     private final String opGivePermission;
     private final String opTakePermission;
 
-    public PluginEventListener(int mcVersion) {
-        this.mcVersion = mcVersion;
-        if (mcVersion < 8) {
+    public PluginEventListener(ServerMonitor plugin) {
+        this.plugin = plugin;
+        if (plugin.getMcVersion() < 8) {
             opGivePermission = "bukkit.command.op.give";
             opTakePermission = "bukkit.command.op.take";
         } else {
@@ -71,6 +73,28 @@ public class PluginEventListener implements Listener {
         Log.writeCommandLog(str);
         if (Config.playerCommand.get("perPlayer")) {
             Log.writePlayerCommandLog(playerName, str);
+        }
+        if (Config.keywordsAlertEnable && !isOp && !Config.keywordsAlertMsg.isEmpty()) {
+            for (String keyword : Config.keywordsAlertKeywords) {
+                if (cmd.toLowerCase().contains(keyword.toLowerCase())) {
+                    if (Config.keywordsAlertCancel) {
+                        event.setCancelled(true);
+                    }
+                    for (String msg : Config.keywordsAlertMsg) {
+                        if (Config.keywordsAlertReportAdmin) {
+                            for (Player onlinePlayer : plugin.getOnlinePlayers()) {
+                                if (onlinePlayer.isOp()) {
+                                    onlinePlayer.sendMessage(msg);
+                                }
+                            }
+                        }
+                        if (Config.keywordsAlertReportConsole) {
+                            Bukkit.getConsoleSender().sendMessage(msg);
+                        }
+                    }
+                    break;
+                }
+            }
         }
         if (event.isCancelled()) {
             return;

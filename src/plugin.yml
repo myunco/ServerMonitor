@@ -1,6 +1,6 @@
 name: ServerMonitor
 main: ml.mcos.servermonitor.ServerMonitor
-version: 1.3.3-SNAPSHOT
+version: 1.4.0-SNAPSHOT
 api-version: 1.13
 author: unco_
 website: https://www.mcbbs.net/thread-995756-1-1.html

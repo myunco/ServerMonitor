@@ -30,7 +30,7 @@ public class TabComplete {
             return ret; //默认情况下 返回空List
         } else if (list.isEmpty()) {
             return null; //返回null时 游戏会用线玩家的名字列表作为候选
-        } else if (args[args.length - 1].equals("")) {
+        } else if (args[args.length - 1].isEmpty()) {
             return list;
         }
         String arg = args[args.length - 1].toLowerCase();

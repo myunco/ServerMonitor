@@ -32,6 +32,11 @@ public class Config {
     public static boolean opChange;
     public static boolean joinAndLeave;
     public static boolean keywordsAlertEnable;
+    public static List<String> keywordsAlertKeywords;
+    public static boolean keywordsAlertCancel;
+    public static List<String> keywordsAlertMsg;
+    public static boolean keywordsAlertReportAdmin;
+    public static boolean keywordsAlertReportConsole;
     public static boolean commandAlertEnable;
     public static List<String> commandAlertPlayerWhitelist;
     public static List<String> commandAlertCommandWhiteList;
@@ -64,6 +69,7 @@ public class Config {
         playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer", false));
         opChange = config.getBoolean("playerCommand.opChange", true);
         joinAndLeave = config.getBoolean("joinAndLeave", true);
+        keywordsAlertEnable = config.getBoolean("keywordsAlert.enable", false);
         commandAlertEnable = config.getBoolean("commandAlert.enable", false);
         if (commandAlertEnable) {
             commandAlertPlayerWhitelist = config.getStringList("commandAlert.whitelist");
@@ -77,6 +83,13 @@ public class Config {
             commandAlertHandleMethodConfig.put("sendMsgToPlayer", config.getStringList("commandAlert.handleMethod.sendMsgToPlayer"));
             commandAlertHandleMethodConfig.put("consoleWarning", config.getStringList("commandAlert.handleMethod.consoleWarning"));
             commandAlertHandleMethodConfig.put("warningLog", config.getStringList("commandAlert.handleMethod.warningLog"));
+        }
+        if (keywordsAlertEnable) {
+            keywordsAlertKeywords = config.getStringList("keywordsAlert.keywords");
+            keywordsAlertCancel = config.getBoolean("keywordsAlert.cancel");
+            keywordsAlertMsg = config.getStringList("keywordsAlert.alertMsg");
+            keywordsAlertReportAdmin = config.getBoolean("keywordsAlert.reportAdmin");
+            keywordsAlertReportConsole = config.getBoolean("keywordsAlert.reportConsole");
         }
     }
 

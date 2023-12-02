@@ -16,7 +16,9 @@ public class UpdateChecker {
     private static Timer timer;
 
     public static void start() {
-        plugin.getServer().getScheduler().runTask(plugin, () -> { //直接使用Timer不能等到开服完成后再检查更新
+        plugin.getServer().getScheduler().runTask(plugin, () -> { // 直接使用Timer不能等到开服完成后再检查更新
+            // 什么？你问我为什么要用Timer？我只能告诉你，我忘了我为什么用Timer了。 ———— 2023/12/2
+            // 等等，我好像又想起来了，是因为计时准确性。 ———— 2023/12/2
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override

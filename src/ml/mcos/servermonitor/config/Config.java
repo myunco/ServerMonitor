@@ -92,7 +92,7 @@ public class Config {
             keywordsAlertReportConsole = config.getBoolean("keywordsAlert.reportConsole");
         }
     }
-
+    //TODO 配置文件升级
     public static void setValue(String path, Object value) {
         config.set(path, value);
         saveConfiguration(config, configFile);

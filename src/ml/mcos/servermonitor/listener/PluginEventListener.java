@@ -19,7 +19,6 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
-import java.util.List;
 import java.util.Objects;
 
 public class PluginEventListener implements Listener {
@@ -80,15 +79,15 @@ public class PluginEventListener implements Listener {
                     if (Config.keywordsAlertCancel) {
                         event.setCancelled(true);
                     }
-                    for (String msg : Config.keywordsAlertMsg) {
-                        if (Config.keywordsAlertReportAdmin) {
-                            for (Player onlinePlayer : plugin.getOnlinePlayers()) {
-                                if (onlinePlayer.isOp()) {
-                                    onlinePlayer.sendMessage(msg);
-                                }
+                    if (Config.keywordsAlertReportAdmin) {
+                        for (Player player : plugin.getOnlineOperators()) {
+                            for (String msg : Config.keywordsAlertMsg) {
+                                player.sendMessage(msg);
                             }
                         }
-                        if (Config.keywordsAlertReportConsole) {
+                    }
+                    if (Config.keywordsAlertReportConsole) {
+                        for (String msg : Config.keywordsAlertMsg) {
                             Bukkit.getConsoleSender().sendMessage(msg);
                         }
                     }
@@ -128,35 +127,27 @@ public class PluginEventListener implements Listener {
         if (method == 0) {
             return;
         }
-        List<String> list;
         if ((method & 1) == 1) {
-            list = Config.commandAlertHandleMethodConfig.get("broadcast");
-            list.forEach(value -> Bukkit.broadcastMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
+            Config.commandAlertHandleMethodConfig.get("broadcast").forEach(value -> Bukkit.broadcastMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 2) == 2) {
-            list = Config.commandAlertHandleMethodConfig.get("consoleCmd");
-            list.forEach(value -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("{player}", playerName).replace("{command}", cmd)));
+            Config.commandAlertHandleMethodConfig.get("consoleCmd").forEach(value -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 4) == 4) {
-            list = Config.commandAlertHandleMethodConfig.get("playerCmd");
             //performCommand要去掉 '/' 所以这里直接用chat吧
-            list.forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
+            Config.commandAlertHandleMethodConfig.get("playerCmd").forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 8) == 8) {
-            list = Config.commandAlertHandleMethodConfig.get("playerSendMsg");
-            list.forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
+            Config.commandAlertHandleMethodConfig.get("playerSendMsg").forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 16) == 16) {
-            list = Config.commandAlertHandleMethodConfig.get("sendMsgToPlayer");
-            list.forEach(value -> event.getPlayer().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
+            Config.commandAlertHandleMethodConfig.get("sendMsgToPlayer").forEach(value -> event.getPlayer().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 32) == 32) {
-            list = Config.commandAlertHandleMethodConfig.get("consoleWarning");
-            list.forEach(value -> Bukkit.getConsoleSender().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
+            Config.commandAlertHandleMethodConfig.get("consoleWarning").forEach(value -> Bukkit.getConsoleSender().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 64) == 64) {
-            list = Config.commandAlertHandleMethodConfig.get("warningLog");
-            list.forEach(value -> Log.writeWarningLog(Util.getTime() + value.replace("{player}", playerName).replace("{command}", cmd)));
+            Config.commandAlertHandleMethodConfig.get("warningLog").forEach(value -> Log.writeWarningLog(Util.getTime() + value.replace("{player}", playerName).replace("{command}", cmd)));
             Log.closeWarningLog();
         }
     }
@@ -201,7 +192,7 @@ public class PluginEventListener implements Listener {
                 .replace("{sender}", name)
                 .replace("{command}", cmd);
         Log.writeCommandLog(str);
-        if (!Config.opChange || (mcVersion > 8 && event.isCancelled())) {
+        if (!Config.opChange || plugin.isVersionGtOrEq(8, 7) && event.isCancelled()) { //1.8.7版本开始此事件才实现Cancellable
             return;
         }
         if (cmd.toLowerCase().startsWith("op ")) {

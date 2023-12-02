@@ -8,12 +8,15 @@ import ml.mcos.servermonitor.metrics.Metrics;
 import ml.mcos.servermonitor.update.UpdateChecker;
 import ml.mcos.servermonitor.util.Log;
 import ml.mcos.servermonitor.util.Util;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ServerMonitor extends JavaPlugin {
     private static ServerMonitor plugin;
@@ -79,24 +82,18 @@ public class ServerMonitor extends JavaPlugin {
         return getClassLoader();
     }
 
-    public Collection<? extends Player> getOnlinePlayers() {
-        if (getMcVersion() > 7 || (getMcVersion() == 7 && getMcVersionPatch() == 10)) {
-            return getServer().getOnlinePlayers();
+    public ArrayList<Player> getOnlineOperators() {
+        ArrayList<Player> result = new ArrayList<>();
+        for (OfflinePlayer operator : getServer().getOperators()) {
+            Player player = getServer().getPlayer(operator.getUniqueId());
+            if (player != null) {
+                result.add(player);
+            }
         }
-        try {
-            return Arrays.asList((Player[]) Class.forName("org.bukkit.Server").getMethod("getOnlinePlayers").invoke(plugin.getServer()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
-    }
-
-    public void logMessage(String message) {
-        getServer().getConsoleSender().sendMessage(Language.logPrefix + message);
+        return result;
     }
 
     public int getMinecraftVersion() {
-        //return Integer.parseInt(getServer().getBukkitVersion().replace('-', '.').split("\\.")[1]);
         String[] version = getServer().getBukkitVersion().replace('-', '.').split("\\.");
         try {
             mcVersionPatch = Integer.parseInt(version[2]);
@@ -109,7 +106,11 @@ public class ServerMonitor extends JavaPlugin {
         return mcVersion;
     }
 
-    public int getMcVersionPatch() {
-        return mcVersionPatch;
+    public boolean isVersionGtOrEq(int version, int patch) {
+        return mcVersion > version || mcVersion == version && mcVersionPatch >= patch;
+    }
+
+    public void logMessage(String message) {
+        getServer().getConsoleSender().sendMessage(Language.logPrefix + message);
     }
 }

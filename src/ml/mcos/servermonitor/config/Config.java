@@ -5,20 +5,23 @@ import ml.mcos.servermonitor.util.Util;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@SuppressWarnings("IOStreamConstructor")
 public class Config {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();
     private static final File configFile = new File(plugin.getDataFolder(), "config.yml");
-    private static YamlConfiguration config;
     public static String language;
     public static String dateFormat;
     public static String lineSeparator;
@@ -46,14 +49,17 @@ public class Config {
 
     public static void loadConfig() {
         plugin.saveDefaultConfig();
-        config = loadConfiguration(configFile);
+        YamlConfiguration config = updateConfiguration();
         language = config.getString("language", "zh_cn");
         Language.loadLanguage(language);
         dateFormat = config.getString("dateFormat", "yyyy/MM/dd HH:mm:ss");
         Util.setTimeFormat(dateFormat);
         lineSeparator = config.getString("lineSeparator", "Auto");
+        assert lineSeparator != null;
         if ("Auto".equalsIgnoreCase(lineSeparator)) {
             lineSeparator = System.lineSeparator();
+        } else {
+            lineSeparator = lineSeparator.replace("\\r", "\r").replace("\\n", "\n");
         }
         realTimeSave = config.getBoolean("realTimeSave", true);
         zipOldLog = config.getBoolean("zipOldLog", false);
@@ -92,21 +98,16 @@ public class Config {
             keywordsAlertReportConsole = config.getBoolean("keywordsAlert.reportConsole");
         }
     }
-    //TODO 配置文件升级
-    public static void setValue(String path, Object value) {
-        config.set(path, value);
-        saveConfiguration(config, configFile);
-    }
 
     public static YamlConfiguration loadConfiguration(File file) {
         YamlConfiguration config = new YamlConfiguration();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder();
             String line;
             try {
                 while((line = reader.readLine()) != null) {
-                    builder.append(line).append('\n');
+                    builder.append(line).append(System.lineSeparator());
                 }
             } finally {
                 reader.close();
@@ -118,11 +119,104 @@ public class Config {
         return config;
     }
 
+    public static YamlConfiguration updateConfiguration() {
+        YamlConfiguration config = loadConfiguration(configFile);
+        if (!config.contains("keywordsAlert")) { //没有1.4.0版本新加的配置 需要升级
+            //更新config会导致注释丢失 为避免这种情况 使用流来追加新内容
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(configFile, true), StandardCharsets.UTF_8)) {
+                writer.write("\r\n" +
+                        "#关键词警报 当任何非OP玩家执行包含指定关键词的命令时向后台或在线OP发出警报\r\n" +
+                        "keywordsAlert:\r\n" +
+                        "  #是否启用 true为启用 false为禁用\r\n" +
+                        "  #此功能在记录玩家命令启用的情况下才能生效\r\n" +
+                        "  enable: false\r\n" +
+                        "\r\n" +
+                        "  #关键词列表 不区分大小写 按示例格式添加\r\n" +
+                        "  keywords:\r\n" +
+                        "    - /gamemode\r\n" +
+                        "    - /give\r\n" +
+                        "    - /op\r\n" +
+                        "    - /deop\r\n" +
+                        "\r\n" +
+                        "  #命令取消执行 true为取消 false为不取消（即使不取消 玩家也未必有权限使用）\r\n" +
+                        "  cancel: false\r\n" +
+                        "\r\n" +
+                        "  #警报信息 支持多行 按格式添加\r\n" +
+                        "  alertMsg:\r\n" +
+                        "    - '§c玩家§a{player}§c尝试使用命令：§b{command}'\r\n" +
+                        "\r\n" +
+                        "  #是否通知在线OP true为通知 false为不通知\r\n" +
+                        "  reportAdmin: true\r\n" +
+                        "\r\n" +
+                        "  #是否通知控制台 true为通知 false为不通知\r\n" +
+                        "  reportConsole: true\r\n");
+                config = loadConfiguration(configFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return config;
+    }
+
     public static void saveConfiguration(YamlConfiguration config, File file) {
-        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             writer.write(config.saveToString());
         } catch (IOException e) {
             Util.sendException(Language.messageExceptionSave.replace("{file}", "config.yml"), e.getMessage());
+        }
+    }
+
+    public static void addToWhitelist(String name) {
+        ArrayList<String> text = new ArrayList<>(160);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                text.add(line);
+                if (line.equals("  whitelist:")) {
+                    text.add("    - " + name);
+                }
+            }
+        } catch (IOException e) {
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", "config.yml"), e.getMessage());
+            return;
+        }
+        writeConfigFile(text);
+    }
+
+    public static void removeFromWhitelist(String name) {
+        ArrayList<String> text = new ArrayList<>(160);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8))) {
+            String line;
+            String target = "    - " + name.toLowerCase();
+            boolean flag = false;
+            while ((line = reader.readLine()) != null) {
+                if (flag && line.toLowerCase().equals(target)) {
+                    continue;
+                }
+                text.add(line);
+                if (line.equals("  whitelist:")) {
+                    flag = true;
+                } else if (flag && line.endsWith(":")) {
+                    flag = false;
+                }
+            }
+        } catch (IOException e) {
+            Util.sendException(Language.messageExceptionOpen.replace("{file}", "config.yml"), e.getMessage());
+            return;
+        }
+        writeConfigFile(text);
+    }
+
+    private static void writeConfigFile(ArrayList<String> text) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(configFile), StandardCharsets.UTF_8))) {
+            for (String line : text) {
+                if (!line.isEmpty()) {
+                    writer.write(line);
+                }
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            Util.sendException(Language.messageExceptionWrite.replace("{file}", "config.yml"), e.getMessage());
         }
     }
 

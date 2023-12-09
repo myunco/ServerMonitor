@@ -43,7 +43,7 @@ public class Util {
         return index == -1 ? str : str.substring(0, index);
     }
 
-    public static boolean isWhitelist(String playerName) {
+    public static boolean isInWhitelist(String playerName) {
         for (String s : Config.commandAlertPlayerWhitelist) {
             if (s.equalsIgnoreCase(playerName)) {
                 return true;
@@ -53,16 +53,16 @@ public class Util {
     }
 
     public static void whitelistAdd(String playerName) {
-        if (!isWhitelist(playerName)) {
+        if (!isInWhitelist(playerName)) {
             Config.commandAlertPlayerWhitelist.add(playerName);
-            Config.setValue("commandAlert.whitelist", Config.commandAlertPlayerWhitelist);
+            Config.addToWhitelist(playerName);
         }
     }
 
     public static void whitelistRemove(String playerName) {
-        if (isWhitelist(playerName)) {
+        if (isInWhitelist(playerName)) {
             Config.commandAlertPlayerWhitelist.remove(playerName);
-            Config.setValue("commandAlert.whitelist", Config.commandAlertPlayerWhitelist);
+            Config.removeFromWhitelist(playerName);
         }
     }
 

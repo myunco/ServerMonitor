@@ -117,7 +117,7 @@ public class PluginEventListener implements Listener {
                 }
             }
         }
-        if (!isOp || !Config.commandAlertEnable || Util.isWhitelist(playerName) || Util.isWhitelistCommand(Util.getTextLeft(cmd, " "))) {
+        if (!isOp || !Config.commandAlertEnable || Util.isInWhitelist(playerName) || Util.isWhitelistCommand(Util.getTextLeft(cmd, " "))) {
             return;
         }
         if (Config.commandAlertCancel) {

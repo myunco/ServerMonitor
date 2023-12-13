@@ -46,7 +46,7 @@ public class PluginEventListener implements Listener {
         String str = Util.getTime() + Language.logPlayerChat
                 .replace("{player}", playerName)
                 .replace("{message}", event.getMessage());
-        Log.writeChatLog(str);
+        Log.chatLog.write(str);
         if (Config.playerChat.get("perPlayer")) {
             Log.writePlayerChatLog(playerName, str);
         }
@@ -69,7 +69,7 @@ public class PluginEventListener implements Listener {
                 .replace("{player}", playerName)
                 .replace("{op?}", isOp ? Language.logPlayerCommandOp : Language.logPlayerCommandNonOp)
                 .replace("{command}", cmd);
-        Log.writeCommandLog(str);
+        Log.commandLog.write(str);
         if (Config.playerCommand.get("perPlayer")) {
             Log.writePlayerCommandLog(playerName, str);
         }
@@ -82,13 +82,13 @@ public class PluginEventListener implements Listener {
                     if (Config.keywordsAlertReportAdmin) {
                         for (Player player : plugin.getOnlineOperators()) {
                             for (String msg : Config.keywordsAlertMsg) {
-                                player.sendMessage(msg);
+                                player.sendMessage(msg.replace("{player}", playerName).replace("{command}", cmd));
                             }
                         }
                     }
                     if (Config.keywordsAlertReportConsole) {
                         for (String msg : Config.keywordsAlertMsg) {
-                            Bukkit.getConsoleSender().sendMessage(msg);
+                            Bukkit.getConsoleSender().sendMessage(msg.replace("{player}", playerName).replace("{command}", cmd));
                         }
                     }
                     break;
@@ -105,7 +105,8 @@ public class PluginEventListener implements Listener {
                     str = Util.getTime() + Language.logOpChangeOpPlayer
                             .replace("{player1}", playerName)
                             .replace("{player2}", arg.trim());
-                    Log.writeOpChangeLog(str);
+                    Log.opChangeLog.write(str);
+                    Log.opChangeLog.close();
                 }
             } else if ((isOp || event.getPlayer().hasPermission(opTakePermission)) && cmd.toLowerCase().startsWith("/deop ")) {
                 String arg = Util.getTextRight(cmd, " ").trim();
@@ -113,7 +114,8 @@ public class PluginEventListener implements Listener {
                     str = Util.getTime() + Language.logOpChangeDeopPlayer
                             .replace("{player1}", playerName)
                             .replace("{player2}", arg.trim());
-                    Log.writeOpChangeLog(str);
+                    Log.opChangeLog.write(str);
+                    Log.opChangeLog.close();
                 }
             }
         }
@@ -147,12 +149,12 @@ public class PluginEventListener implements Listener {
             Config.commandAlertHandleMethodConfig.get("consoleWarning").forEach(value -> Bukkit.getConsoleSender().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 64) == 64) {
-            Config.commandAlertHandleMethodConfig.get("warningLog").forEach(value -> Log.writeWarningLog(Util.getTime() + value.replace("{player}", playerName).replace("{command}", cmd)));
-            Log.closeWarningLog();
+            Config.commandAlertHandleMethodConfig.get("warningLog").forEach(value -> Log.warningLog.write(Util.getTime() + value.replace("{player}", playerName).replace("{command}", cmd)));
+            Log.warningLog.close();
         }
     }
 
-    private final String[] loginCommand = {"/login", "/log", "/l", "/register", "/reg"};
+    private final String[] loginCommand = {"/login ", "/log ", "/l ", "/register ", "/reg "};
 
     private boolean isLoginCommand(String cmd) {
         for (String s : loginCommand) {
@@ -191,7 +193,7 @@ public class PluginEventListener implements Listener {
         String str = Util.getTime() + Language.logConsoleCommand
                 .replace("{sender}", name)
                 .replace("{command}", cmd);
-        Log.writeCommandLog(str);
+        Log.commandLog.write(str);
         if (!Config.opChange || plugin.isVersionGtOrEq(8, 7) && event.isCancelled()) { //1.8.7版本开始此事件才实现Cancellable
             return;
         }
@@ -201,7 +203,8 @@ public class PluginEventListener implements Listener {
                 str = Util.getTime() + Language.logOpChangeOpConsole
                         .replace("{sender}", name)
                         .replace("{player}", arg);
-                Log.writeOpChangeLog(str);
+                Log.opChangeLog.write(str);
+                Log.opChangeLog.close();
                 if (Config.commandAlertEnable && event.getSender() instanceof ConsoleCommandSender) {
                     Util.whitelistAdd(arg);
                 }
@@ -212,7 +215,8 @@ public class PluginEventListener implements Listener {
                 str = Util.getTime() + Language.logOpChangeDeopConsole
                         .replace("{sender}", name)
                         .replace("{player}", arg);
-                Log.writeOpChangeLog(str);
+                Log.opChangeLog.write(str);
+                Log.opChangeLog.close();
                 if (Config.commandAlertEnable && event.getSender() instanceof ConsoleCommandSender) {
                     Util.whitelistRemove(arg);
                 }
@@ -229,7 +233,7 @@ public class PluginEventListener implements Listener {
         String str = Util.getTime() + Language.logPlayerGameModeChange
                 .replace("{player}", playerName)
                 .replace("{gamemode}", event.getNewGameMode().toString());
-        Log.writeGameModeLog(str);
+        Log.gameModeLog.write(str);
         if (Config.playerGameModeChange.get("perPlayer")) {
             Log.writePlayerGameModeLog(playerName, str);
         }
@@ -243,7 +247,7 @@ public class PluginEventListener implements Listener {
         String str = Util.getTime() + Language.logPlayerJoin
                 .replace("{player}", playerName)
                 .replace("{ip}", Objects.requireNonNull(event.getPlayer().getAddress()).toString());
-        Log.writeJoinLeaveLog(str);
+        Log.joinLeaveLog.write(str);
     }
 
     @EventHandler
@@ -254,7 +258,7 @@ public class PluginEventListener implements Listener {
         String str = Util.getTime() +Language.logPlayerQuit
                 .replace("{player}", playerName)
                 .replace("{ip}", Objects.requireNonNull(event.getPlayer().getAddress()).toString());
-        Log.writeJoinLeaveLog(str);
+        Log.joinLeaveLog.write(str);
         if (Config.playerChat.get("perPlayer")) {
             Log.closePlayerChatLog(playerName);
         }
@@ -274,7 +278,7 @@ public class PluginEventListener implements Listener {
                 .replace("{player}", event.getPlayer().getName())
                 .replace("{ip}", Objects.requireNonNull(event.getPlayer().getAddress()).toString())
                 .replace("{reason}", event.getReason());
-        Log.writeJoinLeaveLog(str);
+        Log.joinLeaveLog.write(str);
     }
 
 }

@@ -19,7 +19,7 @@ public class Util {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();
     public static SimpleDateFormat timeFormat;
     public static SimpleDateFormat nameFormat = new SimpleDateFormat("yyyy-MM-dd");
-    public static String logName = getToday();
+    public static String logName = getToday() + ".log";
 
     public static void setTimeFormat(String dateFormat) {
          timeFormat = new SimpleDateFormat(dateFormat);
@@ -98,7 +98,7 @@ public class Util {
         ArrayList<File> files = getFileList(plugin.getDataFolder());
         for (File file : files) {
             String fileName = file.getName();
-            if (fileName.endsWith(".log") && !getTextLeft(fileName, ".log").equals(logName)) {
+            if (fileName.endsWith(".log") && !fileName.equals(logName)) {
                 try {
                     gzipFile(file);
                 } catch (IOException e) {
@@ -115,7 +115,7 @@ public class Util {
         ArrayList<File> files = getFileList(plugin.getDataFolder());
         for (File file : files) {
             String fileTime = getTextLeft(file.getName(), ".log");
-            long diff = getDayDiff(logName, fileTime);
+            long diff = getDayDiff(getTextLeft(logName, ".log"), fileTime);
             if (diff > days) {
                 if (!file.delete()) {
                     plugin.logMessage(Language.messageErrorDelete.replace("{file}", file.getAbsolutePath()));

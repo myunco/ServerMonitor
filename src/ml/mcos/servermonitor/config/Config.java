@@ -102,7 +102,7 @@ public class Config {
     public static YamlConfiguration loadConfiguration(File file) {
         YamlConfiguration config = new YamlConfiguration();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder();
             String line;
             try {

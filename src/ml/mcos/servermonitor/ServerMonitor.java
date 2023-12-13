@@ -53,7 +53,7 @@ public class ServerMonitor extends JavaPlugin {
                     if (!Config.realTimeSave) {
                         Log.flushAllLog();
                     }
-                    String logName = Util.getToday();
+                    String logName = Util.getToday() + ".log";
                     if (!Util.logName.equals(logName)) {
                         Log.updateLog(logName);
                         Util.processOldLog();

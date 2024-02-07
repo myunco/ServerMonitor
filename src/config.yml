@@ -38,7 +38,7 @@ playerCommand:
   #禁用后仍然会记录已改名的命令方块，如果只想记录某个命令方块的命令，可以禁用此项然后将想记录的命令方块改名后放置
   #此项仅在启用记录控制台命令的情况下生效 通常在服务器内有长时间、高频率执行的命令方块时禁用此项 以免日志文件过大
   commandBlockCommand: true
-  #记录op变更 true为启用 false为禁用
+  #记录op变更日志(OpChange.log) true为启用 false为禁用
   #此项在记录玩家命令和记录控制台命令都启用的情况下才能完整生效
   opChange: true
 
@@ -76,6 +76,9 @@ keywordsAlert:
 
   #是否通知控制台 true为通知 false为不通知
   reportConsole: true
+
+  #是否保存警报信息到日志(KeywordsAlert.log) true为保存 false为不保存
+  saveToLog: true
 
 #非白名单OP执行命令警报
 commandAlert:
@@ -135,6 +138,6 @@ commandAlert:
       - '§e请立即查询该玩家指令记录并检查权限系统是否存在漏洞'
       - '§4§l------------------警告------------------'
 
-    #将警告保存到警告日志 支持多行 按格式添加
+    #将警告保存到警告日志(Warning.log) 支持多行 按格式添加
     warningLog:
       - '玩家{player}以管理员身份执行命令：{command} , 请立即查询该玩家命令记录并检查权限系统是否存在漏洞!'

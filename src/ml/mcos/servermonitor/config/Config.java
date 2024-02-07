@@ -40,6 +40,7 @@ public class Config {
     public static List<String> keywordsAlertMsg;
     public static boolean keywordsAlertReportAdmin;
     public static boolean keywordsAlertReportConsole;
+    public static boolean keywordsAlertSaveToLog;
     public static boolean commandAlertEnable;
     public static List<String> commandAlertPlayerWhitelist;
     public static List<String> commandAlertCommandWhiteList;
@@ -96,6 +97,7 @@ public class Config {
             keywordsAlertMsg = config.getStringList("keywordsAlert.alertMsg");
             keywordsAlertReportAdmin = config.getBoolean("keywordsAlert.reportAdmin");
             keywordsAlertReportConsole = config.getBoolean("keywordsAlert.reportConsole");
+            keywordsAlertSaveToLog = config.getBoolean("keywordsAlert.saveToLog");
         }
     }
 
@@ -149,7 +151,10 @@ public class Config {
                         "  reportAdmin: true\r\n" +
                         "\r\n" +
                         "  #是否通知控制台 true为通知 false为不通知\r\n" +
-                        "  reportConsole: true\r\n");
+                        "  reportConsole: true\r\n" +
+                        "\r\n" +
+                        "  #是否保存警告信息到警告日志 true为保存 false为不保存\r\n" +
+                        "  saveToLog: true\r\n");
                 config = loadConfiguration(configFile);
             } catch (IOException e) {
                 e.printStackTrace();

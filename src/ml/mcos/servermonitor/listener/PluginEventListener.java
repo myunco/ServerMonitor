@@ -6,6 +6,7 @@ import ml.mcos.servermonitor.config.Language;
 import ml.mcos.servermonitor.util.Log;
 import ml.mcos.servermonitor.util.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -90,6 +91,13 @@ public class PluginEventListener implements Listener {
                         for (String msg : Config.keywordsAlertMsg) {
                             Bukkit.getConsoleSender().sendMessage(msg.replace("{player}", playerName).replace("{command}", cmd));
                         }
+                    }
+                    if (Config.keywordsAlertSaveToLog) {
+                        for (String msg : Config.keywordsAlertMsg) {
+                            Log.keywordsAlert.write(ChatColor.stripColor(msg.replace("{player}", playerName).replace("{command}", cmd)));
+                        }
+                        Log.keywordsAlert.close();
+
                     }
                     break;
                 }

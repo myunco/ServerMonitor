@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -53,7 +54,7 @@ public class UpdateChecker {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         int code = conn.getResponseCode();
         if (code == HttpURLConnection.HTTP_OK) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
             String latestVersion = reader.readLine();
             reader.close();
             conn.disconnect();

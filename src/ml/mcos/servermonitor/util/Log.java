@@ -16,6 +16,7 @@ public class Log {
     public static Logger opChangeLog = new SingleLogger(dataFolder, "OpChange.log");
     public static Logger joinLeaveLog = new Logger(new File(dataFolder, "JoinLeaveLogs"), "JoinLeave -> ");
     public static Logger warningLog = new SingleLogger(dataFolder, "Warning.log");
+    public static Logger keywordsAlert = new SingleLogger(dataFolder, "KeywordsAlert.log");
     private static final HashMap<String, Logger> playerChatLog = new HashMap<>();
     private static final HashMap<String, Logger> playerCommandLog = new HashMap<>();
     private static final HashMap<String, Logger> playerGameModeLog = new HashMap<>();

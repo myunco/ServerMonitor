@@ -15,6 +15,7 @@ import java.util.TimerTask;
 public class UpdateChecker {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();
     private static Timer timer;
+    private static String downloadLink = "";
 
     public static void start() {
         plugin.getServer().getScheduler().runTask(plugin, () -> { // 直接使用Timer不能等到开服完成后再检查更新
@@ -30,7 +31,8 @@ public class UpdateChecker {
                             if (result.hasNewVersion()) {
                                 String str = Language.replaceArgs(Language.updateFoundNewVersion, CheckResult.currentVersion, result.getLatestVersion());
                                 plugin.logMessage(result.hasMajorUpdate() ? Language.updateMajorUpdate + str : str);
-                                plugin.logMessage(Language.updateDownloadLink + "https://www.mcbbs.net/thread-995756-1-1.html");
+                                // plugin.logMessage(Language.updateDownloadLink + "https://www.mcbbs.net/thread-995756-1-1.html");
+                                plugin.logMessage(Language.updateDownloadLink + downloadLink);
                             }
                         } else {
                             plugin.logMessage(Language.updateCheckFailure + result.getResponseCode());
@@ -56,6 +58,7 @@ public class UpdateChecker {
         if (code == HttpURLConnection.HTTP_OK) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
             String latestVersion = reader.readLine();
+            downloadLink = reader.readLine();
             reader.close();
             conn.disconnect();
             return new CheckResult(latestVersion, code, CheckResult.ResultType.SUCCESS);

@@ -2,8 +2,8 @@ name: ServerMonitor
 main: ml.mcos.servermonitor.ServerMonitor
 version: 1.4.0
 api-version: 1.13
-author: unco_
-website: https://www.mcbbs.net/thread-995756-1-1.html
+author: myunco
+website: https://github.com/myunco/ServerMonitor
 commands:
   ServerMonitor:
     description: This is main command of the plugin.

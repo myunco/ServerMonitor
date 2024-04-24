@@ -1,6 +1,7 @@
 # ServerMonitor
 This is a Bukkit plugin designed to record the operational information of a Minecraft server and save logs, review player behavior, and issue security warnings when necessary, helping server owners avoid malicious sabotage.
-For a detailed description of the plugin, please visit [mcbbs.net](https://www.mcbbs.net/thread-995756-1-1.html).
+
+For a detailed description of the plugin, please visit ~[mcbbs.net](https://www.mcbbs.net/thread-995756-1-1.html)~ [myunco.net](https://myunco.net/thread-2-1-1.html).
 
 bStats
 ---
@@ -9,7 +10,8 @@ bStats
 Releases
 ---
 You can find official releases in the following places:
-- **MCBBS**: https://www.mcbbs.net/thread-995756-1-1.html
+- ~**MCBBS**: https://www.mcbbs.net/thread-995756-1-1.html~
+- **MyForum**: https://myunco.net/thread-2-1-1.html
 - **BaiduNetdisk**: https://pan.baidu.com/s/1XOEuGoeIVBhILZH0DF41Ww?pwd=44cw
 
 How to install? / Installation / Setup

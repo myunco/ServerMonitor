@@ -12,7 +12,7 @@ bStats
 Releases
 ---
 You can find official releases in the following places:
-- **MCBBS**: https://www.mcbbs.net/thread-995756-1-1.html
+- ~~**MCBBS**: https://www.mcbbs.net/thread-995756-1-1.html~~
 - **MyForum**: https://myunco.net/thread-2-1-1.html
 - **BaiduNetdisk**: https://pan.baidu.com/s/1XOEuGoeIVBhILZH0DF41Ww?pwd=44cw
 - **Github**: https://github.com/myunco/ServerMonitor/releases

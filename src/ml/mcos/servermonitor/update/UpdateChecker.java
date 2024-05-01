@@ -15,7 +15,7 @@ import java.util.TimerTask;
 public class UpdateChecker {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();
     private static Timer timer;
-    private static String downloadLink = "";
+    private static String downloadLink;
 
     public static void start() {
         plugin.getServer().getScheduler().runTask(plugin, () -> { // 直接使用Timer不能等到开服完成后再检查更新

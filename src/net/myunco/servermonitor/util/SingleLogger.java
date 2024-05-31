@@ -1,4 +1,4 @@
-package ml.mcos.servermonitor.util;
+package net.myunco.servermonitor.util;
 
 import java.io.File;
 

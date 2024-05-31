@@ -1,8 +1,8 @@
-package ml.mcos.servermonitor.util;
+package net.myunco.servermonitor.util;
 
-import ml.mcos.servermonitor.ServerMonitor;
-import ml.mcos.servermonitor.config.Config;
-import ml.mcos.servermonitor.config.Language;
+import net.myunco.servermonitor.ServerMonitor;
+import net.myunco.servermonitor.config.Config;
+import net.myunco.servermonitor.config.Language;
 
 import java.io.File;
 import java.io.FileInputStream;

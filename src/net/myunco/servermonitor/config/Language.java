@@ -1,7 +1,7 @@
-package ml.mcos.servermonitor.config;
+package net.myunco.servermonitor.config;
 
-import ml.mcos.servermonitor.ServerMonitor;
-import ml.mcos.servermonitor.util.Util;
+import net.myunco.servermonitor.ServerMonitor;
+import net.myunco.servermonitor.util.Util;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;

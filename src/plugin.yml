@@ -1,5 +1,5 @@
 name: ServerMonitor
-main: ml.mcos.servermonitor.ServerMonitor
+main: net.myunco.servermonitor.ServerMonitor
 version: 1.4.0
 api-version: 1.13
 author: myunco

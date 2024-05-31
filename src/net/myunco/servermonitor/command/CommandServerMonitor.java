@@ -1,7 +1,7 @@
-package ml.mcos.servermonitor.command;
+package net.myunco.servermonitor.command;
 
-import ml.mcos.servermonitor.ServerMonitor;
-import ml.mcos.servermonitor.config.Language;
+import net.myunco.servermonitor.ServerMonitor;
+import net.myunco.servermonitor.config.Language;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;

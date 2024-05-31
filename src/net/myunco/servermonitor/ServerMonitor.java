@@ -1,13 +1,13 @@
-package ml.mcos.servermonitor;
+package net.myunco.servermonitor;
 
-import ml.mcos.servermonitor.command.CommandServerMonitor;
-import ml.mcos.servermonitor.config.Config;
-import ml.mcos.servermonitor.config.Language;
-import ml.mcos.servermonitor.listener.PluginEventListener;
-import ml.mcos.servermonitor.metrics.Metrics;
-import ml.mcos.servermonitor.update.UpdateChecker;
-import ml.mcos.servermonitor.util.Log;
-import ml.mcos.servermonitor.util.Util;
+import net.myunco.servermonitor.command.CommandServerMonitor;
+import net.myunco.servermonitor.config.Config;
+import net.myunco.servermonitor.config.Language;
+import net.myunco.servermonitor.listener.PluginEventListener;
+import net.myunco.servermonitor.metrics.Metrics;
+import net.myunco.servermonitor.update.UpdateChecker;
+import net.myunco.servermonitor.util.Log;
+import net.myunco.servermonitor.util.Util;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;

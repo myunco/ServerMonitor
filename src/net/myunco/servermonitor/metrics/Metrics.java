@@ -1,4 +1,4 @@
-package ml.mcos.servermonitor.metrics;
+package net.myunco.servermonitor.metrics;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

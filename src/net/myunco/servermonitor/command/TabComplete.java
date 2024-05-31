@@ -1,4 +1,4 @@
-package ml.mcos.servermonitor.command;
+package net.myunco.servermonitor.command;
 
 import java.util.ArrayList;
 import java.util.Arrays;

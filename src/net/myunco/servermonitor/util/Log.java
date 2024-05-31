@@ -1,7 +1,7 @@
-package ml.mcos.servermonitor.util;
+package net.myunco.servermonitor.util;
 
-import ml.mcos.servermonitor.ServerMonitor;
-import ml.mcos.servermonitor.config.Config;
+import net.myunco.servermonitor.ServerMonitor;
+import net.myunco.servermonitor.config.Config;
 
 import java.io.File;
 import java.util.HashMap;

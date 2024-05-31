@@ -1,10 +1,10 @@
-package ml.mcos.servermonitor.listener;
+package net.myunco.servermonitor.listener;
 
-import ml.mcos.servermonitor.ServerMonitor;
-import ml.mcos.servermonitor.config.Config;
-import ml.mcos.servermonitor.config.Language;
-import ml.mcos.servermonitor.util.Log;
-import ml.mcos.servermonitor.util.Util;
+import net.myunco.servermonitor.ServerMonitor;
+import net.myunco.servermonitor.config.Config;
+import net.myunco.servermonitor.config.Language;
+import net.myunco.servermonitor.util.Log;
+import net.myunco.servermonitor.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;

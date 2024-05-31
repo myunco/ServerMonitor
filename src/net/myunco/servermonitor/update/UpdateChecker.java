@@ -1,7 +1,7 @@
-package ml.mcos.servermonitor.update;
+package net.myunco.servermonitor.update;
 
-import ml.mcos.servermonitor.ServerMonitor;
-import ml.mcos.servermonitor.config.Language;
+import net.myunco.servermonitor.ServerMonitor;
+import net.myunco.servermonitor.config.Language;
 
 import java.io.BufferedReader;
 import java.io.IOException;

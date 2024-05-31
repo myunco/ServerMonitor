@@ -1,6 +1,6 @@
-package ml.mcos.servermonitor.update;
+package net.myunco.servermonitor.update;
 
-import ml.mcos.servermonitor.ServerMonitor;
+import net.myunco.servermonitor.ServerMonitor;
 
 public class CheckResult {
     public static String currentVersion = ServerMonitor.getPlugin().getDescription().getVersion();

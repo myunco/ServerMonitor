@@ -40,6 +40,10 @@ public class CheckResult {
                         newVersion = true;
                         majorUpdate = false;
                         return;
+                    } else if (Integer.parseInt(latest[2]) == Integer.parseInt(current[2]) && current.length > 3) {
+                        newVersion = true;
+                        majorUpdate = false;
+                        return;
                     }
                 }
             }

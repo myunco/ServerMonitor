@@ -4,6 +4,7 @@ import net.myunco.servermonitor.command.CommandServerMonitor;
 import net.myunco.servermonitor.config.Config;
 import net.myunco.servermonitor.config.Language;
 import net.myunco.servermonitor.listener.PluginEventListener;
+import net.myunco.servermonitor.listener.PotionEffectEventListener;
 import net.myunco.servermonitor.metrics.Metrics;
 import net.myunco.servermonitor.update.UpdateChecker;
 import net.myunco.servermonitor.util.Log;
@@ -35,6 +36,8 @@ public class ServerMonitor extends JavaPlugin {
             command.setTabCompleter((TabCompleter) command.getExecutor());
         }
         getServer().getPluginManager().registerEvents(new PluginEventListener(this), this);
+        getServer().getPluginManager().registerEvents(new PotionEffectEventListener(this), this);
+
         new Metrics(this, 12934);
         logMessage(Language.enableMessage);
     }

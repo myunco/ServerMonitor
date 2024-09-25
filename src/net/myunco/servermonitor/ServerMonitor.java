@@ -6,6 +6,7 @@ import net.myunco.servermonitor.config.Language;
 import net.myunco.servermonitor.listener.PluginEventListener;
 import net.myunco.servermonitor.metrics.Metrics;
 import net.myunco.servermonitor.update.UpdateChecker;
+import net.myunco.servermonitor.update.UpdateNotification;
 import net.myunco.servermonitor.util.Log;
 import net.myunco.servermonitor.util.Util;
 import org.bukkit.OfflinePlayer;
@@ -35,7 +36,9 @@ public class ServerMonitor extends JavaPlugin {
             command.setTabCompleter((TabCompleter) command.getExecutor());
         }
         getServer().getPluginManager().registerEvents(new PluginEventListener(this), this);
-
+        if (Config.checkUpdate) {
+            getServer().getPluginManager().registerEvents(new UpdateNotification(), this);
+        }
         new Metrics(this, 12934);
         logMessage(Language.enableMessage);
     }

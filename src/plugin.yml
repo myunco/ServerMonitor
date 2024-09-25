@@ -1,6 +1,6 @@
 name: ServerMonitor
 main: net.myunco.servermonitor.ServerMonitor
-version: 1.4.1-SNAPSHOT
+version: 1.4.1
 api-version: 1.13
 author: myunco
 website: https://github.com/myunco/ServerMonitor
@@ -11,9 +11,9 @@ commands:
     description: This is main command of the plugin.
     usage: §e/ServerMonitor §3<§ahelp§c|§areload§c|§aversion§3>
     aliases: sm
-    permission: servermonitor.use
+    permission: servermonitor.admin
     permission-message: "§cYou don't have permission!"
 permissions:
-  servermonitor.use:
+  servermonitor.admin:
     description: Has permission to access the all ServerMonitor command
     default: op

@@ -105,7 +105,6 @@ public class Metrics {
         }
     }
 
-    @SuppressWarnings("GrazieInspection")
     public static class MetricsBase {
 
         /** The version of the Metrics class. */
@@ -326,7 +325,6 @@ public class Metrics {
      * <p>While this class is neither feature-rich nor the most performant one, it's sufficient enough
      * for its use-case.
      */
-    @SuppressWarnings("GrazieInspection")
     public static class JsonObjectBuilder {
 
         private StringBuilder builder = new StringBuilder();

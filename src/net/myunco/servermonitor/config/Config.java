@@ -14,11 +14,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@SuppressWarnings("IOStreamConstructor")
 public class Config {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();
     private static final File configFile = new File(plugin.getDataFolder(), "config.yml");
@@ -33,6 +33,7 @@ public class Config {
     public static HashMap<String, Boolean> playerCommand = new HashMap<>();
     public static HashMap<String, Boolean> playerGameModeChange = new HashMap<>();
     public static boolean opChange;
+    public static boolean hidePassword;
     public static boolean joinAndLeave;
     public static boolean keywordsAlertEnable;
     public static List<String> keywordsAlertKeywords;
@@ -75,6 +76,7 @@ public class Config {
         playerGameModeChange.put("enable", config.getBoolean("playerGameModeChange.enable", true));
         playerGameModeChange.put("perPlayer", config.getBoolean("playerGameModeChange.perPlayer", false));
         opChange = config.getBoolean("playerCommand.opChange", true);
+        hidePassword = config.getBoolean("playerCommand.hidePassword", false);
         joinAndLeave = config.getBoolean("joinAndLeave", true);
         keywordsAlertEnable = config.getBoolean("keywordsAlert.enable", false);
         commandAlertEnable = config.getBoolean("commandAlert.enable", false);
@@ -104,7 +106,7 @@ public class Config {
     public static YamlConfiguration loadConfiguration(File file) {
         YamlConfiguration config = new YamlConfiguration();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8));
             StringBuilder builder = new StringBuilder();
             String line;
             try {
@@ -164,7 +166,7 @@ public class Config {
     }
 
     public static void saveConfiguration(YamlConfiguration config, File file) {
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8)) {
             writer.write(config.saveToString());
         } catch (IOException e) {
             Util.sendException(Language.messageExceptionSave.replace("{file}", "config.yml"), e.getMessage());
@@ -173,7 +175,7 @@ public class Config {
 
     public static void addToWhitelist(String name) {
         ArrayList<String> text = new ArrayList<>(160);
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(configFile.toPath()), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 text.add(line);
@@ -190,7 +192,7 @@ public class Config {
 
     public static void removeFromWhitelist(String name) {
         ArrayList<String> text = new ArrayList<>(160);
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(configFile.toPath()), StandardCharsets.UTF_8))) {
             String line;
             String target = "    - " + name.toLowerCase();
             boolean flag = false;
@@ -213,7 +215,7 @@ public class Config {
     }
 
     private static void writeConfigFile(ArrayList<String> text) {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(configFile), StandardCharsets.UTF_8))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(configFile.toPath()), StandardCharsets.UTF_8))) {
             for (String line : text) {
                 if (!line.isEmpty()) {
                     writer.write(line);

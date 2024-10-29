@@ -59,7 +59,7 @@ public class PluginEventListener implements Listener {
             return;
         }
         String cmd;
-        if (isLoginCommand(event.getMessage())) {
+        if (Config.hidePassword && isLoginCommand(event.getMessage())) {
             cmd = hidePassword(event.getMessage());
         } else {
             cmd = event.getMessage();
@@ -154,7 +154,9 @@ public class PluginEventListener implements Listener {
             Config.commandAlertHandleMethodConfig.get("sendMsgToPlayer").forEach(value -> event.getPlayer().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 32) == 32) {
-            Config.commandAlertHandleMethodConfig.get("consoleWarning").forEach(value -> Bukkit.getConsoleSender().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
+            for (int i = 0; i < 10; i++) {
+                Config.commandAlertHandleMethodConfig.get("consoleWarning").forEach(value -> Bukkit.getConsoleSender().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
+            }
         }
         if ((method & 64) == 64) {
             Config.commandAlertHandleMethodConfig.get("warningLog").forEach(value -> Log.warningLog.write(Util.getTime() + value.replace("{player}", playerName).replace("{command}", cmd)));

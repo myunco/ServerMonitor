@@ -10,16 +10,40 @@ import java.util.Map;
 public class Log {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();
     private static final File dataFolder = plugin.getDataFolder();
-    public static Logger chatLog = new Logger(new File(dataFolder, "ChatLogs"), "Chat -> ");
-    public static Logger commandLog = new Logger(new File(dataFolder, "CommandLogs"), "Command -> ");
-    public static Logger gameModeLog = new Logger(new File(dataFolder, "GameModeLogs"), "GameMode -> ");
-    public static Logger opChangeLog = new SingleLogger(dataFolder, "OpChange.log");
-    public static Logger joinLeaveLog = new Logger(new File(dataFolder, "JoinLeaveLogs"), "JoinLeave -> ");
-    public static Logger warningLog = new SingleLogger(dataFolder, "Warning.log");
-    public static Logger keywordsAlert = new SingleLogger(dataFolder, "KeywordsAlert.log");
+    public static Logger chatLog;
+    public static Logger commandLog;
+    public static Logger gameModeLog;
+    public static Logger opChangeLog;
+    public static Logger joinLeaveLog;
+    public static Logger warningLog;
+    public static Logger keywordsAlert;
     private static final HashMap<String, Logger> playerChatLog = new HashMap<>();
     private static final HashMap<String, Logger> playerCommandLog = new HashMap<>();
     private static final HashMap<String, Logger> playerGameModeLog = new HashMap<>();
+
+    public static void init() {
+        if (Config.playerChat.get("enable")) {
+            chatLog = new Logger(new File(dataFolder, "ChatLogs"), "Chat -> ");
+        }
+        if (Config.playerCommand.get("enable")) {
+            commandLog = new Logger(new File(dataFolder, "CommandLogs"), "Command -> ");
+        }
+        if (Config.playerGameModeChange.get("enable")) {
+            gameModeLog = new Logger(new File(dataFolder, "GameModeLogs"), "GameMode -> ");
+        }
+        if (Config.opChange) {
+            opChangeLog = new SingleLogger(dataFolder, "OpChange.log");
+        }
+        if (Config.joinAndLeave) {
+            joinLeaveLog = new Logger(new File(dataFolder, "JoinLeaveLogs"), "JoinLeave -> ");
+        }
+        if (Config.commandAlertEnable) {
+            warningLog = new SingleLogger(dataFolder, "Warning.log");
+        }
+        if (Config.keywordsAlertEnable) {
+            keywordsAlert = new SingleLogger(dataFolder, "KeywordsAlert.log");
+        }
+    }
 
     public static void writePlayerChatLog(String playerName, String msg) {
         playerChatLog.computeIfAbsent(playerName,

@@ -65,6 +65,7 @@ public class ServerMonitor extends JavaPlugin {
                 }
             }, 30 * 60 * 1000, 30 * 60 * 1000); //半小时检查一次
         }
+        Log.init();
     }
 
     @Override

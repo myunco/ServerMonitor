@@ -48,6 +48,7 @@ public class Language {
     public static String messageExceptionSave;
     public static String messageExceptionZip;
     public static String messageErrorDelete;
+    public static String messageErrorCreate;
 
     public static void loadLanguage(String language) {
         if (language == null || !language.matches("[a-zA-Z]{2}[_-][a-zA-Z]{2}")) {
@@ -108,6 +109,7 @@ public class Language {
         messageExceptionSave = config.getString("message-exception-save", "§4[错误] §5在保存 {file} 时发生IO异常!");
         messageExceptionZip = config.getString("message-exception-zip", "§4[错误] §5在压缩 {file} 时发生IO异常!");
         messageErrorDelete = config.getString("message-error-delete", "§4[错误] §5删除 {file} 失败!");
+        messageErrorCreate = config.getString("message-error-create", "§4[错误] §5创建目录失败：{file}");
     }
 
     private static void saveDefaultLanguage(File lang, String langPath) {
@@ -138,7 +140,7 @@ public class Language {
     }
 
     private static void languageUpdate(YamlConfiguration config, File lang) {
-        int latestVersion = 4;
+        int latestVersion = 5;
         if (version < latestVersion) {
             plugin.logMessage(replaceArgs(languageVersionOutdated, version, latestVersion));
             switch (version) {
@@ -194,6 +196,8 @@ public class Language {
                     config.set("message-exception-zip", config.getString("message.zipException"));
                     config.set("message-error-delete", config.getString("message.deleteError"));
                     config.set("message", null);
+                case 4:
+                    config.set("message-error-create", "§4[错误] §5创建目录失败：{file}");
                     break;
                 default:
                     plugin.logMessage(languageVersionError + version);

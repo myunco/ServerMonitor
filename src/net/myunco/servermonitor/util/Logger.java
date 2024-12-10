@@ -16,12 +16,10 @@ public class Logger {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();
     private final File logFolder;
     private BufferedWriter logWriter;
-    private final String identifier;
     private String displayName;
 
     public Logger(File logFolder, String identifier) {
         this.logFolder = logFolder;
-        this.identifier = identifier;
         this.displayName = identifier + logFolder.getName();
     }
 
@@ -40,7 +38,7 @@ public class Logger {
     public void open() {
         File file = getLogFile();
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-            plugin.logMessage(identifier + "创建目录失败！");
+            plugin.logMessage(Language.messageErrorCreate.replace("{file}", file.getParentFile().getAbsolutePath()));
             return;
         }
         try {

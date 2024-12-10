@@ -1,5 +1,5 @@
 #語言文件版本 請勿修改此項
-version: 4
+version: 5
 
 log-prefix: '§3[§a伺服器監控§3] '
 message-prefix: '§3[§a伺服器監控§3] §e-> '
@@ -40,3 +40,4 @@ message-exception-close: '§4[錯誤] §5在關閉 【{file}】 時發生IO異�
 message-exception-save: '§4[錯誤] §5在保存 【{file}】 時發生IO異常！'
 message-exception-zip: '§4[錯誤] §5在壓縮 【{file}】 時發生IO異常!'
 message-error-delete: '§4[錯誤] §5刪除 【{file}】 失敗!'
+message-error-create: '§4[錯誤] §5創建目錄失敗：{file}'

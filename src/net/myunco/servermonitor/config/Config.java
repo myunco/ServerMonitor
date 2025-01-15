@@ -47,6 +47,14 @@ public class Config {
     public static boolean commandAlertCancel;
     public static int commandAlertHandleMethod;
     public static HashMap<String, List<String>> commandAlertHandleMethodConfig = new HashMap<>();
+    public static boolean dbEnable;
+    public static String dbType;
+    public static String dbHost;
+    public static String dbPort;
+    public static String dbUsername;
+    public static String dbPassword;
+    public static String dbName;
+    public static String dbTablePrefix;
 
     public static void loadConfig() {
         plugin.saveDefaultConfig();
@@ -99,6 +107,16 @@ public class Config {
             keywordsAlertReportAdmin = config.getBoolean("keywordsAlert.reportAdmin");
             keywordsAlertReportConsole = config.getBoolean("keywordsAlert.reportConsole");
             keywordsAlertSaveToLog = config.getBoolean("keywordsAlert.saveToLog");
+        }
+        dbEnable = config.getBoolean("database.enable", false);
+        if (dbEnable) {
+            dbType = config.getString("database.type", "MySQL");
+            dbHost = config.getString("database.host", "localhost");
+            dbPort = config.getString("database.port", "3306");
+            dbUsername = config.getString("database.username", "root");
+            dbPassword = config.getString("database.password", "");
+            dbName = config.getString("database.database", "minecraft");
+            dbTablePrefix = config.getString("database.tablePrefix", "");
         }
     }
 
@@ -155,7 +173,43 @@ public class Config {
                         "  reportConsole: true\r\n" +
                         "\r\n" +
                         "  #是否保存警告信息到警告日志 true为保存 false为不保存\r\n" +
-                        "  saveToLog: true\r\n");
+                        "  saveToLog: true\r\n" +
+                        "\r\n" + //顺便把1.5.0版本的新内容也加上
+                        "#数据库\r\n" +
+                        "database:\r\n" +
+                        "  #是否启用数据库存储 true为启用 false为禁用\r\n" +
+                        "  enable: false\r\n" +
+                        "  #要使用的数据库类型 目前只支持 MySQL\r\n" +
+                        "  type: 'MySQL'\r\n" +
+                        "  #启用数据库后下面所有项目必须填写 (除了表前缀可空)\r\n" +
+                        "  host: 'localhost'\r\n" +
+                        "  port: 3306\r\n" +
+                        "  username: 'root'\r\n" +
+                        "  password: ''\r\n" +
+                        "  database: 'minecraft'\r\n" +
+                        "  #表前缀 留空表示无前缀 默认表名：chat_log、command_log 以此类推\r\n" +
+                        "  tablePrefix: 'sm_'\r\n");
+                config = loadConfiguration(configFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (!config.contains("database")) { //没有1.5.0版本新加的配置 需要升级
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(configFile, true), StandardCharsets.UTF_8)) {
+                writer.write("\r\n" +
+                        "#数据库\r\n" +
+                        "database:\r\n" +
+                        "  #是否启用数据库存储 true为启用 false为禁用\r\n" +
+                        "  enable: false\r\n" +
+                        "  #要使用的数据库类型 目前只支持 MySQL\r\n" +
+                        "  type: 'MySQL'\r\n" +
+                        "  #启用数据库后下面所有项目必须填写 (除了表前缀可空)\r\n" +
+                        "  host: 'localhost'\r\n" +
+                        "  port: 3306\r\n" +
+                        "  username: 'root'\r\n" +
+                        "  password: ''\r\n" +
+                        "  database: 'minecraft'\r\n" +
+                        "  #表前缀\r\n" +
+                        "  tablePrefix: 'sm_'\r\n");
                 config = loadConfiguration(configFile);
             } catch (IOException e) {
                 e.printStackTrace();

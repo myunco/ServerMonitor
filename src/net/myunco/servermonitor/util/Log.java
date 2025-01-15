@@ -2,6 +2,8 @@ package net.myunco.servermonitor.util;
 
 import net.myunco.servermonitor.ServerMonitor;
 import net.myunco.servermonitor.config.Config;
+import net.myunco.servermonitor.database.DataSource;
+import net.myunco.servermonitor.database.MySQL;
 
 import java.io.File;
 import java.util.HashMap;
@@ -20,6 +22,7 @@ public class Log {
     private static final HashMap<String, Logger> playerChatLog = new HashMap<>();
     private static final HashMap<String, Logger> playerCommandLog = new HashMap<>();
     private static final HashMap<String, Logger> playerGameModeLog = new HashMap<>();
+    private static DataSource dataSource;
 
     public static void init() {
         if (Config.playerChat.get("enable")) {
@@ -34,14 +37,21 @@ public class Log {
         if (Config.opChange) {
             opChangeLog = new SingleLogger(dataFolder, "OpChange.log");
         }
+        if (Config.dbEnable) {
+            dataSource = MySQL.getInstance();
+            chatLog.setDataSource(dataSource);
+            commandLog.setDataSource(dataSource);
+            gameModeLog.setDataSource(dataSource);
+            opChangeLog.setDataSource(dataSource);
+        }
         if (Config.joinAndLeave) {
-            joinLeaveLog = new Logger(new File(dataFolder, "JoinLeaveLogs"), "JoinLeave -> ");
+            joinLeaveLog = new Logger(new File(dataFolder, "JoinLeaveLogs"), "JoinLeave -> ", dataSource);
         }
         if (Config.commandAlertEnable) {
-            warningLog = new SingleLogger(dataFolder, "Warning.log");
+            warningLog = new SingleLogger(dataFolder, "Warning.log", dataSource);
         }
         if (Config.keywordsAlertEnable) {
-            keywordsAlert = new SingleLogger(dataFolder, "KeywordsAlert.log");
+            keywordsAlert = new SingleLogger(dataFolder, "KeywordsAlert.log", dataSource);
         }
     }
 
@@ -124,6 +134,10 @@ public class Log {
         }
         if (Config.playerGameModeChange.get("perPlayer")) {
             closePlayerGameModeLog();
+        }
+        if (dataSource != null) {
+            dataSource.closeConnection();
+            dataSource = null;
         }
     }
 

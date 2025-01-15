@@ -8,4 +8,5 @@ public interface DataSource {
     void logOpChange(String text, String commandSender, String targetPlayer, String uuid, int type);
     void logWarning(String text, String player);
     void logKeywordsAlert(String text, String command, String player);
+    void closeConnection();
 }

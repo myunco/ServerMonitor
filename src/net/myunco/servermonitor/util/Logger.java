@@ -3,6 +3,7 @@ package net.myunco.servermonitor.util;
 import net.myunco.servermonitor.ServerMonitor;
 import net.myunco.servermonitor.config.Config;
 import net.myunco.servermonitor.config.Language;
+import net.myunco.servermonitor.database.DataSource;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,21 +18,35 @@ public class Logger {
     private final File logFolder;
     private BufferedWriter logWriter;
     private String displayName;
+    private DataSource dataSource;
 
     public Logger(File logFolder, String identifier) {
-        this.logFolder = logFolder;
-        this.displayName = identifier + logFolder.getName();
+        this(logFolder, identifier, null);
     }
 
-    public void setDisplayName(String displayName) {
+    public Logger(File logFolder, String identifier, DataSource dataSource) {
+        this.logFolder = logFolder;
+        this.displayName = identifier;
+        this.dataSource = dataSource;
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    protected void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
-    public File getLogFolder() {
+    protected File getLogFolder() {
         return logFolder;
     }
 
-    public File getLogFile() {
+    protected File getLogFile() {
         return new File(logFolder, Util.logName);
     }
 

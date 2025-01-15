@@ -90,7 +90,7 @@ public class ServerMonitor extends JavaPlugin {
     public ArrayList<Player> getOnlineOperators() {
         ArrayList<Player> result = new ArrayList<>();
         for (OfflinePlayer operator : getServer().getOperators()) {
-            Player player = getServer().getPlayer(operator.getUniqueId());
+            Player player = operator.getPlayer();
             if (player != null) {
                 result.add(player);
             }

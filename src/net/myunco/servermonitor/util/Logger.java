@@ -12,13 +12,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class Logger {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();
     private final File logFolder;
     private BufferedWriter logWriter;
     private String displayName;
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     public Logger(File logFolder, String identifier) {
         this(logFolder, identifier, null);
@@ -32,10 +33,6 @@ public class Logger {
 
     public DataSource getDataSource() {
         return dataSource;
-    }
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
     }
 
     protected void setDisplayName(String displayName) {

@@ -1,3 +1,6 @@
+#配置文件版本 请勿修改此项
+version: 5
+
 #语言 默认为简体中文
 language: 'zh_cn'
 
@@ -29,12 +32,14 @@ database:
   type: 'MySQL'
   #启用数据库后下面所有项目必须填写 (除了表前缀可空)
   host: 'localhost'
+  #端口 MySQL默认3306
   port: 3306
   username: 'root'
+  #密码请正确填写 无密码可留空
   password: ''
-  database: 'minecraft'
+  database: 'servermonitor'
   #表前缀 留空表示无前缀 默认表名：chat_log、command_log 以此类推
-  tablePrefix: 'sm_'
+  tablePrefix: ''
 
 playerChat:
   #记录玩家聊天 true为启用 false为禁用
@@ -106,8 +111,7 @@ commandAlert:
 
   #玩家白名单 按示例格式添加（记得删除示例玩家名）
   whitelist:
-    - 玩家名1
-    - 玩家名2
+    - 玩家名
 
   #命令白名单 按示例格式添加
   commandWhiteList:

@@ -115,7 +115,7 @@ public class Config {
             dbPort = config.getString("database.port", "3306");
             dbUsername = config.getString("database.username", "root");
             dbPassword = config.getString("database.password", "");
-            dbName = config.getString("database.database", "minecraft");
+            dbName = config.getString("database.database", "servermonitor");
             dbTablePrefix = config.getString("database.tablePrefix", "");
         }
     }
@@ -142,10 +142,11 @@ public class Config {
 
     public static YamlConfiguration updateConfiguration() {
         YamlConfiguration config = loadConfiguration(configFile);
-        if (!config.contains("keywordsAlert")) { //没有1.4.0版本新加的配置 需要升级
+        if (!config.contains("keywordsAlert")) { //没有1.4.0版本新加的配置 需要升级 (由于1.5版本前配置文件没有版本号 所以只能这么判断了)
             //更新config会导致注释丢失 为避免这种情况 使用流来追加新内容
             try (Writer writer = new OutputStreamWriter(new FileOutputStream(configFile, true), StandardCharsets.UTF_8)) {
-                writer.write("\r\n" +
+                writer.write("\r\n#配置文件版本 请勿修改此项\r\n" +
+                        "version: 5\r\n" +
                         "#关键词警报 当任何非OP玩家执行包含指定关键词的命令时向后台或在线OP发出警报\r\n" +
                         "keywordsAlert:\r\n" +
                         "  #是否启用 true为启用 false为禁用\r\n" +
@@ -191,11 +192,12 @@ public class Config {
                         "  tablePrefix: 'sm_'\r\n");
                 config = loadConfiguration(configFile);
             } catch (IOException e) {
-                e.printStackTrace();
+                Util.sendException(Language.messageExceptionWrite.replace("{file}", "config.yml"), e.getMessage());
             }
         } else if (!config.contains("database")) { //没有1.5.0版本新加的配置 需要升级
             try (Writer writer = new OutputStreamWriter(new FileOutputStream(configFile, true), StandardCharsets.UTF_8)) {
-                writer.write("\r\n" +
+                writer.write("\r\n#配置文件版本 请勿修改此项\r\n" +
+                        "version: 5\r\n" +
                         "#数据库\r\n" +
                         "database:\r\n" +
                         "  #是否启用数据库存储 true为启用 false为禁用\r\n" +
@@ -204,15 +206,17 @@ public class Config {
                         "  type: 'MySQL'\r\n" +
                         "  #启用数据库后下面所有项目必须填写 (除了表前缀可空)\r\n" +
                         "  host: 'localhost'\r\n" +
+                        "  #端口 MySQL默认3306\r\n" +
                         "  port: 3306\r\n" +
                         "  username: 'root'\r\n" +
+                        "  #密码请正确填写 无密码可留空\r\n" +
                         "  password: ''\r\n" +
-                        "  database: 'minecraft'\r\n" +
-                        "  #表前缀\r\n" +
-                        "  tablePrefix: 'sm_'\r\n");
+                        "  database: 'servermonitor'\r\n" +
+                        "  #表前缀 留空表示无前缀 默认表名：chat_log、command_log 以此类推\r\n" +
+                        "  tablePrefix: ''\r\n");
                 config = loadConfiguration(configFile);
             } catch (IOException e) {
-                e.printStackTrace();
+                Util.sendException(Language.messageExceptionWrite.replace("{file}", "config.yml"), e.getMessage());
             }
         }
         return config;

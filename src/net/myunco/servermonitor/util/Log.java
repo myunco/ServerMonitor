@@ -25,24 +25,20 @@ public class Log {
     private static DataSource dataSource;
 
     public static void init() {
+        if (Config.dbEnable) {
+            dataSource = MySQL.getInstance(); //TODO 先这么写 后面支持其他数据库再重写逻辑
+        }
         if (Config.playerChat.get("enable")) {
-            chatLog = new Logger(new File(dataFolder, "ChatLogs"), "Chat -> ");
+            chatLog = new Logger(new File(dataFolder, "ChatLogs"), "Chat -> ", dataSource);
         }
         if (Config.playerCommand.get("enable")) {
-            commandLog = new Logger(new File(dataFolder, "CommandLogs"), "Command -> ");
+            commandLog = new Logger(new File(dataFolder, "CommandLogs"), "Command -> ", dataSource);
         }
         if (Config.playerGameModeChange.get("enable")) {
-            gameModeLog = new Logger(new File(dataFolder, "GameModeLogs"), "GameMode -> ");
+            gameModeLog = new Logger(new File(dataFolder, "GameModeLogs"), "GameMode -> ", dataSource);
         }
         if (Config.opChange) {
-            opChangeLog = new SingleLogger(dataFolder, "OpChange.log");
-        }
-        if (Config.dbEnable) {
-            dataSource = MySQL.getInstance();
-            chatLog.setDataSource(dataSource);
-            commandLog.setDataSource(dataSource);
-            gameModeLog.setDataSource(dataSource);
-            opChangeLog.setDataSource(dataSource);
+            opChangeLog = new SingleLogger(dataFolder, "OpChange.log", dataSource);
         }
         if (Config.joinAndLeave) {
             joinLeaveLog = new Logger(new File(dataFolder, "JoinLeaveLogs"), "JoinLeave -> ", dataSource);
@@ -61,21 +57,10 @@ public class Log {
     }
 
     public static void closePlayerChatLog() {
-        /*
-        ArrayList<Logger> loggers = new ArrayList<>(playerChatLog.size() + 1);
-        for (Map.Entry<String, Logger> entry : playerChatLog.entrySet()) {
-            loggers.add(entry.getValue());
-        }
-        playerChatLog.clear();
-        for (Logger logger : loggers) {
-            logger.close();
-        }
-        loggers.clear();
-        */
-        // 似乎没有clear的必要，流close就行。玩家很多的服务器应该都会定时重启吧？
         for (Map.Entry<String, Logger> entry : playerChatLog.entrySet()) {
             entry.getValue().close();
         }
+        playerChatLog.clear();
     }
 
     public static void closePlayerChatLog(String playerName) {
@@ -94,6 +79,7 @@ public class Log {
         for (Map.Entry<String, Logger> entry : playerCommandLog.entrySet()) {
             entry.getValue().close();
         }
+        playerCommandLog.clear();
     }
 
     public static void closePlayerCommandLog(String playerName) {
@@ -112,6 +98,7 @@ public class Log {
         for (Map.Entry<String, Logger> entry : playerGameModeLog.entrySet()) {
             entry.getValue().close();
         }
+        playerGameModeLog.clear();
     }
     public static void closePlayerGameModeLog(String playerName) {
         Logger logger = playerGameModeLog.get(playerName);
@@ -120,7 +107,7 @@ public class Log {
         }
     }
 
-    public static void closeAllLog() {
+    public static void closeAllLog(boolean closeDataSource) {
         chatLog.close();
         commandLog.close();
         gameModeLog.close();
@@ -135,15 +122,15 @@ public class Log {
         if (Config.playerGameModeChange.get("perPlayer")) {
             closePlayerGameModeLog();
         }
-        if (dataSource != null) {
-            dataSource.closeConnection();
+        if (closeDataSource && dataSource != null) {
+            dataSource.close();
             dataSource = null;
         }
     }
 
     public static void updateLog(String logName) {
         Util.logName = logName;
-        closeAllLog();
+        closeAllLog(false);
     }
 
     public static void flushAllLog() {

@@ -76,7 +76,7 @@ public class ServerMonitor extends JavaPlugin {
 
     public void disable() {
         UpdateChecker.stop();
-        Log.closeAllLog();
+        Log.closeAllLog(true);
     }
 
     public static ServerMonitor getPlugin() {

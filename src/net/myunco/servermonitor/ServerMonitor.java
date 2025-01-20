@@ -5,6 +5,9 @@ import net.myunco.servermonitor.config.Config;
 import net.myunco.servermonitor.config.Language;
 import net.myunco.servermonitor.listener.PluginEventListener;
 import net.myunco.servermonitor.metrics.Metrics;
+import net.myunco.servermonitor.task.BukkitScheduler;
+import net.myunco.servermonitor.task.CompatibleScheduler;
+import net.myunco.servermonitor.task.FoliaScheduler;
 import net.myunco.servermonitor.update.UpdateChecker;
 import net.myunco.servermonitor.update.UpdateNotification;
 import net.myunco.servermonitor.util.Log;
@@ -24,11 +27,17 @@ public class ServerMonitor extends JavaPlugin {
     private static Timer timer;
     private int mcVersion;
     private int mcVersionPatch;
+    private CompatibleScheduler scheduler;
 
     @Override
     public void onEnable() {
         plugin = this;
         mcVersion = getMinecraftVersion();
+        if (isFolia()) {
+            scheduler = new FoliaScheduler(this);
+        } else {
+            scheduler = new BukkitScheduler(this);
+        }
         init();
         PluginCommand command = getCommand("ServerMonitor");
         if (command != null) {
@@ -41,6 +50,7 @@ public class ServerMonitor extends JavaPlugin {
         }
         new Metrics(this, 12934);
         logMessage(Language.enableMessage);
+
     }
 
     public void init() {
@@ -117,5 +127,18 @@ public class ServerMonitor extends JavaPlugin {
 
     public void logMessage(String message) {
         getServer().getConsoleSender().sendMessage(Language.logPrefix + message);
+    }
+
+    private boolean isFolia() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public CompatibleScheduler getScheduler() {
+        return scheduler;
     }
 }

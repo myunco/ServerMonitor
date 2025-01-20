@@ -6,6 +6,7 @@ author: myunco
 website: https://github.com/myunco/ServerMonitor
 description: This is a Bukkit plugin designed to record the operational information of a Minecraft server and save logs, review player behavior, and issue security warnings when necessary, helping server owners avoid malicious sabotage.
   For a detailed description of the plugin, please visit https://myunco.net/thread-2-1-1.html
+folia-supported: true
 commands:
   ServerMonitor:
     description: This is main command of the plugin.

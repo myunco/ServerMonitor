@@ -20,6 +20,8 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
+
+import net.myunco.servermonitor.ServerMonitor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -71,7 +73,7 @@ public class Metrics {
         boolean logErrors = config.getBoolean("logFailedRequests", false);
         boolean logSentData = config.getBoolean("logSentData", false);
         boolean logResponseStatusText = config.getBoolean("logResponseStatusText", false);
-        new MetricsBase("bukkit", serverUUID, serviceId, enabled, this::appendPlatformData, this::appendServiceData, submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask), plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error), (message) -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData, logResponseStatusText);
+        new MetricsBase("bukkit", serverUUID, serviceId, enabled, this::appendPlatformData, this::appendServiceData, submitDataTask -> ServerMonitor.getPlugin().getScheduler().runTask(submitDataTask), plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error), (message) -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData, logResponseStatusText);
     }
 
     private void appendPlatformData(JsonObjectBuilder builder) {

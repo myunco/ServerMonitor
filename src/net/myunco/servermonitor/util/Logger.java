@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 public class Logger {
     private static final ServerMonitor plugin = ServerMonitor.getPlugin();

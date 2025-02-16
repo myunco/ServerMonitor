@@ -40,6 +40,8 @@ database:
   database: 'servermonitor'
   #表前缀 留空表示无前缀 默认表名：chat_log、command_log 以此类推
   tablePrefix: ''
+  #服务器名称 (用于多个服务器共用同一个表时区分日志属于哪个服务器)
+  serverName: '默认服务器'
 
 playerChat:
   #记录玩家聊天 true为启用 false为禁用

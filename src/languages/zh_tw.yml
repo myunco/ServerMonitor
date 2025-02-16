@@ -41,3 +41,8 @@ message-exception-save: '§4[錯誤] §5在保存 【{file}】 時發生IO異常
 message-exception-zip: '§4[錯誤] §5在壓縮 【{file}】 時發生IO異常!'
 message-error-delete: '§4[錯誤] §5刪除 【{file}】 失敗!'
 message-error-create: '§4[錯誤] §5創建目錄失敗：{file}'
+message-database-connect-success: '連接數據庫成功'
+message-database-connect-exception: '連接數據庫失敗或初始化錯誤：{0}'
+message-database-connect-unexpected-close: '數據庫連接被意外關閉，將嘗試重新連接。（此情況不應發生，如果你頻繁看到此警告，請檢查不穩定因素）'
+message-database-connect-close-exception: '關閉數據庫連接時出現異常：{0}'
+message-database-update-exception: '向數據庫中添加日誌時出現異常：{0}'

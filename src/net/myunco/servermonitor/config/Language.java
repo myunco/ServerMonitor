@@ -49,6 +49,11 @@ public class Language {
     public static String messageExceptionZip;
     public static String messageErrorDelete;
     public static String messageErrorCreate;
+    public static String messageDatabaseConnectSuccess;
+    public static String messageDatabaseConnectException;
+    public static String messageDatabaseConnectUnexpectedClose;
+    public static String messageDatabaseConnectCloseException;
+    public static String messageDatabaseUpdateException;
 
     public static void loadLanguage(String language) {
         if (language == null || !language.matches("[a-zA-Z]{2}[_-][a-zA-Z]{2}")) {
@@ -110,6 +115,11 @@ public class Language {
         messageExceptionZip = config.getString("message-exception-zip", "§4[错误] §5在压缩 {file} 时发生IO异常!");
         messageErrorDelete = config.getString("message-error-delete", "§4[错误] §5删除 {file} 失败!");
         messageErrorCreate = config.getString("message-error-create", "§4[错误] §5创建目录失败：{file}");
+        messageDatabaseConnectSuccess = config.getString("message-database-connect-success", "连接数据库成功");
+        messageDatabaseConnectException = config.getString("message-database-connect-exception", "连接数据库失败或初始化错误：{0}");
+        messageDatabaseConnectUnexpectedClose = config.getString("message-database-connect-unexpected-close", "数据库连接被意外关闭，将尝试重新连接。（此情况不应发生，如果你频繁看到此警告，请检查不稳定因素）");
+        messageDatabaseConnectCloseException = config.getString("message-database-connect-close-exception", "关闭数据库连接时出现异常：{0}");
+        messageDatabaseUpdateException = config.getString("message-database-update-exception", "向数据库中添加日志时出现异常：{0}");
     }
 
     private static void saveDefaultLanguage(File lang, String langPath) {
@@ -198,6 +208,11 @@ public class Language {
                     config.set("message", null);
                 case 4:
                     config.set("message-error-create", "§4[错误] §5创建目录失败：{file}");
+                    config.set("message-database-connect-success", "连接数据库成功");
+                    config.set("message-database-connect-exception", "连接数据库失败或初始化错误：{0}");
+                    config.set("message-database-connect-unexpected-close", "数据库连接被意外关闭，将尝试重新连接。（此情况不应发生，如果你频繁看到此警告，请检查不稳定因素）");
+                    config.set("message-database-connect-close-exception", "关闭数据库连接时出现异常：{0}");
+                    config.set("message-database-update-exception", "向数据库中添加日志时出现异常：{0}");
                     break;
                 default:
                     plugin.logMessage(languageVersionError + version);
@@ -212,7 +227,11 @@ public class Language {
 
     public static String replaceArgs(String msg, Object... args) {
         for (int i = 0; i < args.length; i++) {
-            msg = msg.replace("{0}".replace('0', (char) (i + 48)), args[i].toString());
+            if (i == 0) {
+                msg = msg.replace("{0}", args[i].toString());
+            } else {
+                msg = msg.replace("{0}".replace('0', (char) (i + 48)), args[i].toString());
+            }
         }
         return msg;
     }

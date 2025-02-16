@@ -55,6 +55,7 @@ public class Config {
     public static String dbPassword;
     public static String dbName;
     public static String dbTablePrefix;
+    public static String dbServerName;
 
     public static void loadConfig() {
         plugin.saveDefaultConfig();
@@ -64,7 +65,6 @@ public class Config {
         dateFormat = config.getString("dateFormat", "yyyy/MM/dd HH:mm:ss");
         Util.setTimeFormat(dateFormat);
         lineSeparator = config.getString("lineSeparator", "Auto");
-        assert lineSeparator != null;
         if ("Auto".equalsIgnoreCase(lineSeparator)) {
             lineSeparator = System.lineSeparator();
         } else {
@@ -117,6 +117,7 @@ public class Config {
             dbPassword = config.getString("database.password", "");
             dbName = config.getString("database.database", "servermonitor");
             dbTablePrefix = config.getString("database.tablePrefix", "");
+            dbServerName = config.getString("database.serverName", "server");
         }
     }
 
@@ -189,7 +190,9 @@ public class Config {
                         "  password: ''\r\n" +
                         "  database: 'minecraft'\r\n" +
                         "  #表前缀 留空表示无前缀 默认表名：chat_log、command_log 以此类推\r\n" +
-                        "  tablePrefix: 'sm_'\r\n");
+                        "  tablePrefix: 'sm_'\r\n" +
+                        "  #服务器名称 (用于多个服务器共用同一个表时区分日志属于哪个服务器)\r\n" +
+                        "  serverName: '默认服务器'\r\n");
                 config = loadConfiguration(configFile);
             } catch (IOException e) {
                 Util.sendException(Language.messageExceptionWrite.replace("{file}", "config.yml"), e.getMessage());

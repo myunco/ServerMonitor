@@ -14,7 +14,7 @@ public class UpdateChecker {
     static String downloadLink;
 
     public static void start() {
-        plugin.getScheduler().runTask(() -> {
+        plugin.getScheduler().runTaskAsynchronously(() -> {
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override

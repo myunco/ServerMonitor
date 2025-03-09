@@ -18,6 +18,11 @@ public class BukkitScheduler implements CompatibleScheduler {
     }
 
     @Override
+    public void runTaskAsynchronously(Runnable task) {
+        scheduler.runTaskAsynchronously(plugin, task);
+    }
+
+    @Override
     public void runTaskLaterAsynchronously(Runnable task, long delay) {
         scheduler.runTaskLaterAsynchronously(plugin, task, delay);
     }

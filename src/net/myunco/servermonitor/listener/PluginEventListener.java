@@ -29,7 +29,7 @@ public class PluginEventListener implements Listener {
 
     public PluginEventListener(ServerMonitor plugin) {
         this.plugin = plugin;
-        if (plugin.getMcVersion() < 8) {
+        if (plugin.mcVersion.isLessThan(8)) {
             opGivePermission = "bukkit.command.op.give";
             opTakePermission = "bukkit.command.op.take";
         } else {
@@ -230,7 +230,7 @@ public class PluginEventListener implements Listener {
         if (Log.commandLog.getDataSource() != null) {
             Log.commandLog.getDataSource().logCommand(str, cmd, name, "none", event.getSender().isOp());
         }
-        if (!Config.opChange || plugin.isVersionGtOrEq(8, 7) && event.isCancelled()) { //1.8.7版本开始此事件才实现Cancellable
+        if (!Config.opChange || plugin.mcVersion.isGreaterThanOrEqualTo(8, 7) && event.isCancelled()) { //1.8.7版本开始此事件才实现Cancellable
             return;
         }
         if (!(event.getSender() instanceof ConsoleCommandSender)) { //只有console有权限授予/撤销op

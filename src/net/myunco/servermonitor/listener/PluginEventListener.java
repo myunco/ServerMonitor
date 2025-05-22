@@ -1,5 +1,6 @@
 package net.myunco.servermonitor.listener;
 
+import net.myunco.folia.FoliaCompatibleAPI;
 import net.myunco.servermonitor.ServerMonitor;
 import net.myunco.servermonitor.config.Config;
 import net.myunco.servermonitor.config.Language;
@@ -154,18 +155,35 @@ public class PluginEventListener implements Listener {
         if (method == 0) {
             return;
         }
+        FoliaCompatibleAPI fapi = FoliaCompatibleAPI.getInstance();
         if ((method & 1) == 1) {
             Config.commandAlertHandleMethodConfig.get("broadcast").forEach(value -> Bukkit.broadcastMessage(value.replace("{player}", playerName).replace("{command}", cmd)));
         }
         if ((method & 2) == 2) {
-            Config.commandAlertHandleMethodConfig.get("consoleCmd").forEach(value -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("{player}", playerName).replace("{command}", cmd)));
+            if (fapi.isFolia()) {
+                plugin.scheduler.runTask(() -> {
+                    Config.commandAlertHandleMethodConfig.get("consoleCmd").forEach(value -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("{player}", playerName).replace("{command}", cmd)));
+                });
+            } else {
+                Config.commandAlertHandleMethodConfig.get("consoleCmd").forEach(value -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), value.replace("{player}", playerName).replace("{command}", cmd)));
+            }
         }
         if ((method & 4) == 4) {
-            //performCommand要去掉 '/' 所以这里直接用chat吧
-            Config.commandAlertHandleMethodConfig.get("playerCmd").forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
+            if (event.getPlayer().isOnline()) {
+                //performCommand要去掉 '/' 所以这里直接用chat吧
+                if (fapi.isFolia()) {
+                    plugin.scheduler.runTaskLater(() -> {
+                        Config.commandAlertHandleMethodConfig.get("playerCmd").forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
+                    }, 10);
+                } else {
+                    Config.commandAlertHandleMethodConfig.get("playerCmd").forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
+                }
+            }
         }
         if ((method & 8) == 8) {
-            Config.commandAlertHandleMethodConfig.get("playerSendMsg").forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
+            if (event.getPlayer().isOnline()) {
+                Config.commandAlertHandleMethodConfig.get("playerSendMsg").forEach(value -> event.getPlayer().chat(value.replace("{player}", playerName).replace("{command}", cmd)));
+            }
         }
         if ((method & 16) == 16) {
             Config.commandAlertHandleMethodConfig.get("sendMsgToPlayer").forEach(value -> event.getPlayer().sendMessage(value.replace("{player}", playerName).replace("{command}", cmd)));

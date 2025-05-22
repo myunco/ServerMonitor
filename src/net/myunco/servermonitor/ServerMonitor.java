@@ -32,7 +32,7 @@ public class ServerMonitor extends JavaPlugin {
     private static ServerMonitor plugin;
     private static Timer timer;
     public Version mcVersion;
-    private CompatibleScheduler scheduler;
+    public CompatibleScheduler scheduler;
     private ConsoleCommandSender console;
 
     @Override
